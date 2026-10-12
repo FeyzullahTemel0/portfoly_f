@@ -2,25 +2,149 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a;
+  --surface: #f8fafc;
+  --border: #e2e8f0;
+  --muted: #475569;
+  --accent: #0e7490;
+  --accent-foreground: #ffffff;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --background: #0b1120;
+  --foreground: #e2e8f0;
+  --surface: #111a2e;
+  --border: #1e2a44;
+  --muted: #94a3b8;
+  --accent: #22d3ee;
+  --accent-foreground: #04202a;
+  color-scheme: dark;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+html[lang="ar"] body {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+/* Tema simgeleri aktif temaya göre CSS ile seçilir: açıkta ay, koyuda güneş görünür. */
+.theme-icon-light {
+  display: none;
+}
+[data-theme="dark"] .theme-icon-dark {
+  display: none;
+}
+[data-theme="dark"] .theme-icon-light {
+  display: inline;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 54px 54px;
+  mask-image: radial-gradient(ellipse at 50% 34%, #000 8%, transparent 76%);
+}
+
+.button-primary {
+  background: var(--foreground);
+  color: var(--background);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+.button-primary:hover {
+  opacity: 0.88;
+}
+
+.text-gradient {
+  background-image: linear-gradient(90deg, var(--accent), #0f766e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cta-band {
+  background-image: linear-gradient(120deg, #0e7490 0%, #0f766e 54%, #164e63 100%);
+}
+
+@keyframes blob {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(30px, -24px, 0) scale(1.12); }
+}
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes route-loading-progress {
+  0% { transform: translateX(-110%) scaleX(0.55); }
+  50% { transform: translateX(55%) scaleX(0.9); }
+  100% { transform: translateX(220%) scaleX(0.55); }
+}
+
+.animate-blob { animation: blob 14s ease-in-out infinite; }
+.animate-marquee { animation: marquee 35s linear infinite; }
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-pulse-ring { animation: pulse-ring 2s ease-out infinite; }
+.route-loading-progress { animation: route-loading-progress 1.5s ease-in-out infinite; }
+.loading-copy-en { display: none; }
+html[lang="en"] .loading-copy-tr { display: none; }
+html[lang="en"] .loading-copy-en { display: inline; }
+
+@media (max-width: 640px) {
+  .animate-marquee { animation-duration: 24s; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-marquee:hover { animation-play-state: paused; }
+}
+
+.shimmer {
+  background-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--foreground) 12%, transparent), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 3.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-blob,
+  .animate-marquee,
+  .animate-float,
+  .animate-pulse-ring,
+  .route-loading-progress,
+  .shimmer {
+    animation: none;
+  }
 }

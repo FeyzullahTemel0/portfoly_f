@@ -1,17 +1,22 @@
 {
-  "name": "portfolyo",
+  "name": "temeloji-dijital",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "admin:setup": "node scripts/admin-setup.mjs"
   },
   "dependencies": {
+    "mongoose": "^8.24.5",
+    "motion": "^14.0.0",
     "next": "16.3.8",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-icons": "^5.7.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
