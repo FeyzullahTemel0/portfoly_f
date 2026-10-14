@@ -9,6 +9,8 @@ import { isLocale } from "@/lib/locales";
 import { getProjects } from "@/lib/projects";
 import { localizedAlternates } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: PageProps<"/[lang]/projects">): Promise<Metadata> {

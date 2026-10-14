@@ -13,6 +13,8 @@ import { getDictionary } from "@/dictionaries";
 import { isLocale } from "@/lib/locales";
 import { getProjects } from "@/lib/projects";
 import { getReferences } from "@/lib/references";
+
+export const dynamic = "force-dynamic";
 import { groupServices } from "@/lib/service-groups";
 import { localizedAlternates } from "@/lib/seo";
 

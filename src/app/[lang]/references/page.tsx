@@ -10,6 +10,8 @@ import { getReferences } from "@/lib/references";
 import { safeUrl } from "@/lib/site";
 import { localizedAlternates } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: PageProps<"/[lang]/references">): Promise<Metadata> {
