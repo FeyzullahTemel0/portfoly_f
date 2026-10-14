@@ -593,6 +593,9 @@ export const en: BaseDictionary = {
   projects: {
     title: "Our Projects",
     text: "Examples of the projects we have brought to life so far.",
+    searchLabel: "Search projects",
+    searchPlaceholder: "Search by project name, category, or description",
+    searchNoResults: "No projects match your search.",
     homeTitle: "Latest projects",
     empty: "Our projects will be here soon.",
     viewAll: "All projects",

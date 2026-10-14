@@ -593,6 +593,9 @@ export const tr = {
   projects: {
     title: "Projelerimiz",
     text: "Şimdiye kadar hayata geçirdiğimiz projelerden örnekler.",
+    searchLabel: "Projelerde ara",
+    searchPlaceholder: "Proje adı, kategori veya açıklama ara",
+    searchNoResults: "Bu aramayla eşleşen proje bulunamadı.",
     homeTitle: "Son projelerimiz",
     empty: "Projelerimiz yakında burada olacak.",
     viewAll: "Tüm projeler",

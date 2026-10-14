@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
-import { ProjectCard } from "@/components/project-card";
+import { ProjectBrowser } from "@/components/project-browser";
 import { Reveal } from "@/components/reveal";
 import { getDictionary } from "@/dictionaries";
 import { isLocale } from "@/lib/locales";
@@ -33,13 +33,7 @@ export default async function ProjectsPage({ params }: PageProps<"/[lang]/projec
         {items.length === 0 ? (
           <p className="rounded-xl border border-border bg-surface p-8 text-center text-muted">{projects.empty}</p>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((project, index) => (
-              <Reveal key={project.id} delay={(index % 3) * 0.08}>
-                <ProjectCard lang={lang} project={project} more={projects.more} />
-              </Reveal>
-            ))}
-          </div>
+          <ProjectBrowser lang={lang} projects={items} copy={projects} />
         )}
 
         <Reveal>
