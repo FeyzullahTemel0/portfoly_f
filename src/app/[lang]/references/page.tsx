@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
+import { AdSlot } from "@/components/ad-slot";
 import { ReferenceLogo } from "@/components/reference-logo";
 import { Reveal } from "@/components/reveal";
 import { getDictionary } from "@/dictionaries";
@@ -29,6 +30,7 @@ export default async function ReferencesPage({ params }: PageProps<"/[lang]/refe
   return (
     <>
       <PageHero title={references.title} text={references.text} />
+      <AdSlot position="middle" lang={lang} />
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         {items.length === 0 ? (

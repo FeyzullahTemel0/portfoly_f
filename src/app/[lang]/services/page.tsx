@@ -55,6 +55,7 @@ export default async function ServicesPage({ params }: PageProps<"/[lang]/servic
           </div>
         ))}
       </section>
+      <AdSlot position="lower" lang={lang} />
     </>
   );
 }

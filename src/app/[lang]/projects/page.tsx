@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { ProjectBrowser } from "@/components/project-browser";
+import { AdSlot } from "@/components/ad-slot";
 import { Reveal } from "@/components/reveal";
 import { getDictionary } from "@/dictionaries";
 import { isLocale } from "@/lib/locales";
@@ -28,6 +29,7 @@ export default async function ProjectsPage({ params }: PageProps<"/[lang]/projec
   return (
     <>
       <PageHero title={projects.title} text={projects.text} />
+      <AdSlot position="middle" lang={lang} />
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         {items.length === 0 ? (

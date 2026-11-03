@@ -4,16 +4,13 @@ import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 import { baseDictionaries } from "@/dictionaries/base";
 import { getAdminProfile, getCredentials, hashPassword } from "@/lib/admin-account";
-import { AD_POSITIONS, adPageKeys, isAdPosition } from "@/lib/ads";
 import { endSession, requireAdmin, verifyPassword } from "@/lib/auth";
 import { isCurrency } from "@/lib/currency";
 import { connectDb } from "@/lib/db";
 import { locales, type Locale } from "@/lib/locales";
 import { emptyBlock, normalizeBlock } from "@/lib/services";
-import { safeUrl } from "@/lib/site";
 import { deleteImage, isOwnImageUrl } from "@/lib/storage";
 import { translateTexts } from "@/lib/translate";
-import { Ad } from "@/models/ad";
 import { Content } from "@/models/content";
 import { Service, type ServiceBlock } from "@/models/service";
 
@@ -22,10 +19,6 @@ export type Result = { ok: boolean; error?: string; id?: string; data?: unknown 
 const refreshSite = () => revalidatePath("/[lang]", "layout");
 const validId = (id: string) => mongoose.isValidObjectId(id);
 const clip = (value: unknown, max: number) => (typeof value === "string" ? value.trim().slice(0, max) : "");
-const dimension = (value: unknown) => {
-  const number = Math.round(Number(value));
-  return Number.isFinite(number) && number > 0 && number <= 20000 ? number : 0;
-};
 
 // ---------- Hizmetler ----------
 
@@ -208,135 +201,6 @@ export async function importDefaultServices(): Promise<Result> {
   }
 }
 
-// ---------- Reklamlar ----------
-
-export type AdInput = {
-  advertiser: string;
-  pages: string[];
-  position: string;
-  imageUrl: string;
-  imagePublicId: string;
-  mobileImageUrl: string;
-  mobileImagePublicId: string;
-  imageWidth: number;
-  imageHeight: number;
-  mobileImageWidth: number;
-  mobileImageHeight: number;
-  linkUrl: string;
-  alt: string;
-  startsAt: string;
-  endsAt: string;
-  active: boolean;
-  weight: number;
-};
-
-function parseDate(value: string) {
-  if (!value) return null;
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? undefined : date;
-}
-
-export async function saveAd(id: string | null, input: AdInput): Promise<Result> {
-  await requireAdmin();
-  if (id !== null && !validId(id)) return { ok: false, error: "Geçersiz istek." };
-  const advertiser = clip(input.advertiser, 120);
-  if (!advertiser) return { ok: false, error: "Reklam veren adı zorunlu." };
-  if (!isAdPosition(input.position)) return { ok: false, error: "Reklam konumu geçersiz." };
-  const pages = [...new Set((input.pages ?? []).filter((page) => adPageKeys.includes(page)))];
-  if (pages.length === 0) return { ok: false, error: "En az bir sayfa seçin." };
-  const linkUrl = safeUrl(clip(input.linkUrl, 600));
-  if (!linkUrl) return { ok: false, error: "Hedef adres https:// ile başlamalı." };
-  if (!input.imageUrl || !isOwnImageUrl(input.imageUrl)) return { ok: false, error: "Masaüstü reklam görseli yükleyin." };
-  if (input.mobileImageUrl && !isOwnImageUrl(input.mobileImageUrl)) return { ok: false, error: "Geçersiz mobil görsel." };
-  const startsAt = parseDate(input.startsAt);
-  const endsAt = parseDate(input.endsAt);
-  if (startsAt === undefined || endsAt === undefined) return { ok: false, error: "Tarih geçersiz." };
-  if (startsAt && endsAt && endsAt < startsAt) return { ok: false, error: "Bitiş tarihi başlangıçtan önce olamaz." };
-  const weight = Math.min(10, Math.max(1, Math.round(Number(input.weight) || 1)));
-
-  const data = {
-    advertiser,
-    pages,
-    position: input.position,
-    imageUrl: input.imageUrl,
-    imagePublicId: clip(input.imagePublicId, 300),
-    mobileImageUrl: input.mobileImageUrl || "",
-    mobileImagePublicId: input.mobileImageUrl ? clip(input.mobileImagePublicId, 300) : "",
-    imageWidth: dimension(input.imageWidth),
-    imageHeight: dimension(input.imageHeight),
-    mobileImageWidth: input.mobileImageUrl ? dimension(input.mobileImageWidth) : 0,
-    mobileImageHeight: input.mobileImageUrl ? dimension(input.mobileImageHeight) : 0,
-    linkUrl,
-    alt: clip(input.alt, 160),
-    startsAt,
-    endsAt,
-    active: !!input.active,
-    weight,
-  };
-
-  try {
-    await connectDb();
-    let savedId = id;
-    if (id) {
-      const previous = await Ad.findById(id).lean();
-      if (!previous) return { ok: false, error: "Reklam bulunamadı." };
-      await Ad.updateOne({ _id: id }, { $set: data });
-      if (previous.imagePublicId && previous.imagePublicId !== data.imagePublicId) await deleteImage(previous.imagePublicId);
-      if (previous.mobileImagePublicId && previous.mobileImagePublicId !== data.mobileImagePublicId) await deleteImage(previous.mobileImagePublicId);
-    } else {
-      savedId = String((await Ad.create(data))._id);
-    }
-    revalidatePath("/admin/ads");
-    return { ok: true, id: savedId ?? undefined };
-  } catch (error) {
-    console.error("Reklam kaydedilemedi:", error);
-    return { ok: false, error: "Kaydedilemedi. Lütfen tekrar deneyin." };
-  }
-}
-
-export async function setAdActive(id: string, active: boolean): Promise<Result> {
-  await requireAdmin();
-  if (!validId(id)) return { ok: false, error: "Geçersiz istek." };
-  try {
-    await connectDb();
-    await Ad.updateOne({ _id: id }, { $set: { active } });
-    revalidatePath("/admin/ads");
-    return { ok: true };
-  } catch (error) {
-    console.error("Reklam güncellenemedi:", error);
-    return { ok: false, error: "Güncellenemedi." };
-  }
-}
-
-export async function deleteAd(id: string): Promise<Result> {
-  await requireAdmin();
-  if (!validId(id)) return { ok: false, error: "Geçersiz istek." };
-  try {
-    await connectDb();
-    const ad = await Ad.findByIdAndDelete(id).lean();
-    if (ad?.imagePublicId) await deleteImage(ad.imagePublicId);
-    if (ad?.mobileImagePublicId) await deleteImage(ad.mobileImagePublicId);
-    revalidatePath("/admin/ads");
-    return { ok: true };
-  } catch (error) {
-    console.error("Reklam silinemedi:", error);
-    return { ok: false, error: "Silinemedi." };
-  }
-}
-
-export async function resetAdStats(id: string): Promise<Result> {
-  await requireAdmin();
-  if (!validId(id)) return { ok: false, error: "Geçersiz istek." };
-  try {
-    await connectDb();
-    await Ad.updateOne({ _id: id }, { $set: { impressions: 0, clicks: 0 } });
-    revalidatePath("/admin/ads");
-    return { ok: true };
-  } catch {
-    return { ok: false, error: "Sıfırlanamadı." };
-  }
-}
-
 // ---------- Profil ----------
 
 export async function saveProfile(input: { displayName: string; bio: string }): Promise<Result> {
@@ -400,8 +264,4 @@ export async function changeCredentials(input: { currentPassword: string; newEma
     console.error("Hesap bilgileri güncellenemedi:", error);
     return { ok: false, error: "Güncellenemedi." };
   }
-}
-
-export async function getAdSpecs() {
-  return AD_POSITIONS;
 }

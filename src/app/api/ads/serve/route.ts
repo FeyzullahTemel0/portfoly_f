@@ -1,51 +1,48 @@
 import { connectDb } from "@/lib/db";
-import { AD_POSITIONS, isAdPosition } from "@/lib/ads";
+import { AD_SLOTS, isAdSlot, slotCapacity } from "@/lib/ads";
 import { Ad } from "@/models/ad";
 
 export const dynamic = "force-dynamic";
 
-// Seçilen sayfa ve konum için süresi geçerli, ağırlığa göre rastgele bir reklam döndürür.
+// Seçilen sayfa ve konumdaki yayındaki reklamları öncelik sırasına göre döndürür (yatayda en fazla 4, dikeyde 1).
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const page = (url.searchParams.get("page") ?? "").slice(0, 20);
-  const position = url.searchParams.get("pos") ?? "";
-  const noStore = { "Cache-Control": "no-store" };
-  if (!isAdPosition(position) || !/^[a-z]+$/.test(page)) return Response.json({ ad: null }, { headers: noStore });
+  const slot = url.searchParams.get("pos") ?? "";
+  const headers = { "Cache-Control": "no-store" };
+  if (!isAdSlot(slot) || !/^[a-z]+$/.test(page)) return Response.json({ ads: [] }, { headers });
 
   try {
     await connectDb();
     const now = new Date();
-    const ads = await Ad.find({
+    const docs = await Ad.find({
       active: true,
-      position,
-      pages: { $in: ["all", page] },
-      imageUrl: { $ne: "" },
+      placements: `${page}:${slot}`,
       $and: [{ $or: [{ startsAt: null }, { startsAt: { $lte: now } }] }, { $or: [{ endsAt: null }, { endsAt: { $gte: now } }] }],
-    }).lean();
-    if (ads.length === 0) return Response.json({ ad: null }, { headers: noStore });
+    })
+      .sort({ priority: -1, createdAt: 1 })
+      .limit(slotCapacity(slot))
+      .lean();
 
-    const total = ads.reduce((sum, ad) => sum + ad.weight, 0);
-    let pick = Math.random() * total;
-    const chosen = ads.find((ad) => (pick -= ad.weight) < 0) ?? ads[0];
-    const spec = AD_POSITIONS[position];
     return Response.json(
       {
-        ad: {
-          id: String(chosen._id),
-          image: chosen.imageUrl,
-          mobileImage: chosen.mobileImageUrl,
-          alt: chosen.alt || chosen.advertiser,
-          desktop: chosen.imageWidth && chosen.imageHeight ? [chosen.imageWidth, chosen.imageHeight] : spec.desktop,
-          mobile: chosen.mobileImageWidth && chosen.mobileImageHeight ? [chosen.mobileImageWidth, chosen.mobileImageHeight] : spec.mobile,
-          maxWidth: spec.desktop[0],
-          maxHeight: Math.max(180, Math.min(700, spec.desktop[1] * 2)),
-          mobileMaxWidth: spec.mobile[0],
-        },
+        slot,
+        size: AD_SLOTS[slot].size,
+        vertical: AD_SLOTS[slot].orientation === "vertical",
+        ads: docs.map((ad) => ({
+          id: String(ad._id),
+          sponsor: ad.advertiser,
+          title: ad.title,
+          description: ad.description,
+          image: ad.imageUrl,
+          width: ad.imageWidth,
+          height: ad.imageHeight,
+        })),
       },
-      { headers: noStore },
+      { headers },
     );
   } catch (error) {
-    console.error("Reklam alınamadı:", error);
-    return Response.json({ ad: null }, { headers: noStore });
+    console.error("Reklamlar alınamadı:", error);
+    return Response.json({ ads: [] }, { headers });
   }
 }

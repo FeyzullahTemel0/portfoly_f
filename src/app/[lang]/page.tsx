@@ -188,6 +188,8 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
         </section>
       )}
 
+      <AdSlot position="lower" lang={lang} />
+
       <section className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6 sm:py-24">
         <Reveal>
           <div className="cta-band relative overflow-hidden rounded-3xl px-6 py-12 text-center text-white shadow-2xl sm:px-12 sm:py-16">
