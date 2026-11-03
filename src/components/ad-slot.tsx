@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { pageKeyFromPath, type AdPosition } from "@/lib/ads";
 
-type ServedAd = { id: string; image: string; mobileImage: string; alt: string; desktop: [number, number]; mobile: [number, number] };
+type ServedAd = { id: string; image: string; mobileImage: string; alt: string; desktop: [number, number]; mobile: [number, number]; maxWidth: number; maxHeight: number; mobileMaxWidth: number };
 
 const labels: Record<string, string> = { tr: "Reklam", en: "Ad", de: "Anzeige", fr: "Publicité", ar: "إعلان" };
 
@@ -55,7 +55,10 @@ export function AdSlot({ position, lang, className = "" }: Props) {
 
   const [dw, dh] = ad.desktop;
   const [mw, mh] = ad.mobileImage ? ad.mobile : ad.desktop;
-  const style = { "--ar-d": `${dw} / ${dh}`, "--ar-m": `${mw} / ${mh}`, "--max-d": `${dw}px`, "--max-m": `${mw}px` } as CSSProperties;
+  // Görsel kendi oranında gösterilir; konumun önerilen genişliğini ve makul bir yüksekliği aşmaz.
+  const maxD = Math.round(Math.min(ad.maxWidth, ad.maxHeight * (dw / dh)));
+  const maxM = Math.round(Math.min(ad.mobileMaxWidth, 360 * (mw / mh)));
+  const style = { "--ar-d": `${dw} / ${dh}`, "--ar-m": `${mw} / ${mh}`, "--max-d": `${maxD}px`, "--max-m": `${maxM}px` } as CSSProperties;
 
   return (
     <aside aria-label={labels[lang] ?? "Ad"} className={`mx-auto w-full px-4 py-5 sm:px-6 ${className}`}>

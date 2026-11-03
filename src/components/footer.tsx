@@ -23,15 +23,15 @@ export function Footer({ lang, dict, settings }: FooterProps) {
 
   return (
     <footer className="border-t border-border bg-surface/50">
-      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-9 px-4 py-10 sm:grid-cols-2 sm:gap-10 sm:px-6 sm:py-14 lg:grid-cols-6">
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-9 px-4 py-10 sm:grid-cols-2 sm:gap-10 sm:px-6 sm:py-14 lg:grid-cols-[1.35fr_2fr_1fr_1fr_1.3fr]">
         <div className="col-span-2 sm:col-span-1">
-          <Link href={`/${lang}`} className="inline-flex" aria-label={`${dict.brand.name} ${dict.brand.suffix}`}>
-            <BrandImage className="h-14" />
+          <Link href={`/${lang}`} className="block max-w-[13rem]" aria-label={`${dict.brand.name} ${dict.brand.suffix}`}>
+            <BrandImage className="w-full max-w-[13rem]" />
           </Link>
           <p className="mt-4 border-l-2 border-accent pl-3 text-xs leading-5 text-muted">{dict.footer.text}</p>
         </div>
 
-        <nav aria-label={dict.footer.services} className="hidden sm:block lg:col-span-2 lg:border-l lg:border-border lg:pl-6">
+        <nav aria-label={dict.footer.services} className="hidden sm:block lg:border-l lg:border-border lg:pl-6">
           <p className={headingClass}>{dict.footer.services}</p>
           <div className="mt-4 grid grid-cols-2 gap-x-4">
             {serviceColumns.map((column, index) => (

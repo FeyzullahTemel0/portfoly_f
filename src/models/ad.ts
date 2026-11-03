@@ -8,6 +8,10 @@ export type AdDoc = {
   imagePublicId: string;
   mobileImageUrl: string;
   mobileImagePublicId: string;
+  imageWidth: number;
+  imageHeight: number;
+  mobileImageWidth: number;
+  mobileImageHeight: number;
   linkUrl: string;
   alt: string;
   startsAt: Date | null;
@@ -27,6 +31,10 @@ const AdSchema = new Schema<AdDoc>(
     imagePublicId: { type: String, default: "", maxlength: 300 },
     mobileImageUrl: { type: String, default: "", maxlength: 500 },
     mobileImagePublicId: { type: String, default: "", maxlength: 300 },
+    imageWidth: { type: Number, default: 0 },
+    imageHeight: { type: Number, default: 0 },
+    mobileImageWidth: { type: Number, default: 0 },
+    mobileImageHeight: { type: Number, default: 0 },
     linkUrl: { type: String, default: "", maxlength: 600 },
     alt: { type: String, default: "", maxlength: 160 },
     startsAt: { type: Date, default: null },

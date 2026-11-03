@@ -22,6 +22,10 @@ export type Result = { ok: boolean; error?: string; id?: string; data?: unknown 
 const refreshSite = () => revalidatePath("/[lang]", "layout");
 const validId = (id: string) => mongoose.isValidObjectId(id);
 const clip = (value: unknown, max: number) => (typeof value === "string" ? value.trim().slice(0, max) : "");
+const dimension = (value: unknown) => {
+  const number = Math.round(Number(value));
+  return Number.isFinite(number) && number > 0 && number <= 20000 ? number : 0;
+};
 
 // ---------- Hizmetler ----------
 
@@ -214,6 +218,10 @@ export type AdInput = {
   imagePublicId: string;
   mobileImageUrl: string;
   mobileImagePublicId: string;
+  imageWidth: number;
+  imageHeight: number;
+  mobileImageWidth: number;
+  mobileImageHeight: number;
   linkUrl: string;
   alt: string;
   startsAt: string;
@@ -254,6 +262,10 @@ export async function saveAd(id: string | null, input: AdInput): Promise<Result>
     imagePublicId: clip(input.imagePublicId, 300),
     mobileImageUrl: input.mobileImageUrl || "",
     mobileImagePublicId: input.mobileImageUrl ? clip(input.mobileImagePublicId, 300) : "",
+    imageWidth: dimension(input.imageWidth),
+    imageHeight: dimension(input.imageHeight),
+    mobileImageWidth: input.mobileImageUrl ? dimension(input.mobileImageWidth) : 0,
+    mobileImageHeight: input.mobileImageUrl ? dimension(input.mobileImageHeight) : 0,
     linkUrl,
     alt: clip(input.alt, 160),
     startsAt,

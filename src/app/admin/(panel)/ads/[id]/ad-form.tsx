@@ -18,11 +18,11 @@ type ImageFieldProps = {
   size: readonly [number, number];
   url: string;
   disabled: boolean;
-  onChange: (url: string, publicId: string) => void;
+  onChange: (url: string, publicId: string, width: number, height: number) => void;
   onMessage: (ok: boolean, text: string) => void;
 };
 
-// Yüklenen görselin boyut oranı reklam konumunun standart oranıyla uyuşmalıdır.
+// Her boyuttaki görsel kabul edilir; önerilen orandan farklıysa yalnızca bilgi verilir.
 function AdImageField({ label, hint, size, url, disabled, onChange, onMessage }: ImageFieldProps) {
   const [busy, setBusy] = useState(false);
   const input = useRef<HTMLInputElement>(null);
@@ -36,13 +36,10 @@ function AdImageField({ label, hint, size, url, disabled, onChange, onMessage }:
       const bitmap = await createImageBitmap(file);
       const ratio = bitmap.width / bitmap.height;
       const expected = size[0] / size[1];
-      if (Math.abs(ratio - expected) / expected > 0.03) {
-        throw new Error(`Görsel oranı uyumsuz. ${size[0]}×${size[1]} px (veya aynı oranda daha büyük) olmalı; yüklediğiniz ${bitmap.width}×${bitmap.height} px.`);
-      }
-      if (bitmap.width < size[0] * 0.9) throw new Error(`Görsel çok küçük; en az ${size[0]} px genişlik önerilir.`);
+      const differs = Math.abs(ratio - expected) / expected > 0.03;
       const result = await uploadImage(file, "rovax/ads");
-      onChange(result.url, result.publicId);
-      onMessage(true, `${label} yüklendi. Kaydet'e basmayı unutmayın.`);
+      onChange(result.url, result.publicId, bitmap.width, bitmap.height);
+      onMessage(true, differs ? `${label} yüklendi (${bitmap.width}×${bitmap.height}). Önerilen orandan farklı, kendi oranında gösterilecek. Kaydet'e basın.` : `${label} yüklendi. Kaydet'e basın.`);
     } catch (error) {
       onMessage(false, error instanceof Error ? error.message : "Yükleme başarısız.");
     } finally {
@@ -52,13 +49,13 @@ function AdImageField({ label, hint, size, url, disabled, onChange, onMessage }:
 
   return (
     <div>
-      <p className={labelClass}>{label} <span className="font-normal">— {size[0]}×{size[1]} px</span></p>
+      <p className={labelClass}>{label} <span className="font-normal">— önerilen {size[0]}×{size[1]} px</span></p>
       <div className="overflow-hidden rounded-xl border border-dashed border-border bg-background p-3">
         <div className="mx-auto" style={{ maxWidth: Math.min(size[0], 480) }}>
           <div className="relative flex items-center justify-center overflow-hidden rounded-lg bg-surface" style={{ aspectRatio: `${size[0]} / ${size[1]}` }}>
             {url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={url} alt={label} className="h-full w-full object-cover" />
+              <img src={url} alt={label} className="h-full w-full object-contain" />
             ) : (
               <span className="flex flex-col items-center gap-1 text-xs text-muted"><FiImage className="h-5 w-5" /> Görsel yok</span>
             )}
@@ -70,7 +67,7 @@ function AdImageField({ label, hint, size, url, disabled, onChange, onMessage }:
             <FiUpload className="h-4 w-4" /> {busy ? "Yükleniyor..." : url ? "Değiştir" : "Yükle"}
           </button>
           {url && (
-            <button type="button" disabled={busy} onClick={() => onChange("", "")} className="inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm text-red-500 hover:underline">
+            <button type="button" disabled={busy} onClick={() => onChange("", "", 0, 0)} className="inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm text-red-500 hover:underline">
               <FiTrash2 className="h-4 w-4" /> Kaldır
             </button>
           )}
@@ -184,8 +181,8 @@ export function AdForm({ id, initial, ready, stats }: Props) {
       <section className="space-y-5 rounded-2xl border border-border bg-surface p-5 sm:p-6">
         <h2 className="font-semibold">Reklam görselleri</h2>
         <div className="grid gap-5 lg:grid-cols-2">
-          <AdImageField label="Masaüstü / tablet görseli *" hint="PNG, JPG, WebP veya GIF; en fazla 4 MB." size={spec.desktop} url={form.imageUrl} disabled={!ready} onChange={(url, publicId) => setForm((c) => ({ ...c, imageUrl: url, imagePublicId: publicId }))} onMessage={(ok, text) => setStatus({ ok, text })} />
-          <AdImageField label="Mobil görseli (isteğe bağlı)" hint="Yüklenmezse masaüstü görseli mobilde de kullanılır." size={spec.mobile} url={form.mobileImageUrl} disabled={!ready} onChange={(url, publicId) => setForm((c) => ({ ...c, mobileImageUrl: url, mobileImagePublicId: publicId }))} onMessage={(ok, text) => setStatus({ ok, text })} />
+          <AdImageField label="Masaüstü / tablet görseli *" hint="Her boyut kabul edilir (PNG, JPG, WebP, GIF; en fazla 4 MB). Önerilen boyut yanda." size={spec.desktop} url={form.imageUrl} disabled={!ready} onChange={(url, publicId, width, height) => setForm((c) => ({ ...c, imageUrl: url, imagePublicId: publicId, imageWidth: width, imageHeight: height }))} onMessage={(ok, text) => setStatus({ ok, text })} />
+          <AdImageField label="Mobil görseli (isteğe bağlı)" hint="Yüklenmezse masaüstü görseli mobilde de kullanılır." size={spec.mobile} url={form.mobileImageUrl} disabled={!ready} onChange={(url, publicId, width, height) => setForm((c) => ({ ...c, mobileImageUrl: url, mobileImagePublicId: publicId, mobileImageWidth: width, mobileImageHeight: height }))} onMessage={(ok, text) => setStatus({ ok, text })} />
         </div>
         {!ready && <p className="text-xs text-amber-500">Görsel yükleme için R2 depolama bilgileri tanımlı olmalı.</p>}
       </section>
