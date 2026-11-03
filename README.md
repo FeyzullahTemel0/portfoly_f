@@ -1,4 +1,4 @@
-# portfoly_f
+# Rovax Software
 
 Rovax Software web sitesi. Next.js App Router, TypeScript, Tailwind CSS ve MongoDB kullanır.
 
