@@ -76,13 +76,14 @@ export function AdSlot({ position, lang, className = "" }: Props) {
   } else if (count === 1) {
     const ad = ads[0];
     const natural = ad.image && ad.width && ad.height ? ad.width / ad.height : size[0] / size[1];
-    const maxH = Math.max(180, Math.min(600, size[1] * 2));
-    const maxD = Math.round(Math.min(size[0], maxH * natural));
+    const maxH = Math.round(size[1] * 1.1);
+    const maxD = Math.round(Math.min(size[0] * 0.85, maxH * natural));
     wrapStyle = { "--max-d": `${maxD}px`, "--max-m": `${Math.round(Math.min(560, 340 * natural))}px` } as CSSProperties;
     tileStyle = () => ({ "--ar-d": `${natural}`, "--ar-m": `${Math.max(natural, 2.2)}` }) as CSSProperties;
   } else {
-    wrapStyle = { "--max-d": `${size[0]}px`, "--max-m": "560px" } as CSSProperties;
-    const ratio = size[0] / count / size[1];
+    const maxD = Math.round(size[0] * 0.85);
+    wrapStyle = { "--max-d": `${maxD}px`, "--max-m": "560px" } as CSSProperties;
+    const ratio = maxD / count / (size[1] * 0.7);
     tileStyle = () => ({ "--ar-d": `${ratio}`, "--ar-m": "2" }) as CSSProperties;
   }
 
