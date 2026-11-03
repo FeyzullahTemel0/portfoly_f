@@ -3,10 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FiAlertCircle, FiCheck, FiX } from "react-icons/fi";
 import { DesktopSoftwareShowcase } from "@/components/desktop-software-showcase";
+import { AdSlot } from "@/components/ad-slot";
+import { PriceTag } from "@/components/currency";
+import { iconKey, ServiceIcon } from "@/components/home/icons";
 import { Reveal } from "@/components/reveal";
 import { ShopierShowcase } from "@/components/shopier-showcase";
-import { ServiceArt } from "@/components/service-art";
-import { siteImages } from "@/config/images";
 import { getDictionary } from "@/dictionaries";
 import { isLocale, locales } from "@/lib/locales";
 import { localizedAlternates } from "@/lib/seo";
@@ -41,27 +42,39 @@ export default async function ServiceDetailPage({
   const item = services.items.find((s) => s.slug === slug);
   if (!item) notFound();
   const notice = "notice" in item ? item.notice : "";
+  const price = (item as { price?: { mode: string; amount: number; currency: string } }).price;
+  const icon = iconKey(item as { slug: string; icon?: string });
 
   return (
     <>
       <section className="relative overflow-hidden border-b border-border">
-        <div aria-hidden="true" className="bg-grid absolute inset-0 opacity-70" />
         <div aria-hidden="true" className="animate-blob pointer-events-none absolute -left-20 -top-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-10 sm:px-6 sm:py-20 lg:grid-cols-2">
           <Reveal>
             <Link href={`/${lang}/services`} className="text-sm text-muted hover:text-foreground">← {services.back}</Link>
-            <h1 className="mt-4 text-3xl font-bold tracking-normal sm:text-5xl">{item.title}</h1>
-            <p className="mt-4 text-lg leading-8 text-muted">{item.intro}</p>
+            <span className="mt-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-lg shadow-accent/30 lg:hidden">
+              <ServiceIcon slug={icon} className="h-7 w-7" />
+            </span>
+            <h1 className="mt-4 text-balance text-3xl font-extrabold tracking-normal sm:text-5xl">{item.title}</h1>
+            <p className="mt-4 text-base leading-7 text-muted sm:text-lg sm:leading-8">{item.intro}</p>
+            {price && price.mode !== "quote" && (
+              <p className="mt-5">
+                <PriceTag {...price} className="text-gradient text-2xl font-extrabold sm:text-3xl" />
+              </p>
+            )}
             <Link
               href={`/${lang}/contact?service=${item.slug}`}
-              className="mt-8 inline-flex h-12 items-center justify-center rounded-xl bg-accent px-6 font-semibold text-accent-foreground shadow-lg shadow-accent/25 transition hover:-translate-y-0.5"
+              className="button-primary mt-8 inline-flex h-12 w-full items-center justify-center rounded-xl px-6 font-semibold transition hover:-translate-y-0.5 sm:w-auto"
             >
               {services.cta}
             </Link>
           </Reveal>
-          <Reveal delay={0.1}>
-            <div className="group overflow-hidden rounded-3xl border border-border shadow-2xl">
-              <ServiceArt slug={item.slug} image={siteImages.services[item.slug]} alt={item.title} className="aspect-[16/11]" lang={lang} />
+          <Reveal delay={0.1} className="hidden lg:block">
+            <div className="relative mx-auto flex aspect-square max-w-sm items-center justify-center rounded-[2.5rem] border border-border bg-surface shadow-2xl">
+              <span aria-hidden="true" className="absolute inset-6 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--accent)_30%,transparent),transparent_70%)] blur-xl" />
+              <span className="relative flex h-32 w-32 items-center justify-center rounded-3xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-2xl shadow-accent/40">
+                <ServiceIcon slug={icon} className="h-16 w-16" />
+              </span>
             </div>
           </Reveal>
         </div>
@@ -158,6 +171,7 @@ export default async function ServiceDetailPage({
           >
             {services.cta}
           </Link>
+          <AdSlot position="sidebar" lang={lang} className="!px-0 !py-0" />
         </aside>
       </div>
     </>

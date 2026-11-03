@@ -46,7 +46,7 @@ export function TeamForm({ id, initial, cloudinaryReady }: Props) {
     <div className="max-w-3xl space-y-6 rounded-xl border border-border bg-surface p-5 sm:p-6">
       <ImageUploader
         url={form.photoUrl}
-        folder="temeloji/team"
+        folder="rovax/team"
         ready={cloudinaryReady}
         label="Fotoğraf"
         rounded

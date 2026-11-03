@@ -5,19 +5,19 @@ import "../globals.css";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin", "latin-ext"] });
 
 export const metadata: Metadata = {
-  title: "Yönetim Paneli | Temeloji Dijital",
+  title: "Yönetim Paneli | ROVAX SOFTWARE",
   robots: { index: false, follow: false },
-  icons: { icon: "/temeloji-logo.jpeg" },
+  icons: { icon: "/rovax-icon-192.png" },
 };
 
 // Sayfa açılmadan önce kayıtlı temayı uygulayarak renk titremesini önler.
-const themeScript = `try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=t==="dark"?"dark":"light"}catch(e){}`;
+const themeScript = `try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=t==="light"?"light":"dark"}catch(e){}`;
 
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="tr"
-      data-theme="light"
+      data-theme="dark"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${geistSans.variable} h-full antialiased`}

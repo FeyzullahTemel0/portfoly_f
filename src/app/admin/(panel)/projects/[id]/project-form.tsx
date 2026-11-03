@@ -50,7 +50,7 @@ export function ProjectForm({ id, initial, cloudinaryReady }: Props) {
         <h2 className="font-semibold">Görseller</h2>
         <ImageUploader
           url={form.coverUrl}
-          folder="temeloji/projects"
+          folder="rovax/projects"
           ready={cloudinaryReady}
           label="Kapak görseli (kare kartta görünür)"
           onChange={(url, publicId) => setForm((current) => ({ ...current, coverUrl: url, coverPublicId: publicId }))}
@@ -65,7 +65,7 @@ export function ProjectForm({ id, initial, cloudinaryReady }: Props) {
         </div>
         <GalleryUploader
           images={form.gallery}
-          folder="temeloji/projects"
+          folder="rovax/projects"
           ready={cloudinaryReady}
           onChange={(gallery) => setForm((current) => ({ ...current, gallery }))}
           onMessage={onMessage}

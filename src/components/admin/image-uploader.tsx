@@ -84,7 +84,7 @@ export function ImageUploader({ url, folder, ready, label, rounded, successMessa
           )}
           {!ready && (
             <p className="max-w-xs text-xs text-amber-500">
-              Görsel yükleme için .env.local dosyasına Cloudinary bilgileri eklenmeli.
+              Görsel yükleme için .env.local dosyasına R2 depolama bilgileri eklenmeli.
             </p>
           )}
         </div>

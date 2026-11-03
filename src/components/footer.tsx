@@ -1,7 +1,6 @@
 import Link from "next/link";
-import type { IconType } from "react-icons";
-import { FaInstagram, FaLinkedinIn, FaWhatsapp, FaXTwitter } from "react-icons/fa6";
 import { FiMail, FiMapPin, FiPhone } from "react-icons/fi";
+import { socialIcons } from "@/components/social-icons";
 import type { Dictionary } from "@/dictionaries/tr";
 import type { Locale } from "@/lib/locales";
 import { BrandImage } from "@/components/brand-logo";
@@ -11,12 +10,6 @@ import { getContactItems, getSocialItems, type Settings } from "@/lib/site";
 type FooterProps = { lang: Locale; dict: Dictionary; settings: Settings };
 
 const contactIcons = { phone: FiPhone, email: FiMail, address: FiMapPin } as const;
-const socialIcons: Record<string, IconType> = {
-  instagram: FaInstagram,
-  linkedin: FaLinkedinIn,
-  x: FaXTwitter,
-  whatsapp: FaWhatsapp,
-};
 
 export function Footer({ lang, dict, settings }: FooterProps) {
   const contactItems = getContactItems(settings, lang);
@@ -30,15 +23,15 @@ export function Footer({ lang, dict, settings }: FooterProps) {
 
   return (
     <footer className="border-t border-border bg-surface/50">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-6">
-        <div>
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-9 px-4 py-10 sm:grid-cols-2 sm:gap-10 sm:px-6 sm:py-14 lg:grid-cols-6">
+        <div className="col-span-2 sm:col-span-1">
           <Link href={`/${lang}`} className="inline-flex" aria-label={`${dict.brand.name} ${dict.brand.suffix}`}>
-            <BrandImage className="h-28 w-28" />
+            <BrandImage className="h-14" />
           </Link>
           <p className="mt-4 border-l-2 border-accent pl-3 text-xs leading-5 text-muted">{dict.footer.text}</p>
         </div>
 
-        <nav aria-label={dict.footer.services} className="lg:col-span-2 lg:border-l lg:border-border lg:pl-6">
+        <nav aria-label={dict.footer.services} className="hidden sm:block lg:col-span-2 lg:border-l lg:border-border lg:pl-6">
           <p className={headingClass}>{dict.footer.services}</p>
           <div className="mt-4 grid grid-cols-2 gap-x-4">
             {serviceColumns.map((column, index) => (
@@ -57,7 +50,7 @@ export function Footer({ lang, dict, settings }: FooterProps) {
 
         <nav aria-label={dict.footer.company} className="lg:col-span-1 lg:border-l lg:border-border lg:pl-6">
           <p className={headingClass}>{dict.footer.company}</p>
-          <ul className="mt-4 space-y-2">
+          <ul className="mt-4 space-y-2.5">
             <li><Link href={`/${lang}/about`} className={linkClass}>{dict.nav.about}</Link></li>
             <li><Link href={`/${lang}/team`} className={linkClass}>{dict.nav.team}</Link></li>
             <li><Link href={`/${lang}/packages`} className={linkClass}>{dict.nav.packages}</Link></li>
@@ -82,7 +75,7 @@ export function Footer({ lang, dict, settings }: FooterProps) {
           </ul>
         </nav>
 
-        <div className="lg:col-span-1 lg:border-l lg:border-border lg:pl-6">
+        <div className="col-span-2 sm:col-span-1 lg:col-span-1 lg:border-l lg:border-border lg:pl-6">
           <p className={headingClass}>{dict.footer.contact}</p>
           <ul className="mt-4 space-y-3">
             {contactItems.map((item) => {
@@ -113,6 +106,7 @@ export function Footer({ lang, dict, settings }: FooterProps) {
               <ul className="mt-3 flex flex-wrap gap-2">
                 {socials.map((social) => {
                   const Icon = socialIcons[social.key];
+                  if (!Icon) return null;
                   return (
                     <li key={social.key}>
                       <a
@@ -136,7 +130,7 @@ export function Footer({ lang, dict, settings }: FooterProps) {
 
       <div className="border-t border-border">
         <p className="mx-auto max-w-6xl px-4 py-5 text-xs text-muted sm:px-6">
-          © {new Date().getFullYear()} {dict.brand.name} {dict.brand.suffix}. {dict.footer.rights}
+          © {new Date().getFullYear()} {settings.legalName}. {dict.footer.rights}
         </p>
       </div>
     </footer>

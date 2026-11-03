@@ -49,7 +49,6 @@ export default async function ProjectDetailPage({ params }: PageProps<"/[lang]/p
   return (
     <>
       <section className="relative overflow-hidden border-b border-border">
-        <div aria-hidden="true" className="bg-grid absolute inset-0 opacity-70" />
         <div aria-hidden="true" className="animate-blob pointer-events-none absolute -left-20 -top-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
         <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
           <Reveal>

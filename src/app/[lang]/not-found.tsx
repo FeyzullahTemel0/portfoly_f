@@ -4,7 +4,6 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <section className="relative overflow-hidden">
-      <div aria-hidden="true" className="bg-grid absolute inset-0 opacity-70" />
       <div className="relative mx-auto flex max-w-2xl flex-col items-center px-4 py-28 text-center sm:py-36">
         <p className="text-7xl font-black tracking-normal text-accent sm:text-9xl">404</p>
         <h1 className="mt-4 text-2xl font-bold tracking-normal sm:text-3xl">Sayfa bulunamadı / Page not found</h1>

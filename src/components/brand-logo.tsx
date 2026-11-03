@@ -1,30 +1,27 @@
 import Image from "next/image";
 
-export function BrandMark() {
+// Küçük alanlarda (mobil üst bar, yükleme, yönetim paneli) kare RX amblemi kullanılır.
+export function BrandMark({ className = "h-9 w-9" }: { className?: string }) {
   return (
-    <span aria-hidden="true" className="relative inline-flex h-8 w-8 shrink-0 overflow-hidden rounded-md border border-border bg-[#f5f4ed]">
-      <Image
-        src="/temeloji-logo.jpeg"
-        alt=""
-        width={1024}
-        height={1024}
-        sizes="72px"
-        className="absolute left-1/2 top-[-0.75rem] h-[4.5rem] w-[4.5rem] max-w-none -translate-x-1/2 object-cover"
-      />
+    <span aria-hidden="true" className={`relative inline-flex shrink-0 overflow-hidden rounded-xl ring-1 ring-accent/40 ${className}`}>
+      <Image src="/rovax-mini-logo.jpeg" alt="" fill sizes="96px" className="object-cover" />
     </span>
   );
 }
 
-export function BrandImage({ className = "", loading = "lazy" }: { className?: string; loading?: "eager" | "lazy" }) {
+// Geniş logo dosyasındaki amblem ve yazı bölgesi, bozulma olmadan yakınlaştırılarak kırpılır.
+export function BrandImage({ className = "h-12", loading = "lazy", label = "Rovax Software" }: { className?: string; loading?: "eager" | "lazy"; label?: string }) {
   return (
-    <Image
-      src="/temeloji-logo.jpeg"
-      alt="Temeloji Dijital"
-      width={1024}
-      height={1024}
-      sizes="160px"
-      loading={loading}
-      className={`h-32 w-32 object-contain ${className}`}
-    />
+    <span role="img" aria-label={label} className={`relative block aspect-[4.06/1] shrink-0 overflow-hidden rounded-xl bg-[#050a18] ring-1 ring-accent/30 ${className}`}>
+      <Image
+        src="/rovax-logo.jpeg"
+        alt=""
+        fill
+        sizes="(min-width: 1024px) 640px, 480px"
+        loading={loading}
+        className="pointer-events-none select-none object-cover"
+        style={{ transform: "scale(1.47)", transformOrigin: "49.5% 50%" }}
+      />
+    </span>
   );
 }

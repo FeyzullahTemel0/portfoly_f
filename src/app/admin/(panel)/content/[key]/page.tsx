@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminHeader } from "@/components/admin/page-header";
 import { getDictionary } from "@/dictionaries";
-import { isCloudinaryConfigured } from "@/lib/cloudinary";
+import { isStorageConfigured } from "@/lib/storage";
 import { getAboutPhoto } from "@/lib/about-photo";
 import { adminSections, fieldLabels, isSectionKey, itemTemplates } from "@/lib/admin-config";
 import { requireAdmin } from "@/lib/auth";
@@ -25,7 +25,7 @@ export default async function ContentEditPage({ params }: PageProps<"/admin/cont
     <>
       <Link href="/admin/content" className="mb-4 inline-block text-sm text-muted hover:text-foreground">← Tüm bölümler</Link>
       <AdminHeader title={section.title} text={section.description} />
-      <ContentEditor sectionKey={key} initial={initial} labels={fieldLabels} templates={itemTemplates as Record<string, Json>} profilePhoto={profilePhoto} cloudinaryReady={isCloudinaryConfigured()} />
+      <ContentEditor sectionKey={key} initial={initial} labels={fieldLabels} templates={itemTemplates as Record<string, Json>} profilePhoto={profilePhoto} cloudinaryReady={isStorageConfigured()} />
     </>
   );
 }

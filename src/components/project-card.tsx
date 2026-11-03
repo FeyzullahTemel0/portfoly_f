@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FiArrowUpRight } from "react-icons/fi";
+import { FiArrowUpRight, FiLayers } from "react-icons/fi";
 import type { Locale } from "@/lib/locales";
 import type { PublicProject } from "@/lib/projects";
 
@@ -8,7 +8,7 @@ export function ProjectCard({ lang, project, more }: { lang: Locale; project: Pu
   return (
     <Link
       href={`/${lang}/projects/${project.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm transition duration-300 hover:-translate-y-1 hover:border-foreground/40 hover:shadow-xl hover:shadow-foreground/10"
+      className="card-glow group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-sm"
     >
       <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-background">
         {project.coverUrl ? (
@@ -20,8 +20,11 @@ export function ProjectCard({ lang, project, more }: { lang: Locale; project: Pu
             className={project.coverFit === "contain" ? "object-contain p-2" : "object-cover transition-transform duration-500 group-hover:scale-[1.02]"}
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-accent/15 to-teal-500/20 text-5xl font-black text-accent/60">
-            {project.title.slice(0, 1).toLocaleUpperCase()}
+          <div className="absolute inset-0 flex items-center justify-center overflow-hidden bg-gradient-to-br from-accent/20 via-surface to-accent-2/25">
+            <span aria-hidden="true" className="absolute h-40 w-40 rounded-full bg-accent/25 blur-3xl" />
+            <span className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-xl shadow-accent/30">
+              <FiLayers className="h-8 w-8" aria-hidden="true" />
+            </span>
           </div>
         )}
       </div>

@@ -3,9 +3,13 @@ import { Geist } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { AdSlot } from "@/components/ad-slot";
+import { CurrencyProvider } from "@/components/currency";
+import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { AnalyticsConsent } from "@/components/analytics-consent";
 import { getDictionary, getSettings } from "@/dictionaries";
+import { getRates } from "@/lib/rates";
 import { isLocale, locales } from "@/lib/locales";
 import { groupServices } from "@/lib/service-groups";
 import { safeUrl } from "@/lib/site";
@@ -17,7 +21,7 @@ const geistSans = Geist({
 });
 
 // Sayfa açılmadan önce kayıtlı temayı uygulayarak renk titremesini önler.
-const themeScript = `try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=t==="dark"?"dark":"light"}catch(e){}`;
+const themeScript = `try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=t==="light"?"light":"dark"}catch(e){}`;
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -40,7 +44,7 @@ export async function generateMetadata({
   const siteUrl = safeUrl(settings.seo.siteUrl);
   return {
     metadataBase: siteUrl ? new URL(siteUrl) : undefined,
-    icons: { icon: "/temeloji-logo.jpeg" },
+    icons: { icon: "/rovax-icon-192.png", apple: "/rovax-icon-192.png" },
     title: seoTitle || meta.title,
     description: seoDescription || meta.description,
     robots: settings.seo.allowIndex ? { index: true, follow: true } : { index: false, follow: false },
@@ -66,12 +70,13 @@ export default async function RootLayout({
   if (!isLocale(lang)) notFound();
   const dict = await getDictionary(lang);
   const settings = await getSettings();
+  const { rates } = await getRates();
 
   return (
     <html
       lang={lang}
       dir={lang === "ar" ? "rtl" : "ltr"}
-      data-theme="light"
+      data-theme="dark"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${geistSans.variable} h-full antialiased`}
@@ -82,6 +87,7 @@ export default async function RootLayout({
       <body className="flex min-h-full flex-col">
         <ScrollProgress />
         <AnalyticsConsent lang={lang} />
+        <CurrencyProvider rates={rates} lang={lang}>
         <Header
           lang={lang}
           brand={dict.brand}
@@ -93,8 +99,12 @@ export default async function RootLayout({
           }))}
           allServicesLabel={dict.services.all}
         />
+        <AdSlot position="top" lang={lang} />
         <main className="flex-1">{children}</main>
+        <AdSlot position="bottom" lang={lang} />
         <Footer lang={lang} dict={dict} settings={settings} />
+        <MobileTabBar lang={lang} labels={{ home: dict.nav.home, services: dict.nav.services, projects: dict.nav.projects, quote: dict.nav.quote }} />
+        </CurrencyProvider>
       </body>
     </html>
   );

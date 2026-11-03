@@ -1,3 +1,4 @@
+import { getAdminProfile } from "@/lib/admin-account";
 import { requireAdmin } from "@/lib/auth";
 import { connectDb } from "@/lib/db";
 import { Message } from "@/models/message";
@@ -19,9 +20,9 @@ async function getCounts() {
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const email = await requireAdmin();
-  const counts = await getCounts();
+  const [counts, profile] = await Promise.all([getCounts(), getAdminProfile()]);
   return (
-    <AdminShell email={email} counts={counts}>
+    <AdminShell email={email} counts={counts} profile={{ name: profile.displayName, photo: profile.photoUrl }}>
       {children}
     </AdminShell>
   );

@@ -1,6 +1,6 @@
 # portfoly_f
 
-Temeloji Dijital web sitesi. Next.js App Router, TypeScript, Tailwind CSS ve MongoDB kullanır.
+Rovax Software web sitesi. Next.js App Router, TypeScript, Tailwind CSS ve MongoDB kullanır.
 
 ## Geliştirme
 

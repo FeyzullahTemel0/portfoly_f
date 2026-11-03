@@ -80,7 +80,7 @@ export function ContentEditor({ sectionKey, initial, labels, templates, profileP
           <div className="mb-6 rounded-lg border border-border bg-background p-4">
             <ImageUploader
               url={photo.url}
-              folder="temeloji/profile"
+              folder="rovax/profile"
               ready={cloudinaryReady}
               label="Profil fotoğrafı"
               rounded

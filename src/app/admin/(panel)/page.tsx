@@ -5,24 +5,33 @@ import { adminSections } from "@/lib/admin-config";
 import { formatDate, statusClasses, statusLabels } from "@/lib/admin-ui";
 import { requireAdmin } from "@/lib/auth";
 import { connectDb } from "@/lib/db";
+import { Ad } from "@/models/ad";
 import { Message } from "@/models/message";
 import { Quote } from "@/models/quote";
+import { Service } from "@/models/service";
 
 async function loadStats() {
   try {
     await connectDb();
-    const [newQuotes, totalQuotes, unreadMessages, totalMessages, recent] = await Promise.all([
+    const [newQuotes, totalQuotes, unreadMessages, totalMessages, recent, activeAds, serviceCount, adTotals] = await Promise.all([
       Quote.countDocuments({ status: "new" }),
       Quote.countDocuments(),
       Message.countDocuments({ read: false }),
       Message.countDocuments(),
       Quote.find().sort({ createdAt: -1 }).limit(5).lean(),
+      Ad.countDocuments({ active: true }),
+      Service.countDocuments({ visible: true }),
+      Ad.aggregate([{ $group: { _id: null, impressions: { $sum: "$impressions" }, clicks: { $sum: "$clicks" } } }]),
     ]);
     return {
       newQuotes,
       totalQuotes,
       unreadMessages,
       totalMessages,
+      activeAds,
+      serviceCount,
+      adImpressions: adTotals[0]?.impressions ?? 0,
+      adClicks: adTotals[0]?.clicks ?? 0,
       recent: recent.map((q) => ({
         id: String(q._id),
         name: q.name,
@@ -47,6 +56,10 @@ export default async function DashboardPage() {
         { label: "Toplam teklif", value: stats.totalQuotes, href: "/admin/quotes" },
         { label: "Okunmamış mesaj", value: stats.unreadMessages, href: "/admin/messages" },
         { label: "Toplam mesaj", value: stats.totalMessages, href: "/admin/messages" },
+        { label: "Yayındaki hizmet", value: stats.serviceCount, href: "/admin/services" },
+        { label: "Aktif reklam", value: stats.activeAds, href: "/admin/ads" },
+        { label: "Reklam gösterimi", value: stats.adImpressions, href: "/admin/ads" },
+        { label: "Reklam tıklaması", value: stats.adClicks, href: "/admin/ads" },
       ]
     : [];
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminHeader } from "@/components/admin/page-header";
 import { requireAdmin } from "@/lib/auth";
-import { isCloudinaryConfigured } from "@/lib/cloudinary";
+import { isStorageConfigured } from "@/lib/storage";
 import { connectDb } from "@/lib/db";
 import { Reference } from "@/models/reference";
 import type { ReferenceInput } from "../../actions";
@@ -74,7 +74,7 @@ export default async function ReferenceEditPage({ params }: PageProps<"/admin/re
     <>
       <Link href="/admin/references" className="mb-4 inline-block text-sm text-muted hover:text-foreground">← Tüm referanslar</Link>
       <AdminHeader title={isNew ? "Yeni referans" : initial.name} />
-      <ReferenceForm id={isNew ? null : id} initial={initial} cloudinaryReady={isCloudinaryConfigured()} />
+      <ReferenceForm id={isNew ? null : id} initial={initial} cloudinaryReady={isStorageConfigured()} />
     </>
   );
 }

@@ -6,7 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { FiChevronDown, FiMenu, FiX } from "react-icons/fi";
 import type { Dictionary } from "@/dictionaries/tr";
 import type { Locale } from "@/lib/locales";
-import { BrandMark } from "./brand-logo";
+import { BrandImage, BrandMark } from "./brand-logo";
+import { CurrencySwitcher } from "./currency";
 import { ThemeToggle } from "./theme-toggle";
 
 type MenuItem = { href: string; label: string };
@@ -173,8 +174,6 @@ export function Header({ lang, brand, nav, language, serviceGroups, allServicesL
     ],
   };
   const links = [
-    { href: `/${lang}/packages`, label: nav.packages },
-    { href: `/${lang}/process`, label: nav.process },
     { href: `/${lang}/projects`, label: nav.projects },
     { href: `/${lang}/references`, label: nav.references },
     { href: `/${lang}/contact`, label: nav.contact },
@@ -183,23 +182,25 @@ export function Header({ lang, brand, nav, language, serviceGroups, allServicesL
   const closeMobile = () => setMobileOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
+    <header className="glass sticky top-0 z-50 border-b border-border">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href={`/${lang}`} className="inline-flex items-center gap-2.5 text-base font-bold tracking-normal" onClick={closeMobile}>
-          <BrandMark />
-          <span>{brand.name}<span className="text-accent"> {brand.suffix}</span></span>
+        <Link href={`/${lang}`} className="inline-flex items-center" onClick={closeMobile} aria-label={`${brand.name} ${brand.suffix}`}>
+          <BrandMark className="h-10 w-10 sm:hidden" />
+          <span className="hidden sm:block">
+            <BrandImage className="h-10" loading="eager" />
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 lg:flex" aria-label="Ana menü">
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Ana menü">
           <DesktopMenu menu={servicesMenu} onNavigate={closeMobile} />
-          {links.slice(0, 4).map((link) => (
+          {links.slice(0, 2).map((link) => (
             <Link key={link.href} href={link.href} className={linkClass}>
               {link.label}
             </Link>
           ))}
           <DesktopMenu menu={aboutMenu} onNavigate={closeMobile} />
-          <Link href={links[4].href} className={linkClass}>
-            {links[4].label}
+          <Link href={links[2].href} className={linkClass}>
+            {links[2].label}
           </Link>
         </nav>
 
@@ -208,7 +209,7 @@ export function Header({ lang, brand, nav, language, serviceGroups, allServicesL
             <summary aria-label={language.label} className="flex h-9 cursor-pointer list-none items-center gap-1 rounded-lg border border-border bg-surface px-3 text-xs font-semibold transition-colors hover:border-accent">
               {lang.toUpperCase()} <FiChevronDown className="h-3 w-3 transition-transform group-open:rotate-180" aria-hidden="true" />
             </summary>
-            <div className="absolute end-0 top-full z-50 mt-2 min-w-36 rounded-lg border border-border bg-background p-1 shadow-xl">
+            <div className="absolute end-0 top-full z-50 mt-2 min-w-32 rounded-lg border border-border bg-background p-1 shadow-xl">
               {Object.entries(localeLabels).map(([locale, label]) => {
                 const target = locale as Locale;
                 const href = pathname.replace(`/${lang}`, `/${target}`) || `/${target}`;
@@ -216,6 +217,7 @@ export function Header({ lang, brand, nav, language, serviceGroups, allServicesL
               })}
             </div>
           </details>
+          <CurrencySwitcher label={nav.currency} />
           <ThemeToggle label={nav.theme} />
           <Link
             href={`/${lang}/contact`}
@@ -238,14 +240,14 @@ export function Header({ lang, brand, nav, language, serviceGroups, allServicesL
       {mobileOpen && (
         <nav className="max-h-[80vh] overflow-y-auto border-t border-border bg-background px-4 py-3 lg:hidden" aria-label="Mobil menü">
           <MobileMenu menu={servicesMenu} onNavigate={closeMobile} />
-          {links.slice(0, 4).map((link) => (
+          {links.slice(0, 2).map((link) => (
             <Link key={link.href} href={link.href} onClick={closeMobile} className="block py-2 text-sm text-muted hover:text-foreground">
               {link.label}
             </Link>
           ))}
           <MobileMenu menu={aboutMenu} onNavigate={closeMobile} />
-          <Link href={links[4].href} onClick={closeMobile} className="block py-2 text-sm text-muted hover:text-foreground">
-            {links[4].label}
+          <Link href={links[2].href} onClick={closeMobile} className="block py-2 text-sm text-muted hover:text-foreground">
+            {links[2].label}
           </Link>
         </nav>
       )}

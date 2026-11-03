@@ -55,7 +55,7 @@ const tr: LegalDocs = {
     {
       heading: "5. Verilerin Aktarılması",
       paragraphs: [
-        "Veriler; barındırma, veritabanı, e-posta bildirimi ve görsel depolama hizmeti sunan iş ortaklarına ve kanunen yetkili kurumlara, hizmet için gerekli olduğu ölçüde aktarılabilir. Bazı sağlayıcılar Türkiye dışında bulunabilir. Yurt dışına aktarım, yalnızca KVKK'nın 9. maddesi ve uygulanabilir diğer mevzuattaki şartlar ile güvenceler sağlandığında yapılır. Güncel sağlayıcı ve aktarım bilgileri talep üzerine paylaşılır.",
+        "Veriler; barındırma (Vercel), veritabanı (MongoDB Atlas), e-posta bildirimi (Resend) ve görsel depolama (Cloudflare R2) hizmeti sunan iş ortaklarına ve kanunen yetkili kurumlara, hizmet için gerekli olduğu ölçüde aktarılabilir. Bu sağlayıcıların sunucuları Türkiye dışında olabilir. Yurt dışına aktarım, yalnızca KVKK'nın 9. maddesi ve uygulanabilir diğer mevzuattaki şartlar ile güvenceler sağlandığında yapılır. Güncel sağlayıcı ve aktarım bilgileri talep üzerine paylaşılır.",
       ],
     },
     {
@@ -78,6 +78,12 @@ const tr: LegalDocs = {
       heading: "9. Saklama süreleri",
       paragraphs: [
         "Ziyaret analitiği ve yönetici giriş güvenlik olayları 30 günlük otomatik silme süresine tabidir; silme işlemi teknik nedenlerle kısa süre gecikebilir. Teklif ve iletişim kayıtları şu anda otomatik olarak sona ermez; talep sonuçlandırıldıktan ve olası hukuki saklama yükümlülükleri sona erdikten sonra yetkili yönetici tarafından silinmeleri gerekir. Silme talebinizi {contact} üzerinden iletebilirsiniz.",
+      ],
+    },
+    {
+      heading: "10. Reklam alanları ve üçüncü taraf bağlantılar",
+      paragraphs: [
+        "Sitede \"Reklam\" etiketiyle gösterilen alanlar reklam verenlere aittir. Reklamın gösterilme ve tıklanma sayıları kimlik, IP adresi veya çerez içermeyen toplu sayaçlarla tutulur; bu sayaçlar sizi tanımlamaz. Reklama tıkladığınızda veya WhatsApp, Telegram, Instagram gibi iletişim bağlantılarını kullandığınızda ilgili üçüncü tarafın kendi gizlilik politikası ve veri işleme koşulları geçerli olur; bu üçüncü tarafların uygulamalarından {legalName} sorumlu değildir. Reklam verenlerin ticari reklam ve tanıtım içeriklerinden kendileri sorumludur.",
       ],
     },
   ],
@@ -111,11 +117,23 @@ const tr: LegalDocs = {
       ],
     },
     {
-      heading: "6. Değişiklikler",
+      heading: "6. Fiyatlar ve Döviz Kurları",
+      paragraphs: [
+        "Sitede gösterilen fiyatlar bilgilendirme amaçlıdır ve bağlayıcı bir teklif sayılmaz; kesin kapsam, süre ve ücret yazılı teklif veya sözleşmeyle belirlenir. Fiyatlar, aksi belirtilmedikçe vergiler (KDV vb.) ve üçüncü taraf lisans/alan adı/barındırma giderleri hariçtir. Farklı para birimlerinde gösterilen tutarlar güncel piyasa kurlarından otomatik olarak çevrilmiş yaklaşık değerlerdir; ödeme ve fatura, sözleşmede belirtilen para birimi ve geçerli kur üzerinden yapılır.",
+      ],
+    },
+    {
+      heading: "7. Reklamlar ve Üçüncü Taraf Bağlantılar",
+      paragraphs: [
+        "Sitede \"Reklam\" etiketiyle yer alan içerikler reklam verenlere aittir; içeriğin doğruluğu, yasalara uygunluğu ve sunulan ürün/hizmetlerden reklam veren sorumludur. {legalName}, reklam verenlerle kullanıcılar arasındaki işlemlerin tarafı değildir. 6563 sayılı Elektronik Ticaretin Düzenlenmesi Hakkında Kanun ve Ticari Reklam ve Haksız Ticari Uygulamalar Yönetmeliği'ne aykırı, yanıltıcı veya hukuka aykırı reklamlar yayından kaldırılır. WhatsApp, Telegram, Instagram, Threads ve benzeri platformlara verilen bağlantılar bu platformların kendi kullanım koşullarına tabidir.",
+      ],
+    },
+    {
+      heading: "8. Değişiklikler",
       paragraphs: ["Bu koşullar güncellenebilir; güncel metin bu sayfada yayımlanır."],
     },
     {
-      heading: "7. Uygulanacak Hukuk",
+      heading: "9. Uygulanacak Hukuk",
       paragraphs: ["Uygulanabilir olduğu ölçüde Türkiye Cumhuriyeti hukuku esas alınır. Tüketici işlemlerinde ve sınır ötesi işlemlerde emredici tüketici/kişisel veri hükümleri ile başvurulabilecek yetkili merciler saklıdır; bu madde kanunen sahip olduğunuz başvuru haklarını sınırlamaz."],
     },
   ],
@@ -133,7 +151,7 @@ const tr: LegalDocs = {
     {
       heading: "3. Yerel Tercihler",
       paragraphs: [
-        "Tema tercihi tarayıcınızda saklanır. Analitik tercihi 180 gün hatırlanır ve yalnızca sunucunun okuyabildiği, siteler arası izleme yapmayan bir çerezle korunur. Yönetici oturumu için sadece yönetim alanında kullanılan, en fazla 8 saatlik bir oturum çerezi bulunur. Bu çerezler reklam amacı taşımaz; üçüncü taraf reklam/analitik çerezleri kullanılmaz.",
+        "Tema ve para birimi tercihi tarayıcınızda saklanır. Analitik tercihi 180 gün hatırlanır ve yalnızca sunucunun okuyabildiği, siteler arası izleme yapmayan bir çerezle korunur. Yönetici oturumu için sadece yönetim alanında kullanılan, en fazla 8 saatlik bir oturum çerezi bulunur. Bu çerezler reklam amacı taşımaz; üçüncü taraf reklam/analitik çerezleri kullanılmaz. İletişim sayfasındaki harita, yalnızca siz \"Haritayı göster\" dediğinizde Google Maps'ten yüklenir; bu durumda Google, kendi politikası çerçevesinde IP adresiniz gibi verileri işleyebilir.",
       ],
     },
     {
@@ -157,7 +175,7 @@ const tr: LegalDocs = {
     {
       heading: "7. Veri Güvenliği ve Sağlayıcılar",
       paragraphs: [
-        "Verilerin korunması için uygun teknik ve idari önlemler uygulanır; internet üzerinden hiçbir aktarım veya depolama yöntemi mutlak güvenlik garantisi vermez. Barındırma, veritabanı, e-posta bildirimi ve görsel depolama hizmeti sunan iş ortakları gerekli verileri işleyebilir. Bazı sağlayıcılar Türkiye dışında bulunabilir; yurt dışına aktarım yalnızca uygulanabilir mevzuattaki şart ve güvencelerle yapılır. Güncel sağlayıcı bilgileri talep üzerine paylaşılır.",
+        "Verilerin korunması için uygun teknik ve idari önlemler uygulanır; internet üzerinden hiçbir aktarım veya depolama yöntemi mutlak güvenlik garantisi vermez. Barındırma (Vercel), veritabanı (MongoDB Atlas), e-posta bildirimi (Resend) ve görsel depolama (Cloudflare R2) hizmeti sunan iş ortakları gerekli verileri işleyebilir. Güncel döviz kurları anahtarsız bir kur servisinden, kişisel veri gönderilmeden alınır. Bu sağlayıcıların sunucuları Türkiye dışında olabilir; yurt dışına aktarım yalnızca uygulanabilir mevzuattaki şart ve güvencelerle yapılır. Güncel sağlayıcı bilgileri talep üzerine paylaşılır. Reklam gösterim/tıklama sayaçları kimlik veya IP içermeyen toplu sayılardır.",
       ],
     },
     {
@@ -200,7 +218,7 @@ const en: LegalDocs = {
     {
       heading: "5. Transfers",
       paragraphs: [
-        "Data may be shared, as necessary, with website hosting, database, email-notification and image-storage providers and legally authorized institutions. Some providers may be located outside Türkiye. International transfers are made only when the requirements and safeguards of KVKK Article 9 and other applicable laws are met. Current provider and transfer information is available upon request.",
+        "Data may be shared, as necessary, with website hosting (Vercel), database (MongoDB Atlas), email-notification (Resend) and image-storage (Cloudflare R2) providers and legally authorized institutions. These providers may operate servers outside Türkiye. International transfers are made only when the requirements and safeguards of KVKK Article 9 and other applicable laws are met. Current provider and transfer information is available upon request.",
       ],
     },
     {
@@ -218,6 +236,10 @@ const en: LegalDocs = {
     {
       heading: "9. Retention",
       paragraphs: ["Visit analytics and administrator-login security events are automatically deleted after 30 days; deletion may be delayed briefly for technical reasons. Quote and contact records do not currently expire automatically; after a request is resolved and any legal retention need ends, an authorized administrator must delete them. You may request deletion via {contact}."],
+    },
+    {
+      heading: "10. Advertising areas and third-party links",
+      paragraphs: ["Areas labelled \"Ad\" on the site belong to advertisers. Ad impression and click counts are kept as aggregate counters without identifiers, IP addresses or cookies. When you click an ad or use contact links such as WhatsApp, Telegram or Instagram, the relevant third party's own privacy policy applies; {legalName} is not responsible for those third parties' practices. Advertisers are responsible for their own commercial content."],
     },
   ],
   terms: [
@@ -242,11 +264,19 @@ const en: LegalDocs = {
       paragraphs: ["Service descriptions are general information; project scope, price, delivery and intellectual-property terms are finalized in a written quote or agreement. Uninterrupted or error-free website operation is not guaranteed. Third-party services are subject to their providers' terms. Nothing in these terms excludes mandatory legal rights, including consumer rights."],
     },
     {
-      heading: "6. Changes",
+      heading: "6. Prices and Exchange Rates",
+      paragraphs: ["Prices shown on the site are for information only and are not a binding offer; final scope, timeline and price are set in a written quote or agreement. Unless stated otherwise, prices exclude taxes (such as VAT) and third-party licence, domain and hosting costs. Amounts displayed in other currencies are approximate values converted automatically at current market rates; payment and invoicing use the currency and rate stated in the agreement."],
+    },
+    {
+      heading: "7. Advertisements and Third-Party Links",
+      paragraphs: ["Content marked \"Ad\" belongs to the advertiser, who is responsible for its accuracy, legality and the products or services offered. {legalName} is not a party to transactions between advertisers and users. Misleading or unlawful advertisements are removed. Links to WhatsApp, Telegram, Instagram, Threads and similar platforms are subject to those platforms' own terms."],
+    },
+    {
+      heading: "8. Changes",
       paragraphs: ["These terms may be updated; the current version is published on this page."],
     },
     {
-      heading: "7. Governing Law",
+      heading: "9. Governing Law",
       paragraphs: ["The laws of the Republic of Türkiye apply where permitted. Mandatory consumer and data-protection rules and any competent authorities available for cross-border transactions remain unaffected. This clause does not restrict rights or remedies that cannot lawfully be waived."],
     },
   ],
@@ -261,7 +291,7 @@ const en: LegalDocs = {
     },
     {
       heading: "3. Local Preferences",
-      paragraphs: ["Your theme preference is stored in your browser. Your analytics choice is remembered for 180 days using a first-party preference cookie that is not used for cross-site tracking. An essential session cookie is used only for administration for up to 8 hours. These cookies are not used for advertising; no third-party advertising or analytics cookies are used."],
+      paragraphs: ["Your theme and currency preferences are stored in your browser. Your analytics choice is remembered for 180 days using a first-party preference cookie that is not used for cross-site tracking. An essential session cookie is used only for administration for up to 8 hours. These cookies are not used for advertising; no third-party advertising or analytics cookies are used. The map on the contact page loads from Google Maps only after you choose to show it; Google may then process data such as your IP address under its own policy."],
     },
     {
       heading: "4. Optional Visit Analytics",
@@ -277,7 +307,7 @@ const en: LegalDocs = {
     },
     {
       heading: "7. Security and Providers",
-      paragraphs: ["Appropriate technical and organizational safeguards are used, but no internet transmission or storage method can be guaranteed absolutely secure. Hosting, database, email-notification and image-storage providers may process data needed to deliver the service. Some providers may be located outside Türkiye; international transfers are made only under applicable legal requirements and safeguards. Current provider information is available upon request."],
+      paragraphs: ["Appropriate technical and organizational safeguards are used, but no internet transmission or storage method can be guaranteed absolutely secure. Hosting (Vercel), database (MongoDB Atlas), email-notification (Resend) and image-storage (Cloudflare R2) providers may process data needed to deliver the service. Current exchange rates are fetched from a keyless rate service without sending personal data. These providers may operate servers outside Türkiye; international transfers are made only under applicable legal requirements and safeguards. Current provider information is available upon request. Ad impression/click counters are aggregate numbers without identifiers or IP addresses."],
     },
     {
       heading: "8. Data protection rights",

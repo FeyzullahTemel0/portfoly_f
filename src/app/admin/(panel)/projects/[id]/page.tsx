@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminHeader } from "@/components/admin/page-header";
 import { requireAdmin } from "@/lib/auth";
-import { isCloudinaryConfigured } from "@/lib/cloudinary";
+import { isStorageConfigured } from "@/lib/storage";
 import { connectDb } from "@/lib/db";
 import { Project } from "@/models/project";
 import type { ProjectInput } from "../../actions";
@@ -93,7 +93,7 @@ export default async function ProjectEditPage({ params }: PageProps<"/admin/proj
     <>
       <Link href="/admin/projects" className="mb-4 inline-block text-sm text-muted hover:text-foreground">← Tüm projeler</Link>
       <AdminHeader title={isNew ? "Yeni proje" : initial.titleTr} />
-      <ProjectForm id={isNew ? null : id} initial={initial} cloudinaryReady={isCloudinaryConfigured()} />
+      <ProjectForm id={isNew ? null : id} initial={initial} cloudinaryReady={isStorageConfigured()} />
     </>
   );
 }

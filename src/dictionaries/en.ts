@@ -2,12 +2,14 @@ import type { BaseDictionary } from "./tr";
 
 export const en: BaseDictionary = {
   meta: {
-    title: "Temeloji Dijital | Web Design and Software Solutions",
+    title: "ROVAX SOFTWARE | Software and Digital Solutions",
     description:
-      "Temeloji Dijital: corporate websites, Shopier-integrated e-commerce, booking systems and custom software solutions.",
+      "Rovax Software Yazılım Çözümleri: custom desktop programs, web software and admin panels built around your business. Get a free quote.",
   },
-  brand: { name: "Temeloji", suffix: "Dijital" },
+  brand: { name: "ROVAX", suffix: "SOFTWARE" },
   nav: {
+    home: "Home",
+    currency: "Currency",
     services: "Services",
     packages: "Packages",
     process: "Process",
@@ -21,11 +23,11 @@ export const en: BaseDictionary = {
     theme: "Toggle theme",
   },
   hero: {
-    badge: "WEB DESIGN · E-COMMERCE · CUSTOM SOFTWARE",
-    title: "A stronger first impression, online.",
-    text: "We design and build corporate websites, Shopier stores and web-based panels shaped around your business needs.",
+    badge: "CUSTOM SOFTWARE · DESKTOP · WEB",
+    title: "Let's build the software that grows your business.",
+    text: "We build easy-to-use, custom software that automates the work eating your time. Tell us what you need and we'll define the scope and price clearly.",
     primary: "Get a Free Quote",
-    secondary: "See Services",
+    secondary: "See Our Work",
   },
   services: {
     title: "What we do",
@@ -403,13 +405,13 @@ export const en: BaseDictionary = {
     ],
   },
   why: {
-    title: "Why Temeloji Dijital?",
-    text: "We build simple, sustainable solutions that add real value to your business.",
+    title: "Why ROVAX SOFTWARE?",
+    text: "We work toward results and keep the process simple.",
     items: [
-      { title: "Fast and modern", text: "Fast-loading sites written with modern technology." },
-      { title: "Works on every screen", text: "A flawless look on phone, tablet and desktop." },
-      { title: "Easy to manage", text: "Update your content from the panel without writing code." },
-      { title: "Support after delivery", text: "We stay by your side after launch." },
+      { title: "Built around you", text: "Software written for how your business works, not off-the-shelf templates." },
+      { title: "Clear scope, clear timeline", text: "You know what gets built and when it's done from day one." },
+      { title: "Easy to use", text: "Simple, fast interfaces that need no training." },
+      { title: "Support after delivery", text: "Support and improvements continue after launch." },
     ],
   },
   shopierShowcase: {
@@ -619,13 +621,13 @@ export const en: BaseDictionary = {
     ctaText: "Tell us about your project and let's make it happen with our team.",
   },
   aboutTeaser: {
-    title: "Who is Temeloji Dijital?",
-    text: "A simple and transparent software team helping businesses build their digital presence on solid foundations.",
-    cta: "About us",
+    title: "Rovax Software Yazılım Çözümleri",
+    text: "We build simple, fast and sustainable software for small and medium-sized businesses.",
+    cta: "Get to know us",
   },
   about: {
     title: "About Us",
-    text: "Temeloji Dijital builds websites and software solutions that help businesses and professionals establish a confident digital presence.",
+    text: "Rovax Software Yazılım Çözümleri develops custom software that helps businesses and professionals move forward with confidence.",
     profile: {
       name: "Feyzullah Temel",
       role: "Software Developer",
@@ -634,7 +636,7 @@ export const en: BaseDictionary = {
         "I build websites, admin panels and custom software. I manage the whole process from database design to the interface.",
     },
     story: [
-      "We take our name from the idea of a \"foundation\": a solid digital presence rests on a well-laid base.",
+      "In every project our goal is to build a solid, fast and maintainable digital presence for your business.",
       "In every project we first understand the need, then build a fast and maintainable solution without unnecessary decoration.",
       "You can manage the system we deliver. That is why every project comes with an easy-to-use admin panel.",
     ],
@@ -679,8 +681,8 @@ export const en: BaseDictionary = {
   },
   contact: {
     title: "Contact",
-    text: "Tell us what you need and we will plan the best solution together.",
-    ctaTitle: "Let's talk about your project",
+    text: "Tell us briefly what you need and we'll prepare the right solution with a clear quote.",
+    ctaTitle: "Let's turn your idea into software",
     note: "The request and booking form will be added in the next step.",
     email: "Email",
     phone: "Phone",
@@ -743,7 +745,7 @@ export const en: BaseDictionary = {
     ],
   },
   footer: {
-    text: "We approach every project with care and clear communication. Meet us in person or by video call.",
+    text: "Transparent communication and careful work on every project. Meet us in person or by video call.",
     rights: "All rights reserved.",
     services: "Services",
     company: "Company",

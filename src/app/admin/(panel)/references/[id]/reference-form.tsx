@@ -47,7 +47,7 @@ export function ReferenceForm({ id, initial, cloudinaryReady }: Props) {
     <div className="max-w-3xl space-y-6 rounded-xl border border-border bg-surface p-5 sm:p-6">
       <ImageUploader
         url={form.logoUrl}
-        folder="temeloji/references"
+        folder="rovax/references"
         ready={cloudinaryReady}
         label="Logo"
         onChange={(url, publicId) => setForm((current) => ({ ...current, logoUrl: url, logoPublicId: publicId }))}
@@ -62,7 +62,7 @@ export function ReferenceForm({ id, initial, cloudinaryReady }: Props) {
       <section className="space-y-4">
         <GalleryUploader
           images={form.gallery}
-          folder="temeloji/references"
+          folder="rovax/references"
           ready={cloudinaryReady}
           max={10}
           onChange={(images) => setForm((current) => ({

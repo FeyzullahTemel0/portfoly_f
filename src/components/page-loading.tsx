@@ -17,7 +17,7 @@ export function PageLoading({ variant = "site" }: PageLoadingProps) {
         </div>
         <div className="mt-10 flex items-center gap-3">
           <BrandMark />
-          <span className="text-sm font-semibold">Temeloji Dijital</span>
+          <span className="text-sm font-semibold">ROVAX SOFTWARE</span>
         </div>
         {variant === "admin" ? (
           <div className="mt-10">

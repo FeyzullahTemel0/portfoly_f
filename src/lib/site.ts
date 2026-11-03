@@ -2,14 +2,21 @@ import type { Locale } from "@/lib/locales";
 
 // Varsayılan site ayarları. Yönetim panelinde değiştirilen değerler bunların üzerine yazılır.
 export const defaultSettings = {
-  legalName: "Temeloji Dijital",
+  legalName: "Rovax Software Yazılım Çözümleri",
   email: "",
-  phone: "",
-  // Ülke kodlu, yalnızca rakam (örn. 905xxxxxxxxx).
-  whatsapp: "",
-  address: { tr: "Muğla / Merkez", en: "Muğla / Merkez", de: "Muğla / Türkei", fr: "Muğla / Turquie", ar: "موغلا / تركيا" },
-  social: { instagram: "", linkedin: "", x: "" },
-  legalUpdated: "2026-10-08",
+  phone: "+90 501 372 43 47",
+  // Ülke kodlu, yalnızca rakam; WhatsApp bağlantısı bu numaradan oluşur.
+  whatsapp: "905013724347",
+  address: {
+    tr: "Bayır Mahallesi, Menteşe / Muğla",
+    en: "Bayır District, Menteşe / Muğla, Türkiye",
+    de: "Stadtteil Bayır, Menteşe / Muğla, Türkei",
+    fr: "Quartier Bayır, Menteşe / Muğla, Turquie",
+    ar: "حي بايير، منتشه / موغلا، تركيا",
+  },
+  mapsUrl: "https://www.google.com/maps/search/?api=1&query=Bay%C4%B1r+Mahallesi,+Mente%C5%9Fe,+Mu%C4%9Fla",
+  social: { instagram: "", telegram: "", threads: "", x: "", linkedin: "", facebook: "", youtube: "", tiktok: "" },
+  legalUpdated: "2026-11-03",
   seo: {
     siteUrl: "",
     titleTr: "",
@@ -48,7 +55,8 @@ export function safeProjectUrl(value: string) {
 }
 
 export type ContactItem = { key: "phone" | "email" | "address"; value: string; href: string };
-export type SocialItem = { key: "instagram" | "linkedin" | "x" | "whatsapp"; label: string; href: string };
+export type SocialKey = "whatsapp" | "phone" | "email" | "telegram" | "instagram" | "threads" | "x" | "linkedin" | "facebook" | "youtube" | "tiktok";
+export type SocialItem = { key: SocialKey; label: string; href: string };
 
 export function getContactItems(settings: Settings, lang: Locale): ContactItem[] {
   const items: ContactItem[] = [];
@@ -66,14 +74,16 @@ export function getContactItems(settings: Settings, lang: Locale): ContactItem[]
 
 export function getSocialItems(settings: Settings): SocialItem[] {
   const items: SocialItem[] = [];
-  const instagram = safeUrl(settings.social.instagram);
-  const linkedin = safeUrl(settings.social.linkedin);
-  const x = safeUrl(settings.social.x);
   const digits = settings.whatsapp.replace(/\D/g, "");
 
-  if (instagram) items.push({ key: "instagram", label: "Instagram", href: instagram });
-  if (linkedin) items.push({ key: "linkedin", label: "LinkedIn", href: linkedin });
-  if (x) items.push({ key: "x", label: "X", href: x });
   if (digits) items.push({ key: "whatsapp", label: "WhatsApp", href: `https://wa.me/${digits}` });
+  const labels: [Exclude<SocialKey, "whatsapp" | "phone" | "email">, string][] = [
+    ["telegram", "Telegram"], ["instagram", "Instagram"], ["threads", "Threads"], ["x", "X"],
+    ["linkedin", "LinkedIn"], ["facebook", "Facebook"], ["youtube", "YouTube"], ["tiktok", "TikTok"],
+  ];
+  for (const [key, label] of labels) {
+    const href = safeUrl(settings.social[key] ?? "");
+    if (href) items.push({ key, label, href });
+  }
   return items;
 }

@@ -20,7 +20,7 @@ export async function sendNotification(to: string, { subject, lines }: Notificat
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: process.env.MAIL_FROM || "Temeloji Dijital <onboarding@resend.dev>",
+        from: process.env.MAIL_FROM || "Rovax Software Yazılım Çözümleri <onboarding@resend.dev>",
         to: [to],
         subject,
         html,

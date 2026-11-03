@@ -16,7 +16,7 @@ type Props = {
 };
 
 const inputClass =
-  "w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus:border-accent";
+  "w-full rounded-xl border border-border bg-background px-4 py-3 text-base outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/30 sm:text-sm";
 const labelClass = "mb-1.5 block text-sm font-medium";
 const initialState: FormState = { ok: false };
 
@@ -43,7 +43,7 @@ function Consent({ lang, form, error }: { lang: Locale; form: Props["form"]; err
   return (
     <div>
       <label className="flex items-start gap-2 text-sm text-muted">
-        <input type="checkbox" name="noticeAcknowledged" className="mt-0.5 h-4 w-4 accent-[var(--accent)]" />
+        <input type="checkbox" name="noticeAcknowledged" className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--accent)]" />
         <span>
           {form.consent.before}
           <Link href={`/${lang}/legal/kvkk`} target="_blank" className="font-medium text-accent hover:underline">
@@ -62,7 +62,7 @@ function SubmitButton({ pending, label, sending }: { pending: boolean; label: st
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-accent px-6 font-semibold text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-60 sm:w-auto"
+      className="button-primary inline-flex h-14 w-full items-center justify-center rounded-xl px-8 font-semibold transition disabled:opacity-60 sm:h-12 sm:w-auto"
     >
       {pending ? sending : label}
     </button>
@@ -95,18 +95,18 @@ function QuoteForm({ lang, form, services, sizes, initialService, initialPackage
       <fieldset>
         <legend className={labelClass}>{labels.services}</legend>
         <p className="mb-3 text-xs text-muted">{labels.servicesHint}</p>
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="flex flex-wrap gap-2">
           {services.map((service) => (
             <label
               key={service.slug}
-              className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-background p-3 text-sm transition-colors hover:border-accent has-[:checked]:border-accent has-[:checked]:bg-accent/10"
+              className="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-border bg-background px-4 py-2 text-sm transition-colors hover:border-accent active:scale-95 has-[:checked]:border-accent has-[:checked]:bg-accent/15 has-[:checked]:font-semibold has-[:checked]:text-accent has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent"
             >
               <input
                 type="checkbox"
                 name="services"
                 value={service.slug}
                 defaultChecked={selectedServices.includes(service.slug)}
-                className="h-4 w-4 accent-[var(--accent)]"
+                className="sr-only"
               />
               {service.title}
             </label>
@@ -117,12 +117,12 @@ function QuoteForm({ lang, form, services, sizes, initialService, initialPackage
 
       <fieldset>
         <legend className={labelClass}>{labels.size}</legend>
-        <div className="grid gap-2 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {[...sizes.map((size, index) => ({ value: String(index), name: size.name, text: size.text })), { value: "unsure", name: labels.sizeUnsure, text: "" }].map(
             (option) => (
               <label
                 key={option.value}
-                className="cursor-pointer rounded-lg border border-border bg-background p-3 text-sm transition-colors hover:border-accent has-[:checked]:border-accent has-[:checked]:bg-accent/10"
+                className="cursor-pointer rounded-xl border border-border bg-background p-3 text-sm transition-colors hover:border-accent active:scale-[0.98] has-[:checked]:border-accent has-[:checked]:bg-accent/15"
               >
                 <input
                   type="radio"
@@ -212,33 +212,46 @@ function MessageForm({ lang, form }: Pick<Props, "lang" | "form">) {
   );
 }
 
+function Panel({ open, onToggle, title, text, children, id }: { open: boolean; onToggle: () => void; title: string; text: string; children: React.ReactNode; id: string }) {
+  return (
+    <section className={`overflow-hidden rounded-2xl border bg-surface transition-colors ${open ? "border-accent/60 shadow-lg shadow-accent/10" : "border-border"}`}>
+      <h2>
+        <button
+          type="button"
+          id={`${id}-trigger`}
+          aria-expanded={open}
+          aria-controls={`${id}-panel`}
+          onClick={onToggle}
+          className="flex w-full items-center justify-between gap-4 p-5 text-start sm:p-6"
+        >
+          <span>
+            <span className="block text-lg font-bold sm:text-xl">{title}</span>
+            <span className="mt-1 block text-sm font-normal text-muted">{text}</span>
+          </span>
+          <span aria-hidden="true" className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border text-xl leading-none transition-transform duration-300 ${open ? "rotate-45 border-accent text-accent" : ""}`}>+</span>
+        </button>
+      </h2>
+      <div id={`${id}-panel`} role="region" aria-labelledby={`${id}-trigger`} className={`grid transition-[grid-template-rows] duration-300 ease-out ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
+        <div className="overflow-hidden">
+          <div className="border-t border-border p-5 sm:p-6" inert={!open}>{children}</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function ContactForms(props: Props) {
-  const [tab, setTab] = useState<"quote" | "message">("quote");
+  const [open, setOpen] = useState<"quote" | "message" | null>("quote");
   const { form } = props;
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
-      <div role="tablist" className="mb-6 inline-flex rounded-lg border border-border bg-background p-1">
-        {(["quote", "message"] as const).map((key) => (
-          <button
-            key={key}
-            type="button"
-            role="tab"
-            aria-selected={tab === key}
-            onClick={() => setTab(key)}
-            className={`rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
-              tab === key ? "bg-accent text-accent-foreground" : "text-muted hover:text-foreground"
-            }`}
-          >
-            {form.tabs[key]}
-          </button>
-        ))}
-      </div>
-
-      <h2 className="text-2xl font-bold tracking-normal">{tab === "quote" ? form.quote.title : form.message.title}</h2>
-      <p className="mb-6 mt-1 text-sm text-muted">{tab === "quote" ? form.quote.text : form.message.text}</p>
-
-      {tab === "quote" ? <QuoteForm {...props} /> : <MessageForm lang={props.lang} form={form} />}
+    <div className="space-y-4">
+      <Panel id="quote" open={open === "quote"} onToggle={() => setOpen(open === "quote" ? null : "quote")} title={form.quote.title} text={form.quote.text}>
+        <QuoteForm {...props} />
+      </Panel>
+      <Panel id="message" open={open === "message"} onToggle={() => setOpen(open === "message" ? null : "message")} title={form.message.title} text={form.message.text}>
+        <MessageForm lang={props.lang} form={form} />
+      </Panel>
     </div>
   );
 }

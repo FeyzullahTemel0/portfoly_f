@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { baseDictionaries } from "@/dictionaries/base";
 import { requireAdmin, endSession } from "@/lib/auth";
 import { isSectionKey } from "@/lib/admin-config";
-import { createUploadSignature, deleteImage, isOwnImageUrl } from "@/lib/cloudinary";
+import { deleteImage, isOwnImageUrl } from "@/lib/storage";
 import { connectDb } from "@/lib/db";
 import { isLocale } from "@/lib/locales";
 import { defaultSettings, safeProjectUrl, safeUrl } from "@/lib/site";
@@ -79,7 +79,7 @@ export async function saveAboutPhoto(url: string, publicId: string): Promise<Act
   await requireAdmin();
   if (typeof url !== "string" || typeof publicId !== "string") return { ok: false, error: "Geçersiz görsel." };
   if (url || publicId) {
-    if (!url || !isOwnImageUrl(url) || !publicId.startsWith("temeloji/profile/")) {
+    if (!url || !isOwnImageUrl(url) || !publicId.startsWith("rovax/profile/")) {
       return { ok: false, error: "Profil fotoğrafı doğrulanamadı." };
     }
   }
@@ -95,7 +95,7 @@ export async function saveAboutPhoto(url: string, publicId: string): Promise<Act
       { upsert: true },
     );
     refreshSite();
-    if (previousPublicId.startsWith("temeloji/profile/") && previousPublicId !== publicId) {
+    if (previousPublicId.startsWith("rovax/profile/") && previousPublicId !== publicId) {
       await deleteImage(previousPublicId);
     }
     return { ok: true };
@@ -135,6 +135,8 @@ export async function saveSettings(data: unknown): Promise<ActionResult> {
     if (settings.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(settings.email.trim())) {
       return { ok: false, error: "Geçersiz e-posta adresi." };
     }
+    settings.mapsUrl = settings.mapsUrl.trim();
+    if (settings.mapsUrl && !safeUrl(settings.mapsUrl)) return { ok: false, error: "Harita bağlantısı https:// ile başlamalı." };
     const seoUrl = settings.seo.siteUrl.trim();
     if (seoUrl) {
       let parsed: URL;
@@ -150,7 +152,7 @@ export async function saveSettings(data: unknown): Promise<ActionResult> {
       settings.seo.siteUrl = parsed.origin;
     }
     if (settings.seo.ogImageUrl && !isOwnImageUrl(settings.seo.ogImageUrl)) {
-      return { ok: false, error: "SEO paylaşım görseli kendi Cloudinary hesabınızdan olmalı." };
+      return { ok: false, error: "SEO paylaşım görseli kendi depolama alanınızdan olmalı." };
     }
     if (settings.seo.googleSiteVerification && !/^[A-Za-z0-9_-]+$/.test(settings.seo.googleSiteVerification)) {
       return { ok: false, error: "Google doğrulama kodu geçersiz." };
@@ -255,11 +257,6 @@ export type ReferenceInput = {
   order: number;
   visible: boolean;
 };
-
-export async function getUploadSignature(folder: string) {
-  await requireAdmin();
-  return createUploadSignature(folder);
-}
 
 export async function saveReference(id: string | null, input: ReferenceInput): Promise<ActionResult> {
   await requireAdmin();
@@ -603,7 +600,7 @@ export async function saveSeoSettings(input: SeoInput): Promise<ActionResult> {
   const ogImageUrl = text(input.ogImageUrl, 500);
   const ogImagePublicId = text(input.ogImagePublicId, 300);
   const googleSiteVerification = text(input.googleSiteVerification, 200);
-  if (ogImageUrl && !isOwnImageUrl(ogImageUrl)) return { ok: false, error: "Sosyal paylaşım görseli kendi Cloudinary hesabınızdan olmalı." };
+  if (ogImageUrl && !isOwnImageUrl(ogImageUrl)) return { ok: false, error: "Sosyal paylaşım görseli kendi depolama alanınızdan olmalı." };
   if (googleSiteVerification && !/^[A-Za-z0-9_-]+$/.test(googleSiteVerification)) {
     return { ok: false, error: "Google doğrulama kodu geçersiz karakter içeriyor." };
   }

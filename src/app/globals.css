@@ -1,24 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --surface: #f8fafc;
-  --border: #e2e8f0;
-  --muted: #475569;
-  --accent: #0e7490;
+  --background: #f3f6fc;
+  --foreground: #07102a;
+  --surface: #ffffff;
+  --border: #cfd9ec;
+  --muted: #3d4d6b;
+  --accent: #0a5cff;
+  --accent-2: #00a3d9;
   --accent-foreground: #ffffff;
   color-scheme: light;
 }
 
 [data-theme="dark"] {
-  --background: #0b1120;
-  --foreground: #e2e8f0;
-  --surface: #111a2e;
-  --border: #1e2a44;
-  --muted: #94a3b8;
-  --accent: #22d3ee;
-  --accent-foreground: #04202a;
+  --background: #040916;
+  --foreground: #eaf2ff;
+  --surface: #0a1226;
+  --border: #1a2a4d;
+  --muted: #9db2d6;
+  --accent: #2ee6ff;
+  --accent-2: #3b82ff;
+  --accent-foreground: #021018;
   color-scheme: dark;
 }
 
@@ -29,6 +31,7 @@
   --color-border: var(--border);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
   --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-geist-sans);
 }
@@ -37,9 +40,32 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Izgara öğeleri içerik yüzünden taşmasın; tek sütun varsayılan olsun. */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  footer a,
+  footer button {
+    overflow-wrap: anywhere;
+    text-align: start;
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .grid > * {
+    min-width: 0;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
+  overflow-x: clip;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
@@ -58,33 +84,67 @@ html[lang="ar"] body {
   display: inline;
 }
 
-.bg-grid {
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 54px 54px;
-  mask-image: radial-gradient(ellipse at 50% 34%, #000 8%, transparent 76%);
-}
+/* Kahraman sahnesi: yörüngede dönen etiketler ve dönen halkalar. */
+@keyframes spin-cw { to { transform: rotate(360deg); } }
+@keyframes spin-ccw { to { transform: rotate(-360deg); } }
+.spin-cw { animation: spin-cw var(--d, 40s) linear infinite; }
+.spin-ccw { animation: spin-ccw var(--d, 40s) linear infinite; }
+.orbit { position: absolute; inset: 0; animation: spin-cw var(--d) linear infinite; animation-delay: var(--delay, 0s); }
+.orbit-item { position: absolute; left: 50%; top: calc(50% - var(--r)); transform: translate(-50%, -50%); }
+.orbit-item > span { display: block; animation: spin-ccw var(--d) linear infinite; animation-delay: var(--delay, 0s); }
 
 .button-primary {
-  background: var(--foreground);
-  color: var(--background);
-  box-shadow: 0 10px 26px color-mix(in srgb, var(--foreground) 12%, transparent);
+  background-image: linear-gradient(120deg, var(--accent), var(--accent-2));
+  color: var(--accent-foreground);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 32%, transparent);
 }
 
 .button-primary:hover {
-  opacity: 0.88;
+  filter: brightness(1.08);
 }
 
 .text-gradient {
-  background-image: linear-gradient(90deg, var(--accent), #0f766e);
+  background-image: linear-gradient(90deg, var(--accent), var(--accent-2));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .cta-band {
-  background-image: linear-gradient(120deg, #0e7490 0%, #0f766e 54%, #164e63 100%);
+  background-image: linear-gradient(120deg, #0a3cff 0%, #0a7bff 52%, #00b7e6 100%);
+}
+
+/* Kahraman alanı: logodaki mavi ve camgöbeği ışımalarını yansıtan hareketli zemin. */
+.hero-aurora {
+  background:
+    radial-gradient(60% 50% at 80% 10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    radial-gradient(50% 45% at 10% 90%, color-mix(in srgb, var(--accent-2) 20%, transparent), transparent 70%);
+}
+
+.glass {
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+}
+
+.card-glow {
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.card-glow:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow: 0 22px 50px -24px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (max-width: 1023px) {
+  body {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 @keyframes blob {
@@ -143,8 +203,50 @@ html[lang="en"] .loading-copy-en { display: inline; }
   .animate-marquee,
   .animate-float,
   .animate-pulse-ring,
+  .spin-cw,
+  .spin-ccw,
+  .orbit,
+  .orbit-item > span,
   .route-loading-progress,
   .shimmer {
     animation: none;
   }
+}
+
+/* Reklam çerçevesi: dönen ışık şeridi, kalp atışı gibi nabız ve parlama. */
+@property --ad-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes ad-spin { to { --ad-angle: 360deg; } }
+@keyframes ad-heartbeat {
+  0%, 100% { transform: scale(1); }
+  12% { transform: scale(1.014); }
+  24% { transform: scale(1); }
+  38% { transform: scale(1.022); }
+  60% { transform: scale(1); }
+}
+@keyframes ad-glow {
+  0%, 100% { box-shadow: 0 0 10px -2px color-mix(in srgb, var(--accent) 55%, transparent); }
+  12%, 38% { box-shadow: 0 0 34px 2px color-mix(in srgb, var(--accent) 80%, transparent), 0 0 70px -6px color-mix(in srgb, var(--accent-2) 60%, transparent); }
+  24%, 60% { box-shadow: 0 0 14px -2px color-mix(in srgb, var(--accent) 50%, transparent); }
+}
+.ad-frame {
+  position: relative;
+  border-radius: 16px;
+  padding: 3px;
+  background:
+    conic-gradient(from var(--ad-angle), transparent 0 50%, var(--accent) 70%, var(--accent-2) 86%, #fff 92%, transparent 100%);
+  animation: ad-spin 3.6s linear infinite, ad-heartbeat 1.7s ease-in-out infinite, ad-glow 1.7s ease-in-out infinite;
+}
+.ad-inner { border-radius: 13px; overflow: hidden; background: var(--surface); }
+.ad-wrap { max-width: var(--max-m); }
+.ad-ratio { aspect-ratio: var(--ar-m); }
+@media (min-width: 640px) {
+  .ad-wrap { max-width: var(--max-d); }
+  .ad-ratio { aspect-ratio: var(--ar-d); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ad-frame { animation: none; box-shadow: 0 0 16px -2px color-mix(in srgb, var(--accent) 60%, transparent); }
 }

@@ -36,7 +36,7 @@ export function SeoEditor({ initial, cloudinaryReady }: { initial: Settings["seo
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="siteUrl" className={labelClass}>Canlı site adresi</label>
-            <input id="siteUrl" value={data.siteUrl} onChange={(e) => set("siteUrl", e.target.value)} placeholder="https://temeloji.com" className={inputClass} />
+            <input id="siteUrl" value={data.siteUrl} onChange={(e) => set("siteUrl", e.target.value)} placeholder="https://example.com" className={inputClass} />
             <p className="mt-1 text-xs text-muted">Alan adını bağladıktan sonra gir. Sitemap ve dil bazlı canonical bağlantılar bu alan adını kullanır.</p>
           </div>
           <div>
@@ -78,7 +78,7 @@ export function SeoEditor({ initial, cloudinaryReady }: { initial: Settings["seo
         <p className="mb-4 mt-1 text-sm text-muted">WhatsApp, LinkedIn ve diğer platformlarda site bağlantısı paylaşılırken kullanılan Open Graph görseli.</p>
         <ImageUploader
           url={data.ogImageUrl}
-          folder="temeloji/seo"
+          folder="rovax/seo"
           ready={cloudinaryReady}
           label="Paylaşım görseli (önerilen: 1200 × 630 px)"
           onChange={(url, publicId) => setData((current) => ({ ...current, ogImageUrl: url, ogImagePublicId: publicId }))}

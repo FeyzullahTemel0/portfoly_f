@@ -56,7 +56,6 @@ export function ShopierShowcase({ copy }: { copy: Copy }) {
         </div>
 
         <div className="relative flex min-h-[320px] items-center justify-center overflow-hidden border-t border-border bg-background p-6 lg:border-l lg:border-t-0 sm:p-10">
-          <div aria-hidden="true" className="bg-grid absolute inset-0 opacity-70" />
           <div aria-label={copy.mobile} role="img" className="relative flex w-full max-w-[360px] items-end justify-center gap-4">
             <div className="w-[76%] overflow-hidden rounded-xl border border-border bg-background shadow-xl">
               <div className="flex items-center justify-between border-b border-border px-3 py-2.5">

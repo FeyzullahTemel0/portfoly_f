@@ -2,12 +2,14 @@ import type { LegalDocs } from "@/lib/legal";
 
 export const tr = {
   meta: {
-    title: "Temeloji Dijital | Web Tasarım ve Yazılım Çözümleri",
+    title: "ROVAX SOFTWARE | Yazılım ve Dijital Çözümler",
     description:
-      "Temeloji Dijital: kurumsal web siteleri, Shopier entegreli e-ticaret, randevu sistemleri ve özel yazılım çözümleri.",
+      "Rovax Software Yazılım Çözümleri: işinize özel masaüstü programları, web yazılımları ve yönetim panelleri. Ücretsiz teklif alın.",
   },
-  brand: { name: "Temeloji", suffix: "Dijital" },
+  brand: { name: "ROVAX", suffix: "SOFTWARE" },
   nav: {
+    home: "Ana Sayfa",
+    currency: "Para birimi",
     services: "Hizmetler",
     packages: "Paketler",
     process: "Süreç",
@@ -21,11 +23,11 @@ export const tr = {
     theme: "Temayı değiştir",
   },
   hero: {
-    badge: "WEB TASARIMI · E-TİCARET · ÖZEL YAZILIM",
-    title: "Dijitalde güven veren bir ilk izlenim.",
-    text: "İşletmeniz için kurumsal web siteleri, Shopier mağazaları ve ihtiyacınıza göre şekillenen web panelleri tasarlayıp geliştiriyoruz.",
+    badge: "ÖZEL YAZILIM · MASAÜSTÜ · WEB",
+    title: "İşinizi büyüten yazılımı birlikte kuralım.",
+    text: "Zamanınızı alan işleri otomatik hale getiren, kullanımı kolay ve size özel yazılımlar geliştiriyoruz. İhtiyacınızı anlatın, kapsamı ve fiyatı netleştirelim.",
     primary: "Ücretsiz Teklif Al",
-    secondary: "Hizmetleri Gör",
+    secondary: "Çalışmalarımızı Gör",
   },
   services: {
     title: "Neler yapıyoruz?",
@@ -403,13 +405,13 @@ export const tr = {
     ],
   },
   why: {
-    title: "Neden Temeloji Dijital?",
-    text: "İşinize değer katan, sade ve sürdürülebilir çözümler üretiyoruz.",
+    title: "Neden ROVAX SOFTWARE?",
+    text: "Sonuç odaklı çalışır, süreci sade tutarız.",
     items: [
-      { title: "Hızlı ve modern", text: "Hızlı açılan, modern teknolojiyle yazılmış siteler." },
-      { title: "Her ekranda uyumlu", text: "Telefon, tablet ve bilgisayarda kusursuz görünüm." },
-      { title: "Kolay yönetim", text: "İçeriğinizi kod bilmeden panelden güncelleyin." },
-      { title: "Teslim sonrası destek", text: "Yayından sonra da yanınızdayız." },
+      { title: "Size özel çözüm", text: "Hazır kalıplar değil, işinizin akışına göre yazılmış yazılım." },
+      { title: "Net kapsam, net takvim", text: "Ne yapılacağını ve ne zaman biteceğini baştan bilirsiniz." },
+      { title: "Kolay kullanım", text: "Eğitim gerektirmeyen, sade ve hızlı arayüzler." },
+      { title: "Teslimden sonra da yanınızdayız", text: "Yayından sonra destek ve geliştirme devam eder." },
     ],
   },
   shopierShowcase: {
@@ -619,13 +621,13 @@ export const tr = {
     ctaText: "Projenizi anlatın, ekibimizle birlikte hayata geçirelim.",
   },
   aboutTeaser: {
-    title: "Temeloji Dijital kimdir?",
-    text: "İşletmelerin dijitalde sağlam temellere oturması için çalışan, sade ve şeffaf bir yazılım ekibiyiz.",
-    cta: "Hakkımızda",
+    title: "Rovax Software Yazılım Çözümleri",
+    text: "Küçük ve orta ölçekli işletmeler için sade, hızlı ve sürdürülebilir yazılımlar üretiyoruz.",
+    cta: "Bizi tanıyın",
   },
   about: {
     title: "Hakkımızda",
-    text: "Temeloji Dijital, işletmelerin ve profesyonellerin dijitalde güvenle var olması için web siteleri ve yazılım çözümleri geliştirir.",
+    text: "Rovax Software Yazılım Çözümleri, işletmelerin ve profesyonellerin dijitalde güvenle ilerlemesi için özel yazılımlar geliştirir.",
     profile: {
       name: "Feyzullah Temel",
       role: "Yazılım Geliştirici",
@@ -634,7 +636,7 @@ export const tr = {
         "Web siteleri, yönetim panelleri ve özel yazılımlar geliştiriyorum. Veritabanı tasarımından arayüze kadar süreci baştan sona yönetiyorum.",
     },
     story: [
-      "Adımızı \"temel\" kavramından alıyoruz: sağlam bir dijital varlık, iyi atılmış bir temele dayanır.",
+      "Her projede amacımız, işletmeniz için sağlam, hızlı ve sürdürülebilir bir dijital varlık kurmaktır.",
       "Her projede önce ihtiyacı anlar, sonra gereksiz süslerden uzak, hızlı ve sürdürülebilir bir çözüm kurarız.",
       "Teslim ettiğimiz sistemi siz yönetebilirsiniz. Bu yüzden her projeye kullanımı kolay bir yönetim paneli ekleriz.",
     ],
@@ -679,8 +681,8 @@ export const tr = {
   },
   contact: {
     title: "İletişim",
-    text: "İhtiyacınızı anlatın, size en uygun çözümü birlikte planlayalım.",
-    ctaTitle: "Projenizi konuşalım",
+    text: "Kısaca ihtiyacınızı yazın; size en uygun çözümü ve net bir teklifi hazırlayalım.",
+    ctaTitle: "Fikrinizi yazılıma dönüştürelim",
     note: "Talep ve randevu formu bir sonraki adımda eklenecek.",
     email: "E-posta",
     phone: "Telefon",
@@ -743,7 +745,7 @@ export const tr = {
     ],
   },
   footer: {
-    text: "Her projeye şeffaf iletişim ve özenle yaklaşırız. Yüz yüze veya görüntülü görüşmeye açığız.",
+    text: "Her projede şeffaf iletişim ve titiz çalışma. Yüz yüze veya görüntülü görüşmeye açığız.",
     rights: "Tüm hakları saklıdır.",
     services: "Hizmetler",
     company: "Kurumsal",

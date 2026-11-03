@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminHeader } from "@/components/admin/page-header";
 import { requireAdmin } from "@/lib/auth";
-import { isCloudinaryConfigured } from "@/lib/cloudinary";
+import { isStorageConfigured } from "@/lib/storage";
 import { connectDb } from "@/lib/db";
 import { TeamMember } from "@/models/team-member";
 import type { TeamMemberInput } from "../../actions";
@@ -67,7 +67,7 @@ export default async function TeamEditPage({ params }: PageProps<"/admin/team/[i
     <>
       <Link href="/admin/team" className="mb-4 inline-block text-sm text-muted hover:text-foreground">← Tüm ekip üyeleri</Link>
       <AdminHeader title={isNew ? "Yeni ekip üyesi" : initial.name} />
-      <TeamForm id={isNew ? null : id} initial={initial} cloudinaryReady={isCloudinaryConfigured()} />
+      <TeamForm id={isNew ? null : id} initial={initial} cloudinaryReady={isStorageConfigured()} />
     </>
   );
 }

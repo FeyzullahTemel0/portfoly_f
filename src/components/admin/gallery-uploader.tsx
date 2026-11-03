@@ -85,7 +85,7 @@ export function GalleryUploader({ images, folder, ready, max = 12, onChange, onM
           </li>
         )}
       </ul>
-      {!ready && <p className="mt-2 text-xs text-amber-500">Görsel yükleme için .env.local dosyasına Cloudinary bilgileri eklenmeli.</p>}
+      {!ready && <p className="mt-2 text-xs text-amber-500">Görsel yükleme için .env.local dosyasına R2 depolama bilgileri eklenmeli.</p>}
     </div>
   );
 }

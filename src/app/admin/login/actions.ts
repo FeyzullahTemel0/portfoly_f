@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { startSession, verifyPassword } from "@/lib/auth";
+import { getCredentials } from "@/lib/admin-account";
 import { recordSecurityEvent } from "@/lib/access-log";
 import { getClientIp, hashIp, isRateLimited, recordAttempt, shouldReportRateLimit } from "@/lib/request";
 
@@ -20,12 +21,13 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
     return { error: "Çok fazla hatalı deneme. 15 dakika sonra tekrar deneyin.", email };
   }
 
-  const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
-  const adminHash = process.env.ADMIN_PASSWORD_HASH;
-  if (!adminEmail || !adminHash || !process.env.AUTH_SECRET) {
+  const credentials = await getCredentials();
+  if (!credentials || !process.env.AUTH_SECRET) {
     console.error("Admin login configuration is incomplete.");
-    return { error: "Yönetici girişi şu anda kullanılamıyor. Lütfen daha sonra tekrar deneyin." };
+    return { error: "Yönetici girişi şu anda kullanılamaz. Lütfen daha sonra tekrar deneyin." };
   }
+  const adminEmail = credentials.email;
+  const adminHash = credentials.hash;
 
   // Şifre kontrolü e-posta yanlış olsa da çalışır; böylece yanıt süresi bilgi sızdırmaz.
   const passwordOk = verifyPassword(password, adminHash);
