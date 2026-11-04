@@ -8,9 +8,9 @@ export function ProjectCard({ lang, project, more }: { lang: Locale; project: Pu
   return (
     <Link
       href={`/${lang}/projects/${project.slug}`}
-      className="card-glow group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-sm"
+      className="card-glow group flex h-full flex-row overflow-hidden rounded-xl border border-border bg-surface shadow-sm sm:flex-col sm:rounded-2xl"
     >
-      <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-background">
+      <div className="relative aspect-square w-24 shrink-0 overflow-hidden bg-background sm:aspect-[16/10] sm:w-full">
         {project.coverUrl ? (
           <Image
             src={project.coverUrl}
@@ -29,17 +29,17 @@ export function ProjectCard({ lang, project, more }: { lang: Locale; project: Pu
         )}
       </div>
 
-      <div className="flex min-h-36 flex-1 flex-col p-4">
+      <div className="flex min-w-0 flex-1 flex-col justify-center p-3 sm:min-h-36 sm:p-4">
         {project.category && (
-          <span className="mb-2 inline-flex w-fit rounded-md bg-accent/10 px-2 py-1 text-xs font-semibold text-accent">
+          <span className="mb-1.5 inline-flex max-w-full w-fit truncate rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-semibold text-accent sm:mb-2 sm:py-1 sm:text-xs">
             {project.category}
           </span>
         )}
-        <h3 className="text-base font-bold leading-snug text-foreground sm:text-lg">{project.title}</h3>
-        <p className="mt-2 line-clamp-2 text-sm leading-5 text-muted">
+        <h3 className="text-sm font-bold leading-snug text-foreground sm:text-lg">{project.title}</h3>
+        <p className="mt-1 line-clamp-2 text-xs leading-4 text-muted sm:mt-2 sm:text-sm sm:leading-5">
           {project.summary}
         </p>
-        <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-semibold text-accent">
+        <span className="mt-1 inline-flex items-center gap-1 pt-1 text-xs font-semibold text-accent sm:mt-auto sm:pt-4 sm:text-sm">
           {more}
           <FiArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
         </span>

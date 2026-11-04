@@ -58,48 +58,48 @@ export default async function ReferenceDetailPage({ params }: PageProps<"/[lang]
         <div aria-hidden="true" className="hero-aurora pointer-events-none absolute inset-0" />
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(var(--foreground)_1px,transparent_1px),linear-gradient(90deg,var(--foreground)_1px,transparent_1px)] [background-size:44px_44px] [mask-image:radial-gradient(70%_70%_at_50%_30%,#000,transparent)]" />
 
-        <div className="relative mx-auto max-w-7xl px-5 pb-14 pt-8 sm:px-8 lg:pb-24">
-          <Link href={`/${lang}/references`} className="inline-flex items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-foreground">
+        <div className="relative mx-auto max-w-7xl px-4 pb-8 pt-5 sm:px-8 sm:pb-14 sm:pt-8 lg:pb-24">
+          <Link href={`/${lang}/references`} className="inline-flex items-center gap-2 text-xs font-medium text-muted transition-colors hover:text-foreground sm:text-sm">
             <FiArrowLeft aria-hidden="true" className="rtl:rotate-180" /> {ui.back}
           </Link>
 
-          <div className="mt-8 grid items-center gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-14">
+          <div className="mt-5 grid items-center gap-6 sm:mt-8 sm:gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-14">
             <div className="min-w-0">
               <Reveal>
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className={eyebrow}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className={`${eyebrow} px-3 py-1 text-[9px] sm:px-4 sm:py-1.5 sm:text-[11px]`}>
                     <span className="h-1.5 w-1.5 rounded-full bg-accent" />
                     {ui.badge}
                   </span>
-                  {reference.sector && <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent">{reference.sector}</span>}
+                  {reference.sector && <span className="rounded-full bg-accent/10 px-2.5 py-1 text-[10px] font-semibold text-accent sm:px-3 sm:py-1.5 sm:text-xs">{reference.sector}</span>}
                 </div>
               </Reveal>
               <Reveal delay={0.06}>
-                <span className="mt-6 flex h-20 w-40 items-center justify-center overflow-hidden rounded-2xl bg-white p-3 shadow-xl ring-1 ring-black/5">
+                <span className="mt-4 flex h-14 w-32 items-center justify-center overflow-hidden rounded-xl bg-white p-2 shadow-lg ring-1 ring-black/5 sm:mt-6 sm:h-20 sm:w-40 sm:rounded-2xl sm:p-3 sm:shadow-xl">
                   <ReferenceLogo reference={reference} variant="tile" />
                 </span>
               </Reveal>
               <Reveal delay={0.12}>
-                <h1 className="mt-6 text-balance text-[clamp(2.1rem,5.6vw,4.2rem)] font-extrabold leading-[1.05] tracking-normal">{reference.name}</h1>
+                <h1 className="mt-4 text-balance text-[1.8rem] font-extrabold leading-[1.08] tracking-normal sm:mt-6 sm:text-[clamp(2.1rem,5.6vw,4.2rem)]">{reference.name}</h1>
               </Reveal>
               {reference.tagline && (
                 <Reveal delay={0.18}>
-                  <p className="text-gradient mt-4 text-balance text-xl font-bold leading-snug sm:text-2xl">{reference.tagline}</p>
+                  <p className="text-gradient mt-2 text-balance text-base font-bold leading-snug sm:mt-4 sm:text-2xl">{reference.tagline}</p>
                 </Reveal>
               )}
               {reference.description && (
                 <Reveal delay={0.24}>
-                  <p className="mt-5 max-w-xl text-base leading-8 text-muted sm:text-lg">{reference.description}</p>
+                  <p className="mt-3 max-w-xl text-sm leading-6 text-muted sm:mt-5 sm:text-lg sm:leading-8">{reference.description}</p>
                 </Reveal>
               )}
               <Reveal delay={0.3}>
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-5 flex flex-row flex-wrap gap-2 sm:mt-8 sm:gap-3">
                   {website && (
-                    <a href={website} target="_blank" rel="noopener noreferrer" className="button-primary inline-flex h-12 items-center justify-center gap-2 rounded-xl px-7 font-semibold transition hover:-translate-y-0.5">
-                      {ui.visitLive} <FiArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                    <a href={website} target="_blank" rel="noopener noreferrer" className="button-primary inline-flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-semibold transition hover:-translate-y-0.5 sm:h-12 sm:gap-2 sm:rounded-xl sm:px-7 sm:text-base">
+                      {ui.visitLive} <FiArrowUpRight aria-hidden="true" className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </a>
                   )}
-                  <Link href={`/${lang}/contact`} className="glass inline-flex h-12 items-center justify-center rounded-xl border border-border px-7 font-semibold transition hover:-translate-y-0.5 hover:border-accent">
+                  <Link href={`/${lang}/contact`} className="glass inline-flex h-10 items-center justify-center rounded-lg border border-border px-3 text-xs font-semibold transition hover:-translate-y-0.5 hover:border-accent sm:h-12 sm:rounded-xl sm:px-7 sm:text-base">
                     {ui.ctaButton}
                   </Link>
                 </div>
@@ -111,7 +111,7 @@ export default async function ReferenceDetailPage({ params }: PageProps<"/[lang]
                 <div className="relative">
                   <div aria-hidden="true" className="absolute -inset-6 rounded-[2rem] bg-[radial-gradient(circle,color-mix(in_srgb,var(--accent)_30%,transparent),transparent_70%)] blur-2xl" />
                   <div className="relative overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl shadow-black/20 transition-transform duration-700 lg:[transform:perspective(1600px)_rotateY(-7deg)_rotateX(2deg)] lg:hover:[transform:perspective(1600px)_rotateY(0)_rotateX(0)] rtl:lg:[transform:perspective(1600px)_rotateY(7deg)_rotateX(2deg)]">
-                    <div className="flex items-center gap-3 border-b border-border bg-background/70 px-4 py-2.5">
+                    <div className="flex items-center gap-2 border-b border-border bg-background/70 px-3 py-2 sm:gap-3 sm:px-4 sm:py-2.5">
                       <span className="flex gap-1.5" aria-hidden="true">
                         <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
                         <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
@@ -144,17 +144,17 @@ export default async function ReferenceDetailPage({ params }: PageProps<"/[lang]
       )}
 
       {reference.story.length > 0 && (
-        <section className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-12 lg:gap-14">
+        <section className="mx-auto grid max-w-6xl gap-5 px-4 py-10 sm:px-6 sm:py-24 lg:grid-cols-12 lg:gap-14">
           <Reveal className="lg:col-span-4">
             <div className="lg:sticky lg:top-28">
               <span className="mb-4 block h-1 w-12 rounded-full bg-gradient-to-r from-accent to-accent-2" aria-hidden="true" />
-              <h2 className="text-balance text-3xl font-extrabold tracking-normal sm:text-4xl">{ui.about}</h2>
+              <h2 className="text-balance text-2xl font-extrabold tracking-normal sm:text-4xl">{ui.about}</h2>
             </div>
           </Reveal>
-          <div className="space-y-6 lg:col-span-8">
+          <div className="space-y-4 lg:col-span-8 sm:space-y-6">
             {reference.story.map((paragraph, index) => (
               <Reveal key={index} delay={Math.min(index * 0.06, 0.2)}>
-                <p className={index === 0 ? "text-lg font-medium leading-9 sm:text-xl sm:leading-10" : "text-base leading-8 text-muted sm:text-lg sm:leading-9"}>{paragraph}</p>
+                <p className={index === 0 ? "text-base font-medium leading-7 sm:text-xl sm:leading-10" : "text-sm leading-7 text-muted sm:text-lg sm:leading-9"}>{paragraph}</p>
               </Reveal>
             ))}
           </div>
@@ -163,25 +163,25 @@ export default async function ReferenceDetailPage({ params }: PageProps<"/[lang]
 
       {reference.features.length > 0 && (
         <section className="border-y border-border bg-surface">
-          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-24">
             <Reveal className="mx-auto max-w-2xl text-center">
               <span className="mx-auto mb-4 block h-1 w-12 rounded-full bg-gradient-to-r from-accent to-accent-2" aria-hidden="true" />
-              <h2 className="text-balance text-3xl font-extrabold tracking-normal sm:text-4xl">{ui.features}</h2>
-              <p className="mt-3 text-base leading-7 text-muted sm:text-lg">{ui.featuresText}</p>
+              <h2 className="text-balance text-2xl font-extrabold tracking-normal sm:text-4xl">{ui.features}</h2>
+              <p className="mt-2 text-sm leading-6 text-muted sm:mt-3 sm:text-lg sm:leading-7">{ui.featuresText}</p>
             </Reveal>
-            <div className="mt-12 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+            <div className="mt-6 grid gap-2.5 sm:mt-12 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
               {reference.features.map((feature, index) => (
                 <Reveal key={feature.title} delay={(index % 3) * 0.08} className="h-full">
-                  <article className="card-glow relative h-full overflow-hidden rounded-2xl border border-border bg-background p-6">
+                  <article className="card-glow relative h-full overflow-hidden rounded-xl border border-border bg-background p-4 sm:rounded-2xl sm:p-6">
                     <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-accent to-accent-2" />
                     <div className="flex items-center justify-between">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-lg shadow-accent/25">
-                        <FiCheck className="h-5 w-5" aria-hidden="true" />
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-lg shadow-accent/25 sm:h-10 sm:w-10 sm:rounded-xl">
+                        <FiCheck className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
                       </span>
-                      <span className="text-3xl font-black text-foreground/10" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                      <span className="text-2xl font-black text-foreground/10 sm:text-3xl" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                     </div>
-                    <h3 className="mt-5 text-lg font-bold">{feature.title}</h3>
-                    {feature.text && <p className="mt-2 text-sm leading-7 text-muted">{feature.text}</p>}
+                    <h3 className="mt-3 text-sm font-bold sm:mt-5 sm:text-lg">{feature.title}</h3>
+                    {feature.text && <p className="mt-1.5 text-xs leading-5 text-muted sm:mt-2 sm:text-sm sm:leading-7">{feature.text}</p>}
                   </article>
                 </Reveal>
               ))}
@@ -203,24 +203,24 @@ export default async function ReferenceDetailPage({ params }: PageProps<"/[lang]
       )}
 
       {reference.gallery.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-          <Reveal className="mx-auto mb-12 max-w-2xl text-center sm:mb-16">
-            <span className="mx-auto mb-4 block h-1 w-12 rounded-full bg-gradient-to-r from-accent to-accent-2" aria-hidden="true" />
-            <h2 className="text-balance text-3xl font-extrabold tracking-normal sm:text-4xl">{ui.gallery}</h2>
-            <p className="mt-3 text-base leading-7 text-muted sm:text-lg">{ui.galleryText}</p>
+        <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-24">
+          <Reveal className="mx-auto mb-7 max-w-2xl text-center sm:mb-16">
+            <span className="mx-auto mb-3 block h-1 w-10 rounded-full bg-gradient-to-r from-accent to-accent-2 sm:mb-4 sm:w-12" aria-hidden="true" />
+            <h2 className="text-balance text-2xl font-extrabold tracking-normal sm:text-4xl">{ui.gallery}</h2>
+            <p className="mt-2 text-sm leading-6 text-muted sm:mt-3 sm:text-lg sm:leading-7">{ui.galleryText}</p>
           </Reveal>
           <ReferenceGallery items={reference.gallery} name={reference.name} host={host} ui={ui} />
         </section>
       )}
 
-      <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-24">
+      <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6 sm:pb-24">
         <Reveal>
-          <div className="cta-band relative overflow-hidden rounded-3xl px-6 py-12 text-center text-white shadow-2xl sm:px-12 sm:py-16">
+          <div className="cta-band relative overflow-hidden rounded-2xl px-5 py-8 text-center text-white shadow-2xl sm:rounded-3xl sm:px-12 sm:py-16">
             <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.1] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:32px_32px]" />
             <div className="relative">
               <h2 className="text-balance text-2xl font-extrabold tracking-normal sm:text-5xl">{ui.ctaTitle}</h2>
-              <p className="mx-auto mt-4 max-w-xl text-base text-white/85 sm:text-lg">{ui.ctaText}</p>
-              <Link href={`/${lang}/contact`} className="mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-white px-8 font-bold text-[#0a2a8f] transition hover:-translate-y-0.5">
+              <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-white/85 sm:mt-4 sm:text-lg">{ui.ctaText}</p>
+              <Link href={`/${lang}/contact`} className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-white px-5 text-sm font-bold text-[#0a2a8f] transition hover:-translate-y-0.5 sm:mt-8 sm:h-12 sm:rounded-xl sm:px-8 sm:text-base">
                 {ui.ctaButton}
                 <FiArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
               </Link>
@@ -229,12 +229,12 @@ export default async function ReferenceDetailPage({ params }: PageProps<"/[lang]
         </Reveal>
 
         {others.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-center text-xl font-bold sm:text-2xl">{ui.others}</h2>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 sm:mt-16">
+            <h2 className="text-center text-lg font-bold sm:text-2xl">{ui.others}</h2>
+            <div className="mt-4 grid gap-2.5 sm:mt-6 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
               {others.map((item) => (
-                <Link key={item.id} href={`/${lang}/references/${item.slug}`} className="card-glow group flex items-center gap-4 rounded-2xl border border-border bg-surface p-3 pr-5">
-                  <span className="flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-2 ring-1 ring-black/5">
+                <Link key={item.id} href={`/${lang}/references/${item.slug}`} className="card-glow group flex items-center gap-3 rounded-xl border border-border bg-surface p-2.5 pr-4 sm:gap-4 sm:rounded-2xl sm:p-3 sm:pr-5">
+                  <span className="flex h-12 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white p-1.5 ring-1 ring-black/5 sm:h-16 sm:w-24 sm:rounded-xl sm:p-2">
                     <ReferenceLogo reference={item} variant="tile" />
                   </span>
                   <span className="min-w-0 flex-1">

@@ -45,7 +45,7 @@ export function ProjectBrowser({ lang, projects, copy }: { lang: Locale; project
       {filteredProjects.length === 0 ? (
         <p role="status" className="rounded-lg border border-border bg-surface px-5 py-8 text-center text-sm text-muted">{copy.searchNoResults}</p>
       ) : (
-        <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid items-stretch gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {filteredProjects.map((project, index) => (
             <Reveal key={project.id} delay={(index % 3) * 0.05}>
               <ProjectCard lang={lang} project={project} more={copy.more} />

@@ -292,7 +292,7 @@ export function ReferenceGallery({ items, name, host, ui }: { items: GalleryItem
 
   return (
     <>
-      <div className="space-y-14 sm:space-y-24">
+      <div className="space-y-8 sm:space-y-24">
         {items.map((item, index) => (
           <motion.article
             key={item.url}
@@ -300,17 +300,17 @@ export function ReferenceGallery({ items, name, host, ui }: { items: GalleryItem
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="grid items-center gap-6 lg:grid-cols-12 lg:gap-12"
+            className="grid items-center gap-3 sm:gap-6 lg:grid-cols-12 lg:gap-12"
           >
             <div className={`min-w-0 lg:col-span-7 ${index % 2 ? "lg:order-2" : ""}`}>
               <Shot item={item} index={index} name={name} host={host} hint={ui.tapToZoom} onOpen={() => setOpen(index)} />
             </div>
             <div className={`min-w-0 lg:col-span-5 ${index % 2 ? "lg:order-1" : ""}`}>
-              <span className="bg-gradient-to-br from-accent to-accent-2 bg-clip-text text-5xl font-black leading-none text-transparent sm:text-7xl" aria-hidden="true">
+              <span className="bg-gradient-to-br from-accent to-accent-2 bg-clip-text text-4xl font-black leading-none text-transparent sm:text-7xl" aria-hidden="true">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <h3 className="mt-3 text-xl font-bold tracking-normal sm:text-3xl">{item.caption || name}</h3>
-              {item.description && <p className="mt-3 text-sm leading-7 text-muted sm:text-base sm:leading-8">{item.description}</p>}
+              <h3 className="mt-2 text-base font-bold tracking-normal sm:mt-3 sm:text-3xl">{item.caption || name}</h3>
+              {item.description && <p className="mt-1.5 text-xs leading-5 text-muted sm:mt-3 sm:text-base sm:leading-8">{item.description}</p>}
             </div>
           </motion.article>
         ))}
