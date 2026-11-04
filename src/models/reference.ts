@@ -5,8 +5,13 @@ export type ReferenceDoc = {
   slug: string;
   name: string;
   website: string;
+  tagline: LocalizedText;
   sector: LocalizedText;
   description: LocalizedText;
+  story: LocalizedText;
+  features: { title: LocalizedText; text: LocalizedText }[];
+  stats: { value: string; label: LocalizedText }[];
+  tech: string[];
   logoUrl: string;
   logoPublicId: string;
   gallery: {
@@ -19,20 +24,29 @@ export type ReferenceDoc = {
   visible: boolean;
 };
 
-const localized = { tr: { type: String, default: "", maxlength: 200 }, en: { type: String, default: "", maxlength: 200 }, de: { type: String, default: "", maxlength: 200 }, fr: { type: String, default: "", maxlength: 200 }, ar: { type: String, default: "", maxlength: 200 } };
-const localizedLong = { tr: { type: String, default: "", maxlength: 1000 }, en: { type: String, default: "", maxlength: 1000 }, de: { type: String, default: "", maxlength: 1000 }, fr: { type: String, default: "", maxlength: 1000 }, ar: { type: String, default: "", maxlength: 1000 } };
-const localizedCaption = { tr: { type: String, default: "", maxlength: 160 }, en: { type: String, default: "", maxlength: 160 }, de: { type: String, default: "", maxlength: 160 }, fr: { type: String, default: "", maxlength: 160 }, ar: { type: String, default: "", maxlength: 160 } };
+const text = (max: number) => ({
+  tr: { type: String, default: "", maxlength: max },
+  en: { type: String, default: "", maxlength: max },
+  de: { type: String, default: "", maxlength: max },
+  fr: { type: String, default: "", maxlength: max },
+  ar: { type: String, default: "", maxlength: max },
+});
 
 const ReferenceSchema = new Schema<ReferenceDoc>(
   {
     slug: { type: String, default: "", maxlength: 120 },
     name: { type: String, required: true, maxlength: 120 },
     website: { type: String, default: "", maxlength: 300 },
-    sector: localized,
-    description: localizedLong,
+    tagline: text(240),
+    sector: text(200),
+    description: text(2000),
+    story: text(6000),
+    features: { type: [{ _id: false, title: text(120), text: text(500) }], default: [] },
+    stats: { type: [{ _id: false, value: { type: String, default: "", maxlength: 20 }, label: text(80) }], default: [] },
+    tech: { type: [String], default: [] },
     logoUrl: { type: String, default: "", maxlength: 500 },
     logoPublicId: { type: String, default: "", maxlength: 300 },
-    gallery: { type: [{ _id: false, url: String, publicId: String, caption: localizedCaption, description: localizedLong }], default: [] },
+    gallery: { type: [{ _id: false, url: String, publicId: String, caption: text(200), description: text(1500) }], default: [] },
     order: { type: Number, default: 0 },
     visible: { type: Boolean, default: true },
   },

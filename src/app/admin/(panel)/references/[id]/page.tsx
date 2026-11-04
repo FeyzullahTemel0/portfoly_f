@@ -5,24 +5,31 @@ import { AdminHeader } from "@/components/admin/page-header";
 import { requireAdmin } from "@/lib/auth";
 import { isStorageConfigured } from "@/lib/storage";
 import { connectDb } from "@/lib/db";
+import type { LocalizedText } from "@/lib/locales";
 import { Reference } from "@/models/reference";
-import type { ReferenceInput } from "../../actions";
+import type { LocalizedInput, ReferenceInput } from "../../actions";
 import { ReferenceForm } from "./reference-form";
+
+const empty = (): LocalizedInput => ({ tr: "", en: "", de: "", fr: "", ar: "" });
+const toInput = (value: LocalizedText | undefined): LocalizedInput => ({
+  tr: value?.tr ?? "",
+  en: value?.en ?? "",
+  de: value?.de ?? "",
+  fr: value?.fr ?? "",
+  ar: value?.ar ?? "",
+});
 
 const blank: ReferenceInput = {
   slug: "",
   name: "",
   website: "",
-  sectorTr: "",
-  sectorEn: "",
-  sectorDe: "",
-  sectorFr: "",
-  sectorAr: "",
-  descriptionTr: "",
-  descriptionEn: "",
-  descriptionDe: "",
-  descriptionFr: "",
-  descriptionAr: "",
+  tagline: empty(),
+  sector: empty(),
+  description: empty(),
+  story: empty(),
+  features: [],
+  stats: [],
+  tech: "",
   logoUrl: "",
   logoPublicId: "",
   gallery: [],
@@ -45,25 +52,20 @@ export default async function ReferenceEditPage({ params }: PageProps<"/admin/re
       slug: doc.slug ?? "",
       name: doc.name,
       website: doc.website,
-      sectorTr: doc.sector.tr,
-      sectorEn: doc.sector.en,
-      sectorDe: doc.sector.de ?? "",
-      sectorFr: doc.sector.fr ?? "",
-      sectorAr: doc.sector.ar ?? "",
-      descriptionTr: doc.description.tr,
-      descriptionEn: doc.description.en,
-      descriptionDe: doc.description.de ?? "",
-      descriptionFr: doc.description.fr ?? "",
-      descriptionAr: doc.description.ar ?? "",
+      tagline: toInput(doc.tagline),
+      sector: toInput(doc.sector),
+      description: toInput(doc.description),
+      story: toInput(doc.story),
+      features: (doc.features ?? []).map((feature) => ({ title: toInput(feature.title), text: toInput(feature.text) })),
+      stats: (doc.stats ?? []).map((stat) => ({ value: stat.value, label: toInput(stat.label) })),
+      tech: (doc.tech ?? []).join(", "),
       logoUrl: doc.logoUrl,
       logoPublicId: doc.logoPublicId,
       gallery: (doc.gallery ?? []).map((image) => ({
         url: image.url,
         publicId: image.publicId,
-        captionTr: image.caption.tr,
-        captionEn: image.caption.en,
-        descriptionTr: image.description.tr,
-        descriptionEn: image.description.en,
+        caption: toInput(image.caption),
+        description: toInput(image.description),
       })),
       order: doc.order,
       visible: doc.visible,

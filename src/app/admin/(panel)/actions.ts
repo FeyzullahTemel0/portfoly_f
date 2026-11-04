@@ -1,6 +1,7 @@
 "use server";
 
 import mongoose from "mongoose";
+import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { baseDictionaries } from "@/dictionaries/base";
@@ -17,6 +18,8 @@ import { Reference } from "@/models/reference";
 import { TeamMember } from "@/models/team-member";
 import { Project } from "@/models/project";
 import { AccessEvent } from "@/models/access-event";
+import { CustomerReview, ReviewLink, type ReviewStatus } from "@/models/customer-review";
+import { hashReviewToken } from "@/lib/review-token";
 
 export type ActionResult = { ok: boolean; error?: string; data?: unknown };
 
@@ -230,29 +233,26 @@ export async function deleteMessage(id: string): Promise<ActionResult> {
   }
 }
 
+export type LocalizedInput = { tr: string; en: string; de: string; fr: string; ar: string };
+
 export type ReferenceInput = {
   slug: string;
   name: string;
   website: string;
-  sectorTr: string;
-  sectorEn: string;
-  sectorDe: string;
-  sectorFr: string;
-  sectorAr: string;
-  descriptionTr: string;
-  descriptionEn: string;
-  descriptionDe: string;
-  descriptionFr: string;
-  descriptionAr: string;
+  tagline: LocalizedInput;
+  sector: LocalizedInput;
+  description: LocalizedInput;
+  story: LocalizedInput;
+  features: { title: LocalizedInput; text: LocalizedInput }[];
+  stats: { value: string; label: LocalizedInput }[];
+  tech: string;
   logoUrl: string;
   logoPublicId: string;
   gallery: {
     url: string;
     publicId: string;
-    captionTr: string;
-    captionEn: string;
-    descriptionTr: string;
-    descriptionEn: string;
+    caption: LocalizedInput;
+    description: LocalizedInput;
   }[];
   order: number;
   visible: boolean;
@@ -263,17 +263,37 @@ export async function saveReference(id: string | null, input: ReferenceInput): P
   if (id !== null && !validId(id)) return { ok: false, error: "Geçersiz istek." };
 
   const text = (value: unknown, max: number) => String(value ?? "").trim().slice(0, max);
+  const loc = (value: Partial<LocalizedInput> | undefined, max: number) => ({
+    tr: text(value?.tr, max),
+    en: text(value?.en, max),
+    de: text(value?.de, max),
+    fr: text(value?.fr, max),
+    ar: text(value?.ar, max),
+  });
   const name = text(input.name, 120);
   const slug = text(input.slug, 120) ? slugify(text(input.slug, 120)) : "";
   const website = text(input.website, 300);
   const logoUrl = text(input.logoUrl, 500);
   const logoPublicId = text(input.logoPublicId, 300);
-  const gallery = (Array.isArray(input.gallery) ? input.gallery : []).slice(0, 10).map((image) => ({
+  const gallery = (Array.isArray(input.gallery) ? input.gallery : []).slice(0, 12).map((image) => ({
     url: text(image?.url, 500),
     publicId: text(image?.publicId, 300),
-    caption: { tr: text(image?.captionTr, 160), en: text(image?.captionEn, 160), de: "", fr: "", ar: "" },
-    description: { tr: text(image?.descriptionTr, 1000), en: text(image?.descriptionEn, 1000), de: "", fr: "", ar: "" },
+    caption: loc(image?.caption, 200),
+    description: loc(image?.description, 1500),
   }));
+  const features = (Array.isArray(input.features) ? input.features : [])
+    .slice(0, 9)
+    .map((feature) => ({ title: loc(feature?.title, 120), text: loc(feature?.text, 500) }))
+    .filter((feature) => feature.title.tr);
+  const stats = (Array.isArray(input.stats) ? input.stats : [])
+    .slice(0, 4)
+    .map((stat) => ({ value: text(stat?.value, 20), label: loc(stat?.label, 80) }))
+    .filter((stat) => stat.value);
+  const tech = text(input.tech, 600)
+    .split(",")
+    .map((item) => item.trim().slice(0, 40))
+    .filter(Boolean)
+    .slice(0, 16);
 
   if (!name) return { ok: false, error: "Firma adı zorunlu." };
   if (website && !safeUrl(website)) return { ok: false, error: "Web sitesi adresi https:// ile başlamalı." };
@@ -284,8 +304,13 @@ export async function saveReference(id: string | null, input: ReferenceInput): P
     slug,
     name,
     website,
-    sector: { tr: text(input.sectorTr, 200), en: text(input.sectorEn, 200), de: text(input.sectorDe, 200), fr: text(input.sectorFr, 200), ar: text(input.sectorAr, 200) },
-    description: { tr: text(input.descriptionTr, 1000), en: text(input.descriptionEn, 1000), de: text(input.descriptionDe, 1000), fr: text(input.descriptionFr, 1000), ar: text(input.descriptionAr, 1000) },
+    tagline: loc(input.tagline, 240),
+    sector: loc(input.sector, 200),
+    description: loc(input.description, 2000),
+    story: loc(input.story, 6000),
+    features,
+    stats,
+    tech,
     logoUrl,
     logoPublicId: logoUrl ? logoPublicId : "",
     gallery,
@@ -335,6 +360,70 @@ export async function deleteReference(id: string): Promise<ActionResult> {
   refreshSite();
   revalidatePath("/admin", "layout");
   redirect("/admin/references");
+}
+
+export async function createReviewLink(): Promise<{ ok: true; id: string; token: string; expiresAt: string } | { ok: false; error: string }> {
+  await requireAdmin();
+  try {
+    await connectDb();
+    const token = randomBytes(32).toString("base64url");
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const link = await ReviewLink.create({ tokenHash: hashReviewToken(token), expiresAt, usedAt: null, revokedAt: null, uploadCount: 0 });
+    revalidatePath("/admin/reviews");
+    return { ok: true, id: String(link._id), token, expiresAt: expiresAt.toISOString() };
+  } catch (error) {
+    console.error("Yorum bağlantısı oluşturulamadı:", error);
+    return { ok: false, error: "Bağlantı oluşturulamadı. Lütfen tekrar deneyin." };
+  }
+}
+
+export async function revokeReviewLink(id: string): Promise<ActionResult> {
+  await requireAdmin();
+  if (!validId(id)) return { ok: false, error: "Geçersiz istek." };
+  try {
+    await connectDb();
+    await ReviewLink.updateOne({ _id: id, usedAt: null }, { $set: { revokedAt: new Date() } });
+    revalidatePath("/admin/reviews");
+    return { ok: true };
+  } catch (error) {
+    console.error("Yorum bağlantısı iptal edilemedi:", error);
+    return { ok: false, error: "Bağlantı iptal edilemedi." };
+  }
+}
+
+export async function setReviewStatus(id: string, status: "approved" | "rejected"): Promise<ActionResult> {
+  await requireAdmin();
+  if (!validId(id) || !(["approved", "rejected"] as ReviewStatus[]).includes(status)) return { ok: false, error: "Geçersiz istek." };
+  try {
+    await connectDb();
+    const result = await CustomerReview.updateOne(
+      { _id: id },
+      { $set: { status, approvedAt: status === "approved" ? new Date() : null } },
+    );
+    if (!result.matchedCount) return { ok: false, error: "Yorum bulunamadı." };
+    revalidatePath("/admin/reviews");
+    revalidatePath("/[lang]", "page");
+    return { ok: true };
+  } catch (error) {
+    console.error("Yorum durumu güncellenemedi:", error);
+    return { ok: false, error: "Yorum güncellenemedi." };
+  }
+}
+
+export async function deleteCustomerReview(id: string): Promise<ActionResult> {
+  await requireAdmin();
+  if (!validId(id)) return { ok: false, error: "Geçersiz istek." };
+  try {
+    await connectDb();
+    const review = await CustomerReview.findByIdAndDelete(id).lean();
+    if (review?.logoPublicId) await deleteImage(review.logoPublicId);
+    revalidatePath("/admin/reviews");
+    revalidatePath("/[lang]", "page");
+    return { ok: true };
+  } catch (error) {
+    console.error("Yorum silinemedi:", error);
+    return { ok: false, error: "Yorum silinemedi." };
+  }
 }
 
 export type TeamMemberInput = {

@@ -36,39 +36,32 @@ export default async function ReferencesPage({ params }: PageProps<"/[lang]/refe
         {items.length === 0 ? (
           <p className="rounded-xl border border-border bg-surface p-8 text-center text-muted">{references.empty}</p>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item, index) => {
               const website = safeUrl(item.website);
+              const content = (
+                <>
+                  <span className="flex h-24 items-center justify-center overflow-hidden rounded-xl bg-white p-4 ring-1 ring-black/5">
+                    <ReferenceLogo reference={item} variant="tile" />
+                  </span>
+                  <h2 className="mt-5 text-xl font-bold">{item.name}</h2>
+                  {item.sector && <p className="text-sm font-semibold text-accent">{item.sector}</p>}
+                  {(item.tagline || item.description) && <p className="mt-3 line-clamp-4 flex-1 text-sm leading-6 text-muted">{item.tagline || item.description}</p>}
+                </>
+              );
               return (
-                <Reveal key={item.id} delay={(index % 6) * 0.05}>
-                  <article className="flex h-full flex-col rounded-xl border border-border bg-surface p-6 transition-colors hover:border-accent">
+                <Reveal key={item.id} delay={(index % 6) * 0.05} className="h-full">
+                  <article className="card-glow flex h-full flex-col rounded-2xl border border-border bg-surface p-5">
                     {item.slug ? (
                       <Link href={`/${lang}/references/${item.slug}`} className="group flex flex-1 flex-col rounded-md outline-none focus-visible:ring-2 focus-visible:ring-accent">
-                        <div className="flex h-20 items-center">
-                          <ReferenceLogo reference={item} />
-                        </div>
-                        <h2 className="mt-4 text-lg font-semibold">{item.name}</h2>
-                        {item.sector && <p className="text-sm font-medium text-accent">{item.sector}</p>}
-                        {item.description && <p className="mt-3 flex-1 text-sm leading-6 text-muted">{item.description}</p>}
+                        {content}
                         <span className="mt-4 text-sm font-semibold text-accent group-hover:underline">{references.detail} →</span>
                       </Link>
                     ) : (
-                      <div className="flex flex-1 flex-col">
-                    <div className="flex h-20 items-center">
-                      <ReferenceLogo reference={item} />
-                    </div>
-                    <h2 className="mt-4 text-lg font-semibold">{item.name}</h2>
-                    {item.sector && <p className="text-sm font-medium text-accent">{item.sector}</p>}
-                    {item.description && <p className="mt-3 flex-1 text-sm leading-6 text-muted">{item.description}</p>}
-                      </div>
+                      <div className="flex flex-1 flex-col">{content}</div>
                     )}
                     {website && (
-                      <a
-                        href={website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-4 text-sm font-semibold text-accent hover:underline"
-                      >
+                      <a href={website} target="_blank" rel="noopener noreferrer" className="mt-3 text-sm font-semibold text-muted hover:text-accent hover:underline">
                         {references.visit} →
                       </a>
                     )}

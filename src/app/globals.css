@@ -121,6 +121,43 @@ html[lang="ar"] body {
     radial-gradient(50% 45% at 10% 90%, color-mix(in srgb, var(--accent-2) 20%, transparent), transparent 70%);
 }
 
+.services-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.62;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--accent) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 5%, transparent) 1px, transparent 1px),
+    radial-gradient(ellipse at 18% 28%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 55%),
+    radial-gradient(ellipse at 82% 72%, color-mix(in srgb, var(--accent-2) 12%, transparent), transparent 58%);
+  background-size: 64px 64px, 64px 64px, 100% 100%, 100% 100%;
+  filter: blur(1px);
+  mask-image: linear-gradient(transparent, #000 14%, #000 86%, transparent);
+  animation: service-field-drift 28s ease-in-out infinite alternate;
+}
+.services-atmosphere__signal {
+  position: absolute;
+  left: -45%;
+  width: 42%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 70%, transparent), transparent);
+  filter: blur(2px);
+  animation: service-signal 18s linear infinite;
+}
+.services-atmosphere__signal--one { top: 32%; }
+.services-atmosphere__signal--two { top: 69%; animation-delay: -9s; animation-duration: 24s; }
+@keyframes service-field-drift {
+  from { transform: translate3d(-1%, -0.5%, 0); background-position: 0 0, 0 0, 0 0, 0 0; }
+  to { transform: translate3d(1%, 0.5%, 0); background-position: 32px 20px, -20px 32px, 0 0, 0 0; }
+}
+@keyframes service-signal {
+  from { transform: translateX(0); opacity: 0; }
+  12%, 82% { opacity: 0.7; }
+  to { transform: translateX(360%); opacity: 0; }
+}
+
 .glass {
   background: color-mix(in srgb, var(--surface) 90%, transparent);
   backdrop-filter: blur(20px) saturate(1.5);
@@ -201,6 +238,8 @@ html[lang="en"] .loading-copy-en { display: inline; }
   }
   .animate-blob,
   .animate-marquee,
+  .services-atmosphere,
+  .services-atmosphere__signal,
   .animate-float,
   .animate-pulse-ring,
   .spin-cw,

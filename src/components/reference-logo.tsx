@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { PublicReference } from "@/lib/references";
 
-export function ReferenceLogo({ reference }: { reference: PublicReference }) {
+export function ReferenceLogo({ reference, variant = "default" }: { reference: PublicReference; variant?: "default" | "tile" }) {
   if (reference.logoUrl) {
     return (
       <Image
@@ -9,7 +9,7 @@ export function ReferenceLogo({ reference }: { reference: PublicReference }) {
         alt={reference.name}
         width={160}
         height={80}
-        className="h-16 w-auto max-w-full object-contain"
+        className={variant === "tile" ? "h-full w-full object-contain" : "h-16 w-auto max-w-full object-contain"}
       />
     );
   }

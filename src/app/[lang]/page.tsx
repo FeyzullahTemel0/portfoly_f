@@ -5,13 +5,15 @@ import { HeroShowcase } from "@/components/home/hero-showcase";
 import { AdSlot } from "@/components/ad-slot";
 import { iconKey, WhyIcon } from "@/components/home/icons";
 import { Marquee } from "@/components/home/marquee";
+import { ReferenceShowcase } from "@/components/home/reference-showcase";
 import { ProjectCard } from "@/components/project-card";
-import { ReferenceLogo } from "@/components/reference-logo";
+import { CustomerReviews } from "@/components/home/customer-reviews";
 import { Reveal } from "@/components/reveal";
 import { ServiceCard } from "@/components/service-card";
 import { getDictionary } from "@/dictionaries";
 import { isLocale } from "@/lib/locales";
 import { getProjects } from "@/lib/projects";
+import { getApprovedReviews } from "@/lib/customer-reviews";
 import { getReferences } from "@/lib/references";
 import { groupServices } from "@/lib/service-groups";
 import { localizedAlternates } from "@/lib/seo";
@@ -42,12 +44,10 @@ export async function generateMetadata({ params }: PageProps<"/[lang]">) {
 export default async function HomePage({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
-  const { hero, why, services, contact, references, projects } = await getDictionary(lang);
-  const referenceItems = (await getReferences(lang)).slice(0, 8);
+  const { hero, why, services, contact, projects } = await getDictionary(lang);
+  const referenceItems = await getReferences(lang);
+  const customerReviews = await getApprovedReviews();
   const projectItems = (await getProjects(lang)).slice(0, 4);
-  const slides = projectItems
-    .filter((project) => project.coverUrl)
-    .map((project) => ({ src: project.coverUrl, title: project.title, category: project.category, href: `/${lang}/projects/${project.slug}` }));
 
   return (
     <>
@@ -87,15 +87,22 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
           </div>
 
           <div className="min-w-0">
-            <HeroShowcase slides={slides} chips={services.items.map((item) => item.title)} moreLabel={projects.more} />
+            <HeroShowcase />
           </div>
         </div>
         <Marquee items={services.items.map((item) => item.title)} />
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-24">
-        <SectionTitle title={services.title} text={services.text} />
-        {groupServices(services).map((group) => (
+      <ReferenceShowcase items={referenceItems} lang={lang} />
+
+      <section className="services-atmosphere-section relative isolate overflow-hidden border-y border-border bg-background">
+        <div className="services-atmosphere" aria-hidden="true">
+          <span className="services-atmosphere__signal services-atmosphere__signal--one" />
+          <span className="services-atmosphere__signal services-atmosphere__signal--two" />
+        </div>
+        <div className="relative z-10 mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-24">
+          <SectionTitle title={services.title} text={services.text} />
+          {groupServices(services).map((group) => (
           <div key={group.key} className="mt-10 sm:mt-14">
             <Reveal>
               <div className="flex items-center gap-4">
@@ -122,7 +129,8 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
               ))}
             </div>
           </div>
-        ))}
+          ))}
+        </div>
       </section>
 
       <AdSlot position="middle" lang={lang} />
@@ -166,28 +174,6 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
         </section>
       )}
 
-      {referenceItems.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-24">
-          <SectionTitle title={references.homeTitle} />
-          <ul className="mt-10 grid grid-cols-2 gap-4 sm:mt-12 sm:grid-cols-4">
-            {referenceItems.map((item, index) => (
-              <Reveal key={item.id} delay={(index % 4) * 0.06}>
-                <li className="card-glow flex h-28 items-center justify-center rounded-2xl border border-border bg-surface p-5">
-                  <ReferenceLogo reference={item} />
-                </li>
-              </Reveal>
-            ))}
-          </ul>
-          <Reveal>
-            <p className="mt-8 text-center">
-              <Link href={`/${lang}/references`} className="text-sm font-semibold text-accent hover:underline">
-                {references.viewAll} →
-              </Link>
-            </p>
-          </Reveal>
-        </section>
-      )}
-
       <AdSlot position="lower" lang={lang} />
 
       <section className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6 sm:py-24">
@@ -211,6 +197,8 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
           </div>
         </Reveal>
       </section>
+
+      <CustomerReviews items={customerReviews} lang={lang} />
     </>
   );
 }

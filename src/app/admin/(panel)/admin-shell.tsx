@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import {
   FiActivity, FiBriefcase, FiEdit3, FiExternalLink, FiFolder, FiHome, FiInbox, FiLayers, FiLogOut, FiMenu,
-  FiMessageSquare, FiSearch, FiSettings, FiTarget, FiUser, FiUsers, FiX,
+  FiMessageSquare, FiSearch, FiSettings, FiStar, FiTarget, FiUser, FiUsers, FiX,
 } from "react-icons/fi";
 import { BrandMark } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -29,6 +29,7 @@ const navGroups = [
       { href: "/admin/services", label: "Hizmetler & Fiyatlar", icon: FiLayers },
       { href: "/admin/projects", label: "Projeler", icon: FiFolder },
       { href: "/admin/references", label: "Referanslar", icon: FiBriefcase },
+      { href: "/admin/reviews", label: "Müşteri yorumları", icon: FiStar },
       { href: "/admin/team", label: "Ekip", icon: FiUsers },
       { href: "/admin/content", label: "Site İçeriği", icon: FiEdit3 },
     ],
