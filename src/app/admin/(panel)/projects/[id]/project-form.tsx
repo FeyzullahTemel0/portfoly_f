@@ -116,6 +116,12 @@ export function ProjectForm({ id, initial, cloudinaryReady }: Props) {
         <div><label htmlFor="summaryDe" className={labelClass}>Kısa açıklama (Almanca)</label><textarea id="summaryDe" rows={3} value={form.summaryDe} onChange={(e) => set("summaryDe", e.target.value)} className={inputClass} /></div>
         <div><label htmlFor="summaryFr" className={labelClass}>Kısa açıklama (Fransızca)</label><textarea id="summaryFr" rows={3} value={form.summaryFr} onChange={(e) => set("summaryFr", e.target.value)} className={inputClass} /></div>
         <div><label htmlFor="summaryAr" className={labelClass}>Kısa açıklama (Arapça)</label><textarea id="summaryAr" dir="rtl" rows={3} value={form.summaryAr} onChange={(e) => set("summaryAr", e.target.value)} className={inputClass} /></div>
+        <h3 className="font-semibold sm:col-span-2">Öne çıkanlar (her satır: Başlık | kısa açıklama)</h3>
+        <div><label htmlFor="highlightsTr" className={labelClass}>Türkçe</label><textarea id="highlightsTr" rows={6} value={form.highlightsTr} onChange={(e) => set("highlightsTr", e.target.value)} className={inputClass} placeholder="Akıllı finans özeti | Gelir, gider ve tahsilatı tek ekranda görün." /></div>
+        <div><label htmlFor="highlightsEn" className={labelClass}>İngilizce</label><textarea id="highlightsEn" rows={6} value={form.highlightsEn} onChange={(e) => set("highlightsEn", e.target.value)} className={inputClass} /></div>
+        <div><label htmlFor="highlightsDe" className={labelClass}>Almanca</label><textarea id="highlightsDe" rows={6} value={form.highlightsDe} onChange={(e) => set("highlightsDe", e.target.value)} className={inputClass} /></div>
+        <div><label htmlFor="highlightsFr" className={labelClass}>Fransızca</label><textarea id="highlightsFr" rows={6} value={form.highlightsFr} onChange={(e) => set("highlightsFr", e.target.value)} className={inputClass} /></div>
+        <div><label htmlFor="highlightsAr" className={labelClass}>Arapça</label><textarea id="highlightsAr" dir="rtl" rows={6} value={form.highlightsAr} onChange={(e) => set("highlightsAr", e.target.value)} className={inputClass} /></div>
         <div>
           <label htmlFor="descriptionTr" className={labelClass}>Detaylı açıklama (Türkçe) — paragraflar arasında boş satır bırakın</label>
           <textarea id="descriptionTr" rows={9} value={form.descriptionTr} onChange={(e) => set("descriptionTr", e.target.value)} className={inputClass} />

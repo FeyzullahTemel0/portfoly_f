@@ -15,6 +15,7 @@ export type PublicProject = {
 };
 
 export type ProjectDetail = PublicProject & {
+  highlights: { title: string; text: string }[];
   description: string;
   client: string;
   year: string;
@@ -44,6 +45,13 @@ export const getProject = cache(async (lang: Locale, slug: string): Promise<Proj
     if (!doc) return null;
     return {
       ...toPublic(doc, lang),
+      highlights: (doc.highlights?.[lang] || doc.highlights?.en || doc.highlights?.tr || "")
+        .split(/\r?\n/)
+        .map((line) => {
+          const [title, ...rest] = line.split("|");
+          return { title: title.trim(), text: rest.join("|").trim() };
+        })
+        .filter((item) => item.title),
       description: pick(doc.description, lang),
       client: doc.client,
       year: doc.year,

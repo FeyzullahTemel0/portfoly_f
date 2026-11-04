@@ -522,6 +522,11 @@ export type ProjectInput = {
   summaryDe: string;
   summaryFr: string;
   summaryAr: string;
+  highlightsTr: string;
+  highlightsEn: string;
+  highlightsDe: string;
+  highlightsFr: string;
+  highlightsAr: string;
   descriptionTr: string;
   descriptionEn: string;
   descriptionDe: string;
@@ -587,6 +592,7 @@ export async function saveProject(id: string | null, input: ProjectInput): Promi
     slug,
     title: { tr: titleTr, en: text(input.titleEn, 200), de: text(input.titleDe, 200), fr: text(input.titleFr, 200), ar: text(input.titleAr, 200) },
     summary: { tr: text(input.summaryTr, 400), en: text(input.summaryEn, 400), de: text(input.summaryDe, 400), fr: text(input.summaryFr, 400), ar: text(input.summaryAr, 400) },
+    highlights: { tr: text(input.highlightsTr, 2400), en: text(input.highlightsEn, 2400), de: text(input.highlightsDe, 2400), fr: text(input.highlightsFr, 2400), ar: text(input.highlightsAr, 2400) },
     description: { tr: text(input.descriptionTr, 8000), en: text(input.descriptionEn, 8000), de: text(input.descriptionDe, 8000), fr: text(input.descriptionFr, 8000), ar: text(input.descriptionAr, 8000) },
     category: { tr: text(input.categoryTr, 200), en: text(input.categoryEn, 200), de: text(input.categoryDe, 200), fr: text(input.categoryFr, 200), ar: text(input.categoryAr, 200) },
     client: text(input.client, 120),

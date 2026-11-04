@@ -7,6 +7,7 @@ export type ProjectDoc = {
   slug: string;
   title: LocalizedText;
   summary: LocalizedText;
+  highlights: LocalizedText;
   description: LocalizedText;
   category: LocalizedText;
   client: string;
@@ -29,6 +30,7 @@ const ProjectSchema = new Schema<ProjectDoc>(
     slug: { type: String, required: true, unique: true, maxlength: 120 },
     title: short,
     summary: { tr: { type: String, default: "", maxlength: 400 }, en: { type: String, default: "", maxlength: 400 }, de: { type: String, default: "", maxlength: 400 }, fr: { type: String, default: "", maxlength: 400 }, ar: { type: String, default: "", maxlength: 400 } },
+    highlights: { tr: { type: String, default: "", maxlength: 2400 }, en: { type: String, default: "", maxlength: 2400 }, de: { type: String, default: "", maxlength: 2400 }, fr: { type: String, default: "", maxlength: 2400 }, ar: { type: String, default: "", maxlength: 2400 } },
     description: long,
     category: short,
     client: { type: String, default: "", maxlength: 120 },
