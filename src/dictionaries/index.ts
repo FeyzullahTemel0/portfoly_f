@@ -4,6 +4,7 @@ import { connectDb } from "@/lib/db";
 import type { Locale } from "@/lib/locales";
 import { defaultSettings, type Settings } from "@/lib/site";
 import { getServiceItems } from "@/lib/services";
+import { getDefaultServiceItems } from "@/lib/service-catalog";
 import { Content } from "@/models/content";
 import { baseDictionaries, type Dictionary } from "./base";
 import { mergeDeep } from "./merge";
@@ -29,8 +30,8 @@ export const getDictionary = cache(async (lang: Locale): Promise<Dictionary> => 
   const overrides = await getOverrides(lang);
   const dictionary = mergeDeep(baseDictionaries[lang], overrides);
   const managed = await getServiceItems(lang);
-  if (!managed) return dictionary;
-  return { ...dictionary, services: { ...dictionary.services, items: managed as unknown as Dictionary["services"]["items"] } };
+  const items = managed ?? getDefaultServiceItems(lang, dictionary.services.items);
+  return { ...dictionary, services: { ...dictionary.services, items: items as unknown as Dictionary["services"]["items"] } };
 });
 
 export const getSettings = cache(async (): Promise<Settings> => {

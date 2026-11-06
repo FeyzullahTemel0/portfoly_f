@@ -91,10 +91,11 @@ export function ServiceForm({ id, initial }: Props) {
             <input id="slug" value={form.slug} onChange={(e) => setMeta("slug", e.target.value)} className={inputClass} placeholder="ornek-hizmet" />
           </div>
           <div>
-            <label htmlFor="group" className={labelClass}>Grup</label>
-            <select id="group" value={form.group} onChange={(e) => setMeta("group", e.target.value)} className={inputClass}>
-              <option value="software">Yazılım çözümleri</option>
-              <option value="design">Dijital tasarımlar</option>
+            <label htmlFor="catalogCategory" className={labelClass}>Katalog kategorisi</label>
+            <select id="catalogCategory" value={form.catalogCategory} onChange={(e) => setMeta("catalogCategory", e.target.value as ServiceInput["catalogCategory"])} className={inputClass}>
+              <option value="web">Web çözümleri</option>
+              <option value="automation">Otomasyon</option>
+              <option value="ecommerce">E-ticaret</option>
             </select>
           </div>
           <div>

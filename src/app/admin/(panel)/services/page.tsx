@@ -10,7 +10,7 @@ import { ImportDefaults } from "./import-defaults";
 
 export default async function ServicesAdminPage() {
   await requireAdmin();
-  let items: { id: string; slug: string; icon: string; title: string; group: string; order: number; visible: boolean; mode: string; amount: number; currency: string; translated: number }[] = [];
+  let items: { id: string; slug: string; icon: string; title: string; category: string; order: number; visible: boolean; mode: string; amount: number; currency: string; translated: number }[] = [];
   let failed = false;
   try {
     await connectDb();
@@ -22,7 +22,7 @@ export default async function ServicesAdminPage() {
         slug: doc.slug,
         icon: doc.icon || doc.slug,
         title: content.tr?.title || doc.slug,
-        group: doc.group,
+        category: doc.catalogCategory || "web",
         order: doc.order,
         visible: doc.visible,
         mode: doc.priceMode,
@@ -51,7 +51,7 @@ export default async function ServicesAdminPage() {
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground"><ServiceIcon slug={item.icon} className="h-5 w-5" /></span>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">{item.title}</p>
-                <p className="truncate text-xs text-muted">/{item.slug} · {item.group === "design" ? "Tasarım" : "Yazılım"} · Sıra {item.order} · {item.translated}/5 dil</p>
+                <p className="truncate text-xs text-muted">/{item.slug} · {item.category === "ecommerce" ? "E-Ticaret" : item.category === "automation" ? "Otomasyon" : "Web Çözümleri"} · Sıra {item.order} · {item.translated}/5 dil</p>
               </div>
               <div className="text-right text-sm">
                 {item.mode === "quote" ? <span className="text-muted">Teklife göre</span> : <span className="font-semibold">{item.mode === "from" ? "Başlangıç " : ""}{formatMoney(item.amount, item.currency, "tr")}</span>}

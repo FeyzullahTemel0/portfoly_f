@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth";
 import { connectDb } from "@/lib/db";
 import { locales } from "@/lib/locales";
 import { emptyBlock, normalizeBlock } from "@/lib/services";
+import { getCatalogCategory } from "@/lib/service-catalog";
 import { Service } from "@/models/service";
 import type { ServiceInput } from "../../manage-actions";
 import { ServiceForm } from "./service-form";
@@ -16,6 +17,7 @@ export default async function ServiceEditPage({ params }: { params: Promise<{ id
   let initial: ServiceInput = {
     slug: "",
     group: "software",
+    catalogCategory: "web",
     icon: "",
     priceMode: "quote",
     priceAmount: 0,
@@ -34,6 +36,7 @@ export default async function ServiceEditPage({ params }: { params: Promise<{ id
     initial = {
       slug: doc.slug,
       group: doc.group,
+      catalogCategory: doc.catalogCategory ?? getCatalogCategory(doc.slug),
       icon: doc.icon,
       priceMode: doc.priceMode,
       priceAmount: doc.priceAmount,
