@@ -105,7 +105,7 @@ export function ProfileForm({ profile, email, ready }: { profile: AdminProfile; 
                 </button>
               )}
             </div>
-            <p className="text-xs text-muted">Seçtiğiniz görsel kare olarak kırpılır; PNG, JPG veya WebP.</p>
+            <p className="text-xs text-muted">Fotoğraf Hakkımızda alanına uygun 4:5 portre oranında kırpılır. Sürükleyip yakınlaştırarak kadrajı ayarlayın.</p>
             {!ready && <p className="text-xs text-amber-500">Görsel yükleme için R2 depolama bilgileri tanımlı olmalı.</p>}
           </div>
           <input ref={input} type="file" accept="image/*" onChange={onPick} className="sr-only" />

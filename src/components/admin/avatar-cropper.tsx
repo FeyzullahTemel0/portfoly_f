@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 type Props = { file: File; onCancel: () => void; onDone: (cropped: File) => void };
 
-const STAGE = 288;
-const OUTPUT = 512;
+const STAGE_WIDTH = 240;
+const STAGE_HEIGHT = 300;
+const OUTPUT_WIDTH = 720;
+const OUTPUT_HEIGHT = 900;
 
-// Profil fotoğrafı için sürükle-yakınlaştır kare kırpma penceresi.
+// Hakkımızda portresiyle aynı 4:5 oranında sürükle-yakınlaştır kırpma penceresi.
 export function AvatarCropper({ file, onCancel, onDone }: Props) {
   const [src, setSrc] = useState("");
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
@@ -23,12 +25,12 @@ export function AvatarCropper({ file, onCancel, onDone }: Props) {
     return () => reader.abort();
   }, [file]);
 
-  const base = size ? Math.max(STAGE / size.w, STAGE / size.h) : 1;
+  const base = size ? Math.max(STAGE_WIDTH / size.w, STAGE_HEIGHT / size.h) : 1;
   const scale = base * zoom;
   const clamp = (x: number, y: number, s = scale) => {
     if (!size) return { x, y };
-    const maxX = Math.max(0, (size.w * s - STAGE) / 2);
-    const maxY = Math.max(0, (size.h * s - STAGE) / 2);
+    const maxX = Math.max(0, (size.w * s - STAGE_WIDTH) / 2);
+    const maxY = Math.max(0, (size.h * s - STAGE_HEIGHT) / 2);
     return { x: Math.min(maxX, Math.max(-maxX, x)), y: Math.min(maxY, Math.max(-maxY, y)) };
   };
 
@@ -41,14 +43,14 @@ export function AvatarCropper({ file, onCancel, onDone }: Props) {
     const image = imageRef.current;
     if (!image || !size) return;
     const canvas = document.createElement("canvas");
-    canvas.width = OUTPUT;
-    canvas.height = OUTPUT;
+    canvas.width = OUTPUT_WIDTH;
+    canvas.height = OUTPUT_HEIGHT;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const ratio = OUTPUT / STAGE;
+    const ratio = OUTPUT_WIDTH / STAGE_WIDTH;
     const width = size.w * scale * ratio;
     const height = size.h * scale * ratio;
-    ctx.drawImage(image, OUTPUT / 2 + offset.x * ratio - width / 2, OUTPUT / 2 + offset.y * ratio - height / 2, width, height);
+    ctx.drawImage(image, OUTPUT_WIDTH / 2 + offset.x * ratio - width / 2, OUTPUT_HEIGHT / 2 + offset.y * ratio - height / 2, width, height);
     canvas.toBlob(
       (blob) => {
         if (blob) onDone(new File([blob], "profil.webp", { type: "image/webp" }));
@@ -64,8 +66,8 @@ export function AvatarCropper({ file, onCancel, onDone }: Props) {
         <h2 className="font-semibold">Fotoğrafı kırp</h2>
         <p className="mt-1 text-xs text-muted">Sürükleyerek konumlandırın, kaydırıcıyla yakınlaştırın.</p>
         <div
-          className="relative mx-auto mt-4 touch-none select-none overflow-hidden rounded-2xl bg-black"
-          style={{ width: STAGE, height: STAGE }}
+          className="relative mx-auto mt-4 touch-none select-none overflow-hidden rounded-xl bg-black"
+          style={{ width: STAGE_WIDTH, height: STAGE_HEIGHT }}
           onPointerDown={(event) => {
             event.currentTarget.setPointerCapture(event.pointerId);
             drag.current = { x: event.clientX, y: event.clientY, ox: offset.x, oy: offset.y };
@@ -89,7 +91,7 @@ export function AvatarCropper({ file, onCancel, onDone }: Props) {
               style={size ? { width: size.w * scale, height: size.h * scale, transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px))` } : { opacity: 0 }}
             />
           )}
-          <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-full shadow-[0_0_0_999px_rgba(0,0,0,0.55)] ring-2 ring-white/70" />
+          <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-xl shadow-[0_0_0_999px_rgba(0,0,0,0.55)] ring-2 ring-white/70" />
         </div>
         <label className="mt-4 block text-xs font-semibold text-muted">
           Yakınlaştırma

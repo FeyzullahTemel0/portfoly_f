@@ -40,9 +40,9 @@ export default async function AboutPage({ params }: PageProps<"/[lang]/about">) 
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <Reveal>
             <div className="rounded-2xl border border-border bg-surface p-6 text-center">
-              <div className="relative mx-auto flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-accent text-3xl font-bold text-accent-foreground">
+              <div className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-accent/20 via-accent-2/20 to-surface text-6xl font-bold text-accent">
                 {profilePhoto.url ? (
-                  <Image src={profilePhoto.url} alt={profile.name} fill sizes="96px" className="object-cover" priority />
+                  <Image src={profilePhoto.url} alt={profile.name} fill sizes="(min-width: 1024px) 360px, 100vw" className="object-cover object-[center_32%]" priority />
                 ) : (
                   <span aria-hidden="true">{initials(profile.name)}</span>
                 )}
