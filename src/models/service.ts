@@ -16,6 +16,8 @@ export type ServiceDoc = {
   group: "software" | "design";
   catalogCategory: "web" | "automation" | "ecommerce";
   icon: string;
+  imageUrl: string;
+  imagePublicId: string;
   priceMode: "from" | "fixed" | "quote";
   priceAmount: number;
   priceCurrency: string;
@@ -30,6 +32,8 @@ const ServiceSchema = new Schema<ServiceDoc>(
     group: { type: String, enum: ["software", "design"], default: "software" },
     catalogCategory: { type: String, enum: ["web", "automation", "ecommerce"], default: "web" },
     icon: { type: String, default: "", maxlength: 40 },
+    imageUrl: { type: String, default: "", maxlength: 500 },
+    imagePublicId: { type: String, default: "", maxlength: 300 },
     priceMode: { type: String, enum: ["from", "fixed", "quote"], default: "quote" },
     priceAmount: { type: Number, default: 0, min: 0 },
     priceCurrency: { type: String, default: "TRY", maxlength: 3 },

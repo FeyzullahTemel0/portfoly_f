@@ -178,5 +178,5 @@
     "includes": { "tr": ["Kullanıcı ve problem varsayımlarının netleştirilmesi", "Öncelikli kullanıcı akışları ve ekran prototipi", "Küçük, test edilebilir ilk sürüm kapsamı", "Test hedefleri ve sonraki geliştirme önerisi"], "en": ["Clarify target users and problem assumptions", "Prioritized user flows and screen prototype", "A small, testable first-release scope", "Validation goals and a next-step roadmap"] },
     "notIncluded": { "tr": ["Pazar başarısı, yatırım veya satış garantisi", "Prototipte olmayan özellikler", "Sürekli ürün yönetimi ve büyüme operasyonu"], "en": ["Market success, funding or sales guarantees", "Features outside the agreed prototype", "Ongoing product management and growth operations"] },
     "suitable": { "tr": ["Ürün fikrini büyük bütçe ayırmadan denemek isteyen girişimler", "Önce kullanıcı akışını doğrulayıp sonra büyütmek isteyen işletmeler"], "en": ["Startups testing a product idea before a larger investment", "Businesses validating user flows before scaling"] }
-  },
+  }
 ]

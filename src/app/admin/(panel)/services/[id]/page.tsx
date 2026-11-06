@@ -6,6 +6,7 @@ import { connectDb } from "@/lib/db";
 import { locales } from "@/lib/locales";
 import { emptyBlock, normalizeBlock } from "@/lib/services";
 import { getCatalogCategory } from "@/lib/service-catalog";
+import { isStorageConfigured } from "@/lib/storage";
 import { Service } from "@/models/service";
 import type { ServiceInput } from "../../manage-actions";
 import { ServiceForm } from "./service-form";
@@ -19,6 +20,8 @@ export default async function ServiceEditPage({ params }: { params: Promise<{ id
     group: "software",
     catalogCategory: "web",
     icon: "",
+    imageUrl: "",
+    imagePublicId: "",
     priceMode: "quote",
     priceAmount: 0,
     priceCurrency: "TRY",
@@ -38,6 +41,8 @@ export default async function ServiceEditPage({ params }: { params: Promise<{ id
       group: doc.group,
       catalogCategory: doc.catalogCategory ?? getCatalogCategory(doc.slug),
       icon: doc.icon,
+      imageUrl: doc.imageUrl ?? "",
+      imagePublicId: doc.imagePublicId ?? "",
       priceMode: doc.priceMode,
       priceAmount: doc.priceAmount,
       priceCurrency: doc.priceCurrency,
@@ -50,7 +55,7 @@ export default async function ServiceEditPage({ params }: { params: Promise<{ id
   return (
     <>
       <AdminHeader title={isNew ? "Yeni hizmet" : "Hizmeti düzenle"} text="Türkçe metni girin; diğer diller otomatik çevrilir. Fiyat ziyaretçinin para birimine güncel kurla çevrilir." />
-      <ServiceForm id={isNew ? null : id} initial={initial} />
+      <ServiceForm id={isNew ? null : id} initial={initial} storageReady={isStorageConfigured()} />
     </>
   );
 }

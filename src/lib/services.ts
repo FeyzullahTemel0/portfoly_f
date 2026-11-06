@@ -12,6 +12,7 @@ export type ServiceItem = {
   group: "software" | "design";
   catalogCategory: ServiceCategory;
   icon: string;
+  imageUrl: string;
   title: string;
   summary: string;
   intro: string;
@@ -70,6 +71,7 @@ export const getServiceItems = cache(async (lang: Locale): Promise<ServiceItem[]
         group: doc.group,
         catalogCategory: doc.catalogCategory ?? getCatalogCategory(doc.slug),
         icon: doc.icon,
+        imageUrl: doc.imageUrl ?? "",
         title: pickText("title"),
         summary: pickText("summary"),
         intro: pickText("intro"),

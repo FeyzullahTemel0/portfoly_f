@@ -70,7 +70,7 @@ export default async function ServiceDetailPage({
             </Link>
           </Reveal>
           <Reveal delay={0.1} className="order-last min-w-0">
-            <ServiceArt slug={icon} image={siteImages.services[slug]} alt={item.title} lang={lang} className="rounded-2xl border border-border shadow-2xl" />
+            <ServiceArt slug={icon} image={(item as { imageUrl?: string }).imageUrl || siteImages.services[slug]} alt={item.title} lang={lang} className="rounded-2xl border border-border shadow-2xl" />
           </Reveal>
         </div>
       </section>

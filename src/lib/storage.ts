@@ -2,7 +2,7 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
-export const UPLOAD_FOLDERS = ["rovax/references", "rovax/team", "rovax/projects", "rovax/seo", "rovax/profile", "rovax/ads", "rovax/reviews", "rovax/articles"] as const;
+export const UPLOAD_FOLDERS = ["rovax/references", "rovax/team", "rovax/projects", "rovax/seo", "rovax/profile", "rovax/ads", "rovax/reviews", "rovax/articles", "rovax/services"] as const;
 export const MEDIA_PREFIX = "/media/";
 export const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
 
@@ -14,7 +14,7 @@ const EXTENSIONS: Record<string, string> = {
   "image/avif": "avif",
 };
 
-const KEY_PATTERN = /^rovax\/(references|team|projects|seo|profile|ads|reviews|articles)\/[A-Za-z0-9_-]{8,64}\.(jpg|png|webp|gif|avif)$/;
+const KEY_PATTERN = /^rovax\/(references|team|projects|seo|profile|ads|reviews|articles|services)\/[A-Za-z0-9_-]{8,64}\.(jpg|png|webp|gif|avif)$/;
 
 function config() {
   const endpoint = process.env.R2_ENDPOINT?.replace(/\/+$/, "");

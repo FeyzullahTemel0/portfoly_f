@@ -10,7 +10,7 @@ import { connectDb } from "@/lib/db";
 import { locales, type Locale } from "@/lib/locales";
 import { emptyBlock, normalizeBlock } from "@/lib/services";
 import { deprecatedServiceSlugs, getDefaultServiceItems, type ServiceCategory } from "@/lib/service-catalog";
-import { deleteImage, isOwnImageUrl } from "@/lib/storage";
+import { deleteImage, isOwnImageUrl, keyFromUrl } from "@/lib/storage";
 import { translateTexts } from "@/lib/translate";
 import { Content } from "@/models/content";
 import { Service, type ServiceBlock } from "@/models/service";
@@ -28,6 +28,8 @@ export type ServiceInput = {
   group: string;
   catalogCategory: ServiceCategory;
   icon: string;
+  imageUrl: string;
+  imagePublicId: string;
   priceMode: string;
   priceAmount: number;
   priceCurrency: string;
@@ -113,6 +115,11 @@ export async function saveService(id: string | null, input: ServiceInput, autoTr
   if (!content.tr.title) return { ok: false, error: "Türkçe başlık zorunlu." };
   const slug = slugify(input.slug || content.tr.title);
   if (!slug) return { ok: false, error: "Sayfa adresi oluşturulamadı." };
+  const imageUrl = clip(input.imageUrl, 500);
+  const imagePublicId = clip(input.imagePublicId, 300);
+  if (imageUrl && (!isOwnImageUrl(imageUrl) || !imageUrl.startsWith("/media/rovax/services/") || keyFromUrl(imageUrl) !== imagePublicId)) {
+    return { ok: false, error: "Geçersiz hizmet görseli." };
+  }
   const amount = Number(input.priceAmount);
   if (!Number.isFinite(amount) || amount < 0 || amount > 1_000_000_000) return { ok: false, error: "Fiyat geçersiz." };
   const priceMode = ["from", "fixed", "quote"].includes(input.priceMode) ? input.priceMode : "quote";
@@ -139,6 +146,8 @@ export async function saveService(id: string | null, input: ServiceInput, autoTr
       group: "software" as const,
       catalogCategory: category,
       icon: clip(input.icon, 40),
+      imageUrl,
+      imagePublicId: imageUrl ? imagePublicId : "",
       priceMode,
       priceAmount: amount,
       priceCurrency: isCurrency(input.priceCurrency) ? input.priceCurrency : "TRY",
@@ -148,8 +157,11 @@ export async function saveService(id: string | null, input: ServiceInput, autoTr
     };
     let savedId = id;
     if (id) {
+      const previous = await Service.findById(id).lean();
+      if (!previous) return { ok: false, error: "Hizmet bulunamadı." };
       const result = await Service.updateOne({ _id: id }, { $set: data });
       if (result.matchedCount === 0) return { ok: false, error: "Hizmet bulunamadı." };
+      if (previous.imagePublicId && previous.imagePublicId !== data.imagePublicId) await deleteImage(previous.imagePublicId);
     } else {
       savedId = String((await Service.create(data))._id);
     }
@@ -168,7 +180,9 @@ export async function deleteService(id: string): Promise<Result> {
   if (!validId(id)) return { ok: false, error: "Geçersiz istek." };
   try {
     await connectDb();
+    const service = await Service.findById(id).lean();
     await Service.deleteOne({ _id: id });
+    if (service?.imagePublicId) await deleteImage(service.imagePublicId);
     await Content.updateOne({ scope: "settings", key: "servicesManaged" }, { $set: { data: { on: true } } }, { upsert: true });
     refreshSite();
     revalidatePath("/admin/services");

@@ -3,12 +3,14 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { FiGlobe, FiPlus, FiTrash2 } from "react-icons/fi";
+import { ImageUploader } from "@/components/admin/image-uploader";
+import { siteImages } from "@/config/images";
 import { CURRENCIES } from "@/lib/currency";
 import { serviceIconKeys } from "@/components/home/icons";
 import { deleteService, saveService, translateServiceContent, type ServiceInput } from "../../manage-actions";
 
 type Block = ServiceInput["content"][string];
-type Props = { id: string | null; initial: ServiceInput };
+type Props = { id: string | null; initial: ServiceInput; storageReady: boolean };
 
 const inputClass = "w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/25";
 const labelClass = "mb-1.5 block text-xs font-semibold text-muted";
@@ -23,7 +25,7 @@ const tabs = [
 const emptyBlock = (): Block => ({ title: "", summary: "", intro: "", notice: "", includes: [], notIncluded: [], suitable: [], steps: [] });
 const lines = (value: string) => value.split("\n");
 
-export function ServiceForm({ id, initial }: Props) {
+export function ServiceForm({ id, initial, storageReady }: Props) {
   const router = useRouter();
   const [form, setForm] = useState(initial);
   const [lang, setLang] = useState<string>("tr");
@@ -136,6 +138,19 @@ export function ServiceForm({ id, initial }: Props) {
           <input type="checkbox" checked={form.visible} onChange={(e) => setMeta("visible", e.target.checked)} className="h-5 w-5 accent-[var(--accent)]" />
           Sitede görünsün
         </label>
+      </section>
+
+      <section className="space-y-4 rounded-2xl border border-border bg-surface p-5 sm:p-6">
+        <h2 className="font-semibold">Hizmet görseli</h2>
+        <p className="text-xs text-muted">Bu görsel hizmet kartında ve hizmet detayında kullanılır. Yüklemezseniz mevcut varsayılan fotoğraf gösterilir.</p>
+        <ImageUploader
+          url={form.imageUrl || siteImages.services[form.slug] || ""}
+          folder="rovax/services"
+          ready={storageReady}
+          label="Kart ve detay görseli"
+          onChange={(imageUrl, imagePublicId) => setForm((current) => ({ ...current, imageUrl, imagePublicId }))}
+          onMessage={(ok, text) => setStatus({ ok, text })}
+        />
       </section>
 
       <section className="space-y-5 rounded-2xl border border-border bg-surface p-5 sm:p-6">
