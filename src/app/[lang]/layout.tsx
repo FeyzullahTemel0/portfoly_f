@@ -21,7 +21,7 @@ const geistSans = Geist({
 });
 
 // Sayfa açılmadan önce kayıtlı temayı uygulayarak renk titremesini önler.
-const themeScript = `try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=t==="light"?"light":"dark"}catch(e){}`;
+const themeScript = `try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=t==="dark"?"dark":"light"}catch(e){}`;
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -76,7 +76,7 @@ export default async function RootLayout({
     <html
       lang={lang}
       dir={lang === "ar" ? "rtl" : "ltr"}
-      data-theme="dark"
+      data-theme="light"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${geistSans.variable} h-full antialiased`}

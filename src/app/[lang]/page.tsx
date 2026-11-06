@@ -114,17 +114,18 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
             </Reveal>
             <div className="mt-6 grid gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
               {group.items.map((item, index) => (
-                <Reveal key={item.slug} delay={(index % 3) * 0.08} className="h-full">
-                  <ServiceCard
-                    href={`/${lang}/services/${item.slug}`}
-                    slug={iconKey(item as { slug: string; icon?: string })}
-                    title={item.title}
-                    summary={item.summary}
-                    price={(item as { price?: { mode: string; amount: number; currency: string } }).price}
-                    more={services.more}
-                    lang={lang}
-                  />
-                </Reveal>
+                <ServiceCard
+                  key={item.slug}
+                  index={index}
+                  href={`/${lang}/services/${item.slug}`}
+                  slug={iconKey(item as { slug: string; icon?: string })}
+                  title={item.title}
+                  summary={item.summary}
+                  imageUrl={(item as { imageUrl?: string }).imageUrl}
+                  price={(item as { price?: { mode: string; amount: number; currency: string } }).price}
+                  more={services.more}
+                  lang={lang}
+                />
               ))}
             </div>
           </div>;

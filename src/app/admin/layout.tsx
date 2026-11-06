@@ -11,13 +11,13 @@ export const metadata: Metadata = {
 };
 
 // Sayfa açılmadan önce kayıtlı temayı uygulayarak renk titremesini önler.
-const themeScript = `try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=t==="light"?"light":"dark"}catch(e){}`;
+const themeScript = `try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=t==="dark"?"dark":"light"}catch(e){}`;
 
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="tr"
-      data-theme="dark"
+      data-theme="light"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${geistSans.variable} h-full antialiased`}

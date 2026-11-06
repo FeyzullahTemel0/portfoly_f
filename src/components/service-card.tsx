@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { motion, useReducedMotion } from "motion/react";
 import { useState, type SyntheticEvent } from "react";
 import { FiArrowRight, FiChevronRight } from "react-icons/fi";
 import { PriceTag } from "@/components/currency";
@@ -9,12 +10,19 @@ import { ServiceIcon } from "@/components/home/icons";
 import { siteImages } from "@/config/images";
 import type { Locale } from "@/lib/locales";
 
-type Props = { href: string; slug: string; title: string; summary: string; more: string; lang?: Locale; imageUrl?: string; price?: { mode: string; amount: number; currency: string } };
+type Props = { href: string; slug: string; title: string; summary: string; more: string; index: number; lang?: Locale; imageUrl?: string; price?: { mode: string; amount: number; currency: string } };
 
 // Mobilde uygulama listesi gibi kompakt satır, geniş ekranda dikey kart.
-export function ServiceCard({ href, slug, title, summary, more, imageUrl, price }: Props) {
+export function ServiceCard({ href, slug, title, summary, more, index, imageUrl, price }: Props) {
   const image = imageUrl || siteImages.services[slug];
   const [imageAccent, setImageAccent] = useState<string | null>(null);
+  const reduceMotion = useReducedMotion();
+  const motionStyle = [
+    { x: 0, y: 42, rotateX: 9, rotateY: 0 },
+    { x: -34, y: 22, rotateX: 0, rotateY: 8 },
+    { x: 34, y: 22, rotateX: 0, rotateY: -8 },
+    { x: 0, y: 48, rotateX: -7, rotateY: 0 },
+  ][index % 4];
 
   function sampleImageAccent(event: SyntheticEvent<HTMLImageElement>) {
     const imageElement = event.currentTarget;
@@ -49,36 +57,45 @@ export function ServiceCard({ href, slug, title, summary, more, imageUrl, price 
   }
 
   return (
-    <Link
-      href={href}
-      className="card-glow group flex h-full items-center gap-4 rounded-2xl border border-border bg-surface p-4 active:scale-[0.99] sm:flex-col sm:items-start sm:gap-5 sm:p-6"
+    <motion.div
+      initial={reduceMotion ? false : { ...motionStyle, opacity: 0, scale: 0.96, filter: "blur(8px)" }}
+      whileInView={{ x: 0, y: 0, rotateX: 0, rotateY: 0, opacity: 1, scale: 1, filter: "blur(0px)" }}
+      viewport={{ once: true, amount: 0.22, margin: "0px 0px -64px 0px" }}
+      transition={{ duration: reduceMotion ? 0 : 0.9, delay: reduceMotion ? 0 : (index % 4) * 0.075, ease: [0.22, 1, 0.36, 1] }}
+      style={{ transformPerspective: 1100, transformStyle: "preserve-3d" }}
+      className="h-full"
     >
-      {image ? (
-        <span className="relative aspect-square w-16 shrink-0 overflow-hidden rounded-lg bg-background sm:aspect-[16/9] sm:w-full sm:rounded-xl">
-          <Image src={image} alt={title} fill sizes="(min-width: 640px) 360px, 64px" onLoad={sampleImageAccent} className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-          {imageAccent && (
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-1/5"
-              style={{ background: `linear-gradient(to top, rgb(${imageAccent} / 0.28), rgb(${imageAccent} / 0.12) 42%, transparent)` }}
-            />
-          )}
-        </span>
-      ) : (
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-lg shadow-accent/25 transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14">
-          <ServiceIcon slug={slug} className="h-6 w-6" />
-        </span>
-      )}
-      <div className="min-w-0 flex-1">
-        <h3 className="text-[15px] font-bold leading-snug sm:text-lg">{title}</h3>
-        <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted sm:line-clamp-3 sm:leading-6">{summary}</p>
-        {price && price.mode !== "quote" && price.amount > 0 && <PriceTag {...price} className="mt-2 inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent" />}
-        <span className="mt-4 hidden items-center gap-1 text-sm font-semibold text-accent sm:inline-flex">
-          {more}
-          <FiArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180" aria-hidden="true" />
-        </span>
-      </div>
-      <FiChevronRight className="h-5 w-5 shrink-0 text-muted rtl:rotate-180 sm:hidden" aria-hidden="true" />
-    </Link>
+      <Link
+        href={href}
+        className="card-glow group flex h-full items-center gap-4 rounded-2xl border border-border bg-surface p-4 active:scale-[0.99] sm:flex-col sm:items-start sm:gap-5 sm:p-6"
+      >
+        {image ? (
+          <span className="relative aspect-square w-16 shrink-0 overflow-hidden rounded-lg bg-background sm:aspect-[16/9] sm:w-full sm:rounded-xl">
+            <Image src={image} alt={title} fill sizes="(min-width: 640px) 360px, 64px" onLoad={sampleImageAccent} className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+            {imageAccent && (
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 transition-all duration-500 ease-out group-hover:translate-y-2 group-hover:opacity-70"
+                style={{ background: `linear-gradient(to top, rgb(${imageAccent} / 0.28), rgb(${imageAccent} / 0.12) 42%, transparent)` }}
+              />
+            )}
+          </span>
+        ) : (
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-lg shadow-accent/25 transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14">
+            <ServiceIcon slug={slug} className="h-6 w-6" />
+          </span>
+        )}
+        <div className="min-w-0 flex-1">
+          <h3 className="text-[15px] font-bold leading-snug sm:text-lg">{title}</h3>
+          <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted sm:line-clamp-3 sm:leading-6">{summary}</p>
+          {price && price.mode !== "quote" && price.amount > 0 && <PriceTag {...price} className="mt-2 inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent" />}
+          <span className="mt-4 hidden items-center gap-1 text-sm font-semibold text-accent sm:inline-flex">
+            {more}
+            <FiArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180" aria-hidden="true" />
+          </span>
+        </div>
+        <FiChevronRight className="h-5 w-5 shrink-0 text-muted rtl:rotate-180 sm:hidden" aria-hidden="true" />
+      </Link>
+    </motion.div>
   );
 }

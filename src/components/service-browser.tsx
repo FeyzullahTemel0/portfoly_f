@@ -28,8 +28,8 @@ export function ServiceBrowser({ groups, more, lang }: { groups: ServiceGroup[];
         })}
       </div>
       <div className="grid items-stretch gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 2xl:grid-cols-4">
-        {visible.map(({ item }) => (
-          <ServiceCard key={item.slug} href={`/${lang}/services/${item.slug}`} slug={iconKey(item as { slug: string; icon?: string })} title={item.title} summary={item.summary} imageUrl={(item as { imageUrl?: string }).imageUrl} price={(item as { price?: { mode: string; amount: number; currency: string } }).price} more={more} lang={lang} />
+        {visible.map(({ item }, index) => (
+          <ServiceCard key={item.slug} index={index} href={`/${lang}/services/${item.slug}`} slug={iconKey(item as { slug: string; icon?: string })} title={item.title} summary={item.summary} imageUrl={(item as { imageUrl?: string }).imageUrl} price={(item as { price?: { mode: string; amount: number; currency: string } }).price} more={more} lang={lang} />
         ))}
       </div>
     </div>

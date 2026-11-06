@@ -4,6 +4,7 @@ import { useEffect, useRef, type RefObject } from "react";
 import { buildLandDots, cities, hub, type City } from "./world-data";
 
 type Rgb = [number, number, number];
+type GlobeColors = { a: Rgb; b: Rgb; dark: boolean };
 
 function parseColor(value: string, fallback: Rgb): Rgb {
   const hex = value.trim().replace("#", "");
@@ -14,7 +15,11 @@ function parseColor(value: string, fallback: Rgb): Rgb {
 
 function readColors() {
   const style = getComputedStyle(document.documentElement);
-  return { a: parseColor(style.getPropertyValue("--accent"), [46, 230, 255]), b: parseColor(style.getPropertyValue("--accent-2"), [59, 130, 255]) };
+  return {
+    a: parseColor(style.getPropertyValue("--accent"), [10, 92, 255]),
+    b: parseColor(style.getPropertyValue("--accent-2"), [0, 163, 217]),
+    dark: document.documentElement.dataset.theme === "dark",
+  } satisfies GlobeColors;
 }
 
 const rgba = (c: Rgb, alpha: number) => `rgba(${c[0]},${c[1]},${c[2]},${alpha})`;
@@ -101,7 +106,7 @@ export function Globe({ pointer }: { pointer: RefObject<{ x: number; y: number }
       const cx = width / 2;
       const cy = height / 2;
       const R = Math.min(width, height) * 0.38;
-      const { a, b } = colors;
+      const { a, b, dark } = colors;
 
       const project = (v: [number, number, number]) => {
         const x1 = v[0] * cosY + v[2] * sinY;
@@ -113,8 +118,8 @@ export function Globe({ pointer }: { pointer: RefObject<{ x: number; y: number }
 
       // Atmosfer ışıması ve gövde.
       const glow = ctx.createRadialGradient(cx, cy, R * 0.92, cx, cy, R * 1.32);
-      glow.addColorStop(0, rgba(a, 0.4));
-      glow.addColorStop(0.35, rgba(b, 0.14));
+      glow.addColorStop(0, rgba(a, dark ? 0.4 : 0.3));
+      glow.addColorStop(0.35, rgba(b, dark ? 0.14 : 0.2));
       glow.addColorStop(1, rgba(b, 0));
       ctx.fillStyle = glow;
       ctx.beginPath();
@@ -122,17 +127,31 @@ export function Globe({ pointer }: { pointer: RefObject<{ x: number; y: number }
       ctx.fill();
 
       const body = ctx.createRadialGradient(cx - R * 0.35, cy - R * 0.4, R * 0.05, cx, cy, R);
-      body.addColorStop(0, rgba(a, 0.13));
-      body.addColorStop(0.55, rgba(b, 0.04));
-      body.addColorStop(1, rgba(b, 0.12));
+      body.addColorStop(0, dark ? rgba(a, 0.13) : "rgba(255,255,255,0.96)");
+      body.addColorStop(0.48, dark ? rgba(b, 0.07) : "rgba(132,184,255,0.5)");
+      body.addColorStop(0.82, dark ? rgba(b, 0.12) : rgba(a, 0.24));
+      body.addColorStop(1, dark ? rgba(b, 0.2) : "rgba(15,76,174,0.48)");
       ctx.fillStyle = body;
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.fill();
 
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.995, 0, Math.PI * 2);
+      ctx.clip();
+      const shimmerX = cx - R * 0.35 + Math.sin(time * 0.00018) * R * 0.42;
+      const shimmer = ctx.createRadialGradient(shimmerX, cy - R * 0.35, R * 0.02, shimmerX, cy - R * 0.35, R * 0.78);
+      shimmer.addColorStop(0, `rgba(255,255,255,${dark ? 0.12 : 0.44})`);
+      shimmer.addColorStop(0.42, rgba(b, dark ? 0.04 : 0.12));
+      shimmer.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = shimmer;
+      ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+      ctx.restore();
+
       // Enlem ve boylam çizgileri.
       ctx.lineWidth = 0.7;
-      ctx.strokeStyle = rgba(a, 0.14);
+      ctx.strokeStyle = rgba(a, dark ? 0.14 : 0.24);
       for (const line of graticule) {
         ctx.beginPath();
         let pen = false;
@@ -157,17 +176,17 @@ export function Globe({ pointer }: { pointer: RefObject<{ x: number; y: number }
         for (const v of set) {
           const p = project(v);
           if (p.z <= 0.02) continue;
-          const shade = 0.4 + 0.6 * Math.pow(p.z, 0.6);
+          const shade = (dark ? 0.4 : 0.72) + (dark ? 0.6 : 0.28) * Math.pow(p.z, 0.6);
           ctx.globalAlpha = Math.min(1, shade);
-          const size = 1.3 + p.z * 1.6;
+          const size = (dark ? 1.3 : 1.5) + p.z * (dark ? 1.6 : 1.8);
           ctx.fillRect(cx + p.x * R - size / 2, cy - p.y * R - size / 2, size, size);
         }
       }
       ctx.globalAlpha = 1;
 
       // Kenar çizgisi.
-      ctx.lineWidth = 1.2;
-      ctx.strokeStyle = rgba(a, 0.45);
+      ctx.lineWidth = dark ? 1.2 : 1.6;
+      ctx.strokeStyle = rgba(a, dark ? 0.45 : 0.62);
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
       ctx.stroke();
@@ -177,7 +196,7 @@ export function Globe({ pointer }: { pointer: RefObject<{ x: number; y: number }
         const projected = arc.points.map(project);
         const visibleAt = (p: { x: number; y: number; z: number }) => p.z > 0 || Math.hypot(p.x, p.y) > 1.0;
         ctx.lineWidth = 1.2;
-        ctx.strokeStyle = rgba(a, 0.42);
+        ctx.strokeStyle = rgba(a, dark ? 0.42 : 0.64);
         ctx.beginPath();
         let pen = false;
         projected.forEach((p) => {
