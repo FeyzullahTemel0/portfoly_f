@@ -5,7 +5,7 @@ import { isCurrency } from "@/lib/currency";
 import { locales, type Locale } from "@/lib/locales";
 import { Content } from "@/models/content";
 import { Service, type ServiceBlock } from "@/models/service";
-import { getCatalogCategory, type ServiceCategory } from "@/lib/service-catalog";
+import { deprecatedServiceSlugs, getCatalogCategory, type ServiceCategory } from "@/lib/service-catalog";
 
 export type ServiceItem = {
   slug: string;
@@ -57,7 +57,7 @@ export async function servicesAreManaged() {
 export const getServiceItems = cache(async (lang: Locale): Promise<ServiceItem[] | null> => {
   try {
     if (!(await servicesAreManaged())) return null;
-    const docs = await Service.find({ visible: true }).sort({ order: 1, createdAt: 1 }).lean();
+    const docs = await Service.find({ visible: true, slug: { $nin: deprecatedServiceSlugs } }).sort({ order: 1, createdAt: 1 }).lean();
     return docs.map((doc) => {
       const content = (doc.content ?? {}) as Record<string, unknown>;
       const own = normalizeBlock(content[lang]);

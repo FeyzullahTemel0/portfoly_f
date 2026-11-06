@@ -20,7 +20,15 @@ export type DefaultServiceItem = {
   price: { mode: "quote"; amount: 0; currency: "TRY" };
 };
 
-export const deprecatedServiceSlugs = ["web-design-mockup", "advertising-design", "poster-design", "digital-platform-design"] as const;
+export const deprecatedServiceSlugs = [
+  "web-design-mockup",
+  "advertising-design",
+  "poster-design",
+  "digital-platform-design",
+  "qr-menu",
+  "mobile-app-development",
+  "saas-development",
+] as const;
 
 const categoryBySlug: Record<string, ServiceCategory> = {
   "corporate-website": "web",
@@ -114,7 +122,7 @@ export function getDefaultServiceItems(lang: Locale, items: readonly BaseService
         price: { mode: "quote" as const, amount: 0 as const, currency: "TRY" as const },
       };
     });
-  const extra = (catalog as CatalogService[]).map((item) => {
+  const extra = (catalog as CatalogService[]).filter((item) => !deprecatedServiceSlugs.includes(item.slug as (typeof deprecatedServiceSlugs)[number])).map((item) => {
     const sourceLocale = lang === "tr" ? "tr" : "en";
     return {
       slug: item.slug,
