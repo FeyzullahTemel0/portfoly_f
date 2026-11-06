@@ -1,4 +1,4 @@
-export type UploadFolder = "rovax/references" | "rovax/team" | "rovax/projects" | "rovax/seo" | "rovax/profile" | "rovax/ads" | "rovax/reviews";
+export type UploadFolder = "rovax/references" | "rovax/team" | "rovax/projects" | "rovax/seo" | "rovax/profile" | "rovax/ads" | "rovax/reviews" | "rovax/articles";
 export const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const MAX_SIDE = 2400;
 

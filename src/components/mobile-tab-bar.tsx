@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiBriefcase, FiGrid, FiHome, FiSend } from "react-icons/fi";
+import { FiBookOpen, FiGrid, FiHome, FiSend } from "react-icons/fi";
 import type { Locale } from "@/lib/locales";
 
 type Props = {
   lang: Locale;
-  labels: { home: string; services: string; projects: string; quote: string };
+  labels: { home: string; services: string; insights: string; quote: string };
 };
 
 // Mobil ve tablette uygulama hissi veren alt sekme çubuğu; masaüstünde gizlenir.
@@ -16,7 +16,7 @@ export function MobileTabBar({ lang, labels }: Props) {
   const tabs = [
     { href: `/${lang}`, label: labels.home, Icon: FiHome, exact: true },
     { href: `/${lang}/services`, label: labels.services, Icon: FiGrid },
-    { href: `/${lang}/projects`, label: labels.projects, Icon: FiBriefcase },
+    { href: `/${lang}/insights`, label: labels.insights, Icon: FiBookOpen },
   ];
 
   return (

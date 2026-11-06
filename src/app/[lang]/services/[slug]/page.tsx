@@ -5,9 +5,12 @@ import { FiAlertCircle, FiCheck, FiX } from "react-icons/fi";
 import { DesktopSoftwareShowcase } from "@/components/desktop-software-showcase";
 import { AdSlot } from "@/components/ad-slot";
 import { PriceTag } from "@/components/currency";
-import { iconKey, ServiceIcon } from "@/components/home/icons";
+import { iconKey } from "@/components/home/icons";
 import { Reveal } from "@/components/reveal";
 import { ShopierShowcase } from "@/components/shopier-showcase";
+import { ServiceArt } from "@/components/service-art";
+import { ServiceTechStack } from "@/components/service-tech-stack";
+import { siteImages } from "@/config/images";
 import { getDictionary } from "@/dictionaries";
 import { isLocale, locales } from "@/lib/locales";
 import { localizedAlternates } from "@/lib/seo";
@@ -52,9 +55,6 @@ export default async function ServiceDetailPage({
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-10 sm:px-6 sm:py-20 lg:grid-cols-2">
           <Reveal>
             <Link href={`/${lang}/services`} className="text-sm text-muted hover:text-foreground">← {services.back}</Link>
-            <span className="mt-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-lg shadow-accent/30 lg:hidden">
-              <ServiceIcon slug={icon} className="h-7 w-7" />
-            </span>
             <h1 className="mt-4 text-balance text-3xl font-extrabold tracking-normal sm:text-5xl">{item.title}</h1>
             <p className="mt-4 text-base leading-7 text-muted sm:text-lg sm:leading-8">{item.intro}</p>
             {price && price.mode !== "quote" && (
@@ -69,13 +69,8 @@ export default async function ServiceDetailPage({
               {services.cta}
             </Link>
           </Reveal>
-          <Reveal delay={0.1} className="hidden lg:block">
-            <div className="relative mx-auto flex aspect-square max-w-sm items-center justify-center rounded-[2.5rem] border border-border bg-surface shadow-2xl">
-              <span aria-hidden="true" className="absolute inset-6 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--accent)_30%,transparent),transparent_70%)] blur-xl" />
-              <span className="relative flex h-32 w-32 items-center justify-center rounded-3xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-2xl shadow-accent/40">
-                <ServiceIcon slug={icon} className="h-16 w-16" />
-              </span>
-            </div>
+          <Reveal delay={0.1} className="order-last min-w-0">
+            <ServiceArt slug={icon} image={siteImages.services[slug]} alt={item.title} lang={lang} className="rounded-2xl border border-border shadow-2xl" />
           </Reveal>
         </div>
       </section>
@@ -151,6 +146,9 @@ export default async function ServiceDetailPage({
               ))}
             </ol>
           </div>
+          <Reveal>
+            <ServiceTechStack slug={slug} title={services.techTitle} note={services.techNote} />
+          </Reveal>
         </div>
 
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">

@@ -9,6 +9,7 @@ import { isCurrency } from "@/lib/currency";
 import { connectDb } from "@/lib/db";
 import { locales, type Locale } from "@/lib/locales";
 import { emptyBlock, normalizeBlock } from "@/lib/services";
+import { deprecatedServiceSlugs, getDefaultServiceItems, type ServiceCategory } from "@/lib/service-catalog";
 import { deleteImage, isOwnImageUrl } from "@/lib/storage";
 import { translateTexts } from "@/lib/translate";
 import { Content } from "@/models/content";
@@ -25,6 +26,7 @@ const clip = (value: unknown, max: number) => (typeof value === "string" ? value
 export type ServiceInput = {
   slug: string;
   group: string;
+  catalogCategory: ServiceCategory;
   icon: string;
   priceMode: string;
   priceAmount: number;
@@ -103,6 +105,7 @@ export async function translateServiceContent(content: Record<string, ServiceBlo
 
 export async function saveService(id: string | null, input: ServiceInput, autoTranslate: boolean): Promise<Result> {
   await requireAdmin();
+  if (!input || typeof input !== "object") return { ok: false, error: "Hizmet verisi geçersiz." };
   if (id !== null && !validId(id)) return { ok: false, error: "Geçersiz istek." };
 
   const content: Record<string, ServiceBlock> = {};
@@ -130,15 +133,17 @@ export async function saveService(id: string | null, input: ServiceInput, autoTr
       }
     }
 
+    const category = (["web", "automation", "ecommerce"] as const).includes(input.catalogCategory) ? input.catalogCategory : "web";
     const data = {
       slug,
-      group: input.group === "design" ? "design" : "software",
+      group: "software" as const,
+      catalogCategory: category,
       icon: clip(input.icon, 40),
       priceMode,
       priceAmount: amount,
       priceCurrency: isCurrency(input.priceCurrency) ? input.priceCurrency : "TRY",
       order: Number.isFinite(Number(input.order)) ? Math.round(Number(input.order)) : 0,
-      visible: !!input.visible,
+      visible: Boolean(input.visible),
       content,
     };
     let savedId = id;
@@ -174,21 +179,25 @@ export async function deleteService(id: string): Promise<Result> {
   }
 }
 
-// Sitenin hazır gelen hizmetlerini (5 dilde) veritabanına aktarır; mevcut adresler atlanır.
 export async function importDefaultServices(): Promise<Result> {
   await requireAdmin();
   try {
     await connectDb();
     let added = 0;
-    const base = baseDictionaries.tr.services.items;
-    for (const [index, item] of base.entries()) {
-      if (await Service.exists({ slug: item.slug })) continue;
+    await Service.updateMany({ slug: { $in: deprecatedServiceSlugs } }, { $set: { visible: false } });
+    const defaults = getDefaultServiceItems("tr", baseDictionaries.tr.services.items);
+    for (const [index, item] of defaults.entries()) {
+      if (await Service.exists({ slug: item.slug })) {
+        await Service.updateOne({ slug: item.slug }, { $set: { catalogCategory: item.catalogCategory, group: "software" } });
+        continue;
+      }
       const content: Record<string, ServiceBlock> = {};
       for (const locale of locales) {
-        const match = baseDictionaries[locale].services.items.find((entry) => entry.slug === item.slug) as unknown;
+        const localizedItems = getDefaultServiceItems(locale, baseDictionaries[locale].services.items);
+        const match = localizedItems.find((entry) => entry.slug === item.slug);
         content[locale] = cleanBlock(match);
       }
-      await Service.create({ slug: item.slug, group: item.group === "design" ? "design" : "software", icon: item.slug, priceMode: "quote", priceAmount: 0, priceCurrency: "TRY", order: index, visible: true, content });
+      await Service.create({ slug: item.slug, group: "software", catalogCategory: item.catalogCategory, icon: item.icon || item.slug, priceMode: "quote", priceAmount: 0, priceCurrency: "TRY", order: index, visible: true, content });
       added += 1;
     }
     await Content.updateOne({ scope: "settings", key: "servicesManaged" }, { $set: { data: { on: true } } }, { upsert: true });

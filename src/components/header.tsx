@@ -174,7 +174,7 @@ export function Header({ lang, brand, nav, language, serviceGroups, allServicesL
     ],
   };
   const links = [
-    { href: `/${lang}/projects`, label: nav.projects },
+    { href: `/${lang}/insights`, label: nav.insights },
     { href: `/${lang}/references`, label: nav.references },
     { href: `/${lang}/contact`, label: nav.contact },
   ];

@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { AdSlot } from "@/components/ad-slot";
-import { iconKey } from "@/components/home/icons";
-import { Reveal } from "@/components/reveal";
-import { ServiceCard } from "@/components/service-card";
+import { ServiceBrowser } from "@/components/service-browser";
 import { getDictionary } from "@/dictionaries";
 import { isLocale } from "@/lib/locales";
 import { groupServices } from "@/lib/service-groups";
@@ -28,32 +26,8 @@ export default async function ServicesPage({ params }: PageProps<"/[lang]/servic
     <>
       <PageHero title={services.title} text={services.text} />
       <AdSlot position="middle" lang={lang} />
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
-        {groupServices(services).map((group) => (
-          <div key={group.key} className="mb-10 last:mb-0 sm:mb-16">
-            <Reveal>
-              <div className="flex items-center gap-4">
-                <h2 className="text-sm font-semibold uppercase tracking-normal text-accent">{group.heading}</h2>
-                <span aria-hidden="true" className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
-              </div>
-            </Reveal>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-              {group.items.map((item, index) => (
-                <Reveal key={item.slug} delay={(index % 3) * 0.08} className="h-full">
-                  <ServiceCard
-                    href={`/${lang}/services/${item.slug}`}
-                    slug={iconKey(item as { slug: string; icon?: string })}
-                    title={item.title}
-                    summary={item.summary}
-                    price={(item as { price?: { mode: string; amount: number; currency: string } }).price}
-                    more={services.more}
-                    lang={lang}
-                  />
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        ))}
+      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-16">
+        <ServiceBrowser groups={groupServices(services)} more={services.more} lang={lang} />
       </section>
       <AdSlot position="lower" lang={lang} />
     </>

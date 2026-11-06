@@ -103,7 +103,7 @@ export default async function RootLayout({
         <main className="flex-1">{children}</main>
         <AdSlot position="bottom" lang={lang} />
         <Footer lang={lang} dict={dict} settings={settings} />
-        <MobileTabBar lang={lang} labels={{ home: dict.nav.home, services: dict.nav.services, projects: dict.nav.projects, quote: dict.nav.quote }} />
+        <MobileTabBar lang={lang} labels={{ home: dict.nav.home, services: dict.nav.services, insights: dict.nav.insights, quote: dict.nav.quote }} />
         </CurrencyProvider>
       </body>
     </html>

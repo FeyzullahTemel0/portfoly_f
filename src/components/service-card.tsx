@@ -1,21 +1,30 @@
 import Link from "next/link";
+import Image from "next/image";
 import { FiArrowRight, FiChevronRight } from "react-icons/fi";
 import { PriceTag } from "@/components/currency";
 import { ServiceIcon } from "@/components/home/icons";
+import { siteImages } from "@/config/images";
 import type { Locale } from "@/lib/locales";
 
 type Props = { href: string; slug: string; title: string; summary: string; more: string; lang?: Locale; price?: { mode: string; amount: number; currency: string } };
 
 // Mobilde uygulama listesi gibi kompakt satır, geniş ekranda dikey kart.
 export function ServiceCard({ href, slug, title, summary, more, price }: Props) {
+  const image = siteImages.services[slug];
   return (
     <Link
       href={href}
       className="card-glow group flex h-full items-center gap-4 rounded-2xl border border-border bg-surface p-4 active:scale-[0.99] sm:flex-col sm:items-start sm:gap-5 sm:p-6"
     >
-      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-lg shadow-accent/25 transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14">
-        <ServiceIcon slug={slug} className="h-6 w-6" />
-      </span>
+      {image ? (
+        <span className="relative aspect-square w-16 shrink-0 overflow-hidden rounded-lg bg-background sm:aspect-[16/9] sm:w-full sm:rounded-xl">
+          <Image src={image} alt={title} fill sizes="(min-width: 640px) 360px, 64px" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+        </span>
+      ) : (
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-lg shadow-accent/25 transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14">
+          <ServiceIcon slug={slug} className="h-6 w-6" />
+        </span>
+      )}
       <div className="min-w-0 flex-1">
         <h3 className="text-[15px] font-bold leading-snug sm:text-lg">{title}</h3>
         <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted sm:line-clamp-3 sm:leading-6">{summary}</p>

@@ -1,18 +1,18 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FiArrowRight, FiCode, FiMessageCircle, FiPenTool } from "react-icons/fi";
+import { FiArrowRight, FiCode, FiCpu, FiMessageCircle, FiShoppingBag } from "react-icons/fi";
 import { HeroShowcase } from "@/components/home/hero-showcase";
 import { AdSlot } from "@/components/ad-slot";
 import { iconKey, WhyIcon } from "@/components/home/icons";
 import { Marquee } from "@/components/home/marquee";
 import { ReferenceShowcase } from "@/components/home/reference-showcase";
-import { ProjectCard } from "@/components/project-card";
+import { InsightsPreview } from "@/components/home/insights-preview";
 import { CustomerReviews } from "@/components/home/customer-reviews";
 import { Reveal } from "@/components/reveal";
 import { ServiceCard } from "@/components/service-card";
 import { getDictionary } from "@/dictionaries";
 import { isLocale } from "@/lib/locales";
-import { getProjects } from "@/lib/projects";
+import { getArticles } from "@/lib/articles";
 import { getApprovedReviews } from "@/lib/customer-reviews";
 import { getReferences } from "@/lib/references";
 import { groupServices } from "@/lib/service-groups";
@@ -44,10 +44,8 @@ export async function generateMetadata({ params }: PageProps<"/[lang]">) {
 export default async function HomePage({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
-  const { hero, why, services, contact, projects } = await getDictionary(lang);
-  const referenceItems = await getReferences(lang);
-  const customerReviews = await getApprovedReviews();
-  const projectItems = (await getProjects(lang)).slice(0, 4);
+  const { hero, why, services, contact } = await getDictionary(lang);
+  const [referenceItems, customerReviews, latestArticles] = await Promise.all([getReferences(lang), getApprovedReviews(), getArticles(lang)]);
 
   return (
     <>
@@ -79,7 +77,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
                   {hero.primary}
                   <FiArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
-                <Link href={`/${lang}/${projectItems.length > 0 ? "projects" : "services"}`} className={secondaryButton}>
+                <Link href={`/${lang}/services`} className={secondaryButton}>
                   {hero.secondary}
                 </Link>
               </div>
@@ -102,12 +100,13 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
         </div>
         <div className="relative z-10 mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-24">
           <SectionTitle title={services.title} text={services.text} />
-          {groupServices(services).map((group) => (
-          <div key={group.key} className="mt-10 sm:mt-14">
+          {groupServices(services).map((group) => {
+            const GroupIcon = group.key === "web" ? FiCode : group.key === "ecommerce" ? FiShoppingBag : FiCpu;
+            return <div key={group.key} className="mt-10 sm:mt-14">
             <Reveal>
               <div className="flex items-center gap-4">
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-surface text-accent">
-                  {group.key === "software" ? <FiCode className="h-4 w-4" aria-hidden="true" /> : <FiPenTool className="h-4 w-4" aria-hidden="true" />}
+                  <GroupIcon className="h-4 w-4" aria-hidden="true" />
                 </span>
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-accent">{group.heading}</h3>
                 <span aria-hidden="true" className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
@@ -128,8 +127,8 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
                 </Reveal>
               ))}
             </div>
-          </div>
-          ))}
+          </div>;
+          })}
         </div>
       </section>
 
@@ -154,25 +153,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
         </div>
       </section>
 
-      {projectItems.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-24">
-          <SectionTitle title={projects.homeTitle} />
-          <div className="mt-10 grid gap-5 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4">
-            {projectItems.map((project, index) => (
-              <Reveal key={project.id} delay={(index % 4) * 0.08}>
-                <ProjectCard lang={lang} project={project} more={projects.more} />
-              </Reveal>
-            ))}
-          </div>
-          <Reveal>
-            <p className="mt-8 text-center">
-              <Link href={`/${lang}/projects`} className="text-sm font-semibold text-accent hover:underline">
-                {projects.viewAll} →
-              </Link>
-            </p>
-          </Reveal>
-        </section>
-      )}
+      <InsightsPreview articles={latestArticles} lang={lang} />
 
       <AdSlot position="lower" lang={lang} />
 

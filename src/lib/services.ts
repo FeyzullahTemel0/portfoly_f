@@ -5,10 +5,12 @@ import { isCurrency } from "@/lib/currency";
 import { locales, type Locale } from "@/lib/locales";
 import { Content } from "@/models/content";
 import { Service, type ServiceBlock } from "@/models/service";
+import { getCatalogCategory, type ServiceCategory } from "@/lib/service-catalog";
 
 export type ServiceItem = {
   slug: string;
   group: "software" | "design";
+  catalogCategory: ServiceCategory;
   icon: string;
   title: string;
   summary: string;
@@ -66,6 +68,7 @@ export const getServiceItems = cache(async (lang: Locale): Promise<ServiceItem[]
       return {
         slug: doc.slug,
         group: doc.group,
+        catalogCategory: doc.catalogCategory ?? getCatalogCategory(doc.slug),
         icon: doc.icon,
         title: pickText("title"),
         summary: pickText("summary"),

@@ -55,7 +55,7 @@ export function Footer({ lang, dict, settings }: FooterProps) {
             <li><Link href={`/${lang}/team`} className={linkClass}>{dict.nav.team}</Link></li>
             <li><Link href={`/${lang}/packages`} className={linkClass}>{dict.nav.packages}</Link></li>
             <li><Link href={`/${lang}/process`} className={linkClass}>{dict.nav.process}</Link></li>
-            <li><Link href={`/${lang}/projects`} className={linkClass}>{dict.nav.projects}</Link></li>
+            <li><Link href={`/${lang}/insights`} className={linkClass}>{dict.nav.insights}</Link></li>
             <li><Link href={`/${lang}/references`} className={linkClass}>{dict.nav.references}</Link></li>
             <li><Link href={`/${lang}/contact`} className={linkClass}>{dict.nav.contact}</Link></li>
           </ul>

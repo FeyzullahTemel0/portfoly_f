@@ -14,6 +14,7 @@ export type ServiceBlock = {
 export type ServiceDoc = {
   slug: string;
   group: "software" | "design";
+  catalogCategory: "web" | "automation" | "ecommerce";
   icon: string;
   priceMode: "from" | "fixed" | "quote";
   priceAmount: number;
@@ -27,6 +28,7 @@ const ServiceSchema = new Schema<ServiceDoc>(
   {
     slug: { type: String, required: true, unique: true, maxlength: 80 },
     group: { type: String, enum: ["software", "design"], default: "software" },
+    catalogCategory: { type: String, enum: ["web", "automation", "ecommerce"], default: "web" },
     icon: { type: String, default: "", maxlength: 40 },
     priceMode: { type: String, enum: ["from", "fixed", "quote"], default: "quote" },
     priceAmount: { type: Number, default: 0, min: 0 },

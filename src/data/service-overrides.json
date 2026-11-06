@@ -1,0 +1,42 @@
+{
+  "corporate-website": {
+    "catalogCategory": "web",
+    "title": { "tr": "Premium Kurumsal Web Siteleri", "en": "Premium Corporate Websites", "de": "Premium-Unternehmenswebsites", "fr": "Sites web corporate premium", "ar": "مواقع إلكترونية مؤسسية احترافية" },
+    "summary": { "tr": "Marka kimliğinizi yansıtan, hızlı ve yönetilebilir kurumsal web siteleri.", "en": "Fast, manageable corporate websites shaped around your brand identity.", "de": "Schnelle, verwaltbare Unternehmenswebsites passend zu Ihrer Marke.", "fr": "Des sites corporate rapides et faciles à gérer, à l’image de votre marque.", "ar": "مواقع مؤسسية سريعة وسهلة الإدارة تعكس هوية علامتكم." }
+  },
+  "shopier-ecommerce": {
+    "catalogCategory": "ecommerce",
+    "title": { "tr": "Shopier Entegreli Satış Siteleri", "en": "Shopier-Integrated Storefronts", "de": "Shopier-integrierte Shops", "fr": "Boutiques connectées à Shopier", "ar": "متاجر متصلة بـ Shopier" },
+    "summary": { "tr": "Kendi markalı web mağazanız; ürün ve sipariş yönetimi Shopier uygulamasında.", "en": "Your branded web store, with products and orders managed in the Shopier app.", "de": "Ihr eigener Webshop; Produkte und Bestellungen verwalten Sie in der Shopier-App.", "fr": "Votre boutique à votre marque ; produits et commandes gérés dans l’application Shopier.", "ar": "متجركم بعلامتكم التجارية، مع إدارة المنتجات والطلبات عبر تطبيق Shopier." }
+  },
+  "booking-systems": {
+    "catalogCategory": "automation",
+    "title": { "tr": "Otomatik Randevu ve Rezervasyon Sistemleri", "en": "Appointment and Reservation Systems", "de": "Termin- und Reservierungssysteme", "fr": "Systèmes de rendez-vous et réservation", "ar": "أنظمة المواعيد والحجوزات" },
+    "summary": { "tr": "Müşterilerin çevrim içi saat seçtiği, işletmenizin tek panelden yönettiği takvimler.", "en": "Online time selection for customers and one-panel scheduling for your team.", "de": "Online-Terminwahl für Kunden und zentrale Kalenderverwaltung für Ihr Team.", "fr": "Choix de créneau en ligne et gestion centralisée pour votre équipe.", "ar": "يختار العملاء المواعيد عبر الإنترنت ويدير فريقكم الجدول من لوحة واحدة." }
+  },
+  "personal-blog": {
+    "catalogCategory": "web",
+    "title": { "tr": "Kişisel Marka ve Blog Siteleri", "en": "Personal Brand and Blog Websites", "de": "Persönliche Marken- und Blog-Websites", "fr": "Sites de marque personnelle et blogs", "ar": "مواقع العلامة الشخصية والمدونات" },
+    "summary": { "tr": "Çalışmalarınızı ve yazılarınızı kendi yönetilebilir sitenizde yayımlayın.", "en": "Publish your work and articles on a website you can manage yourself.", "de": "Veröffentlichen Sie Arbeiten und Beiträge auf Ihrer selbst verwalteten Website.", "fr": "Publiez vos travaux et articles sur un site que vous gérez vous-même.", "ar": "انشروا أعمالكم ومقالاتكم على موقع تديرونه بأنفسكم." }
+  },
+  "custom-software": {
+    "catalogCategory": "web",
+    "title": { "tr": "Sıfırdan Özel Web Uygulamaları", "en": "Custom Web Applications", "de": "Individuelle Webanwendungen", "fr": "Applications web sur mesure", "ar": "تطبيقات ويب مخصصة" },
+    "summary": { "tr": "Hazır paketlerin karşılamadığı iş akışları için size özel web yazılımları.", "en": "Purpose-built web software for workflows that ready-made packages cannot handle.", "de": "Individuelle Websoftware für Abläufe, die Standardpakete nicht abdecken.", "fr": "Des logiciels web sur mesure lorsque les offres standard ne suffisent pas.", "ar": "برمجيات ويب مصممة لسير العمل الذي لا تغطيه الحلول الجاهزة." }
+  },
+  "admin-panel": {
+    "catalogCategory": "web",
+    "title": { "tr": "Özel Web Yönetim Panelleri (CMS)", "en": "Custom Web Admin Panels (CMS)", "de": "Individuelle Web-Verwaltungsbereiche (CMS)", "fr": "Panneaux d’administration web (CMS) sur mesure", "ar": "لوحات إدارة ويب مخصصة (CMS)" },
+    "summary": { "tr": "İçerik, kayıt ve operasyonlarınızı yetkilere göre web panelinden yönetin.", "en": "Manage content, records and operations from a web panel with defined access.", "de": "Verwalten Sie Inhalte und Abläufe mit klar geregelten Zugriffsrechten.", "fr": "Gérez contenus et opérations depuis un panneau avec des accès définis.", "ar": "أديروا المحتوى والسجلات والعمليات عبر لوحة ويب بصلاحيات محددة." }
+  },
+  "windows-desktop-apps": {
+    "catalogCategory": "automation",
+    "title": { "tr": "Windows Masaüstü Programları", "en": "Windows Desktop Applications", "de": "Windows-Desktopanwendungen", "fr": "Applications de bureau Windows", "ar": "تطبيقات سطح مكتب Windows" },
+    "summary": { "tr": "Python ile iş akışınıza göre geliştirilen Windows masaüstü uygulamaları.", "en": "Python desktop applications built around your Windows workflows.", "de": "Python-Desktopanwendungen passend zu Ihren Windows-Abläufen.", "fr": "Des applications Python adaptées à vos processus sous Windows.", "ar": "تطبيقات سطح مكتب Python مصممة وفق سير عملكم على Windows." }
+  },
+  "crm-panel": {
+    "catalogCategory": "automation",
+    "title": { "tr": "Müşteri ve Satış Takip Sistemi (CRM)", "en": "Customer and Sales Tracking (CRM)", "de": "Kunden- und Vertriebsverwaltung (CRM)", "fr": "Suivi clients et ventes (CRM)", "ar": "نظام متابعة العملاء والمبيعات (CRM)" },
+    "summary": { "tr": "Müşteri iletişimini, teklif aşamalarını ve sıradaki işleri tek panelde izleyin.", "en": "Track customer conversations, deal stages and next actions in one panel.", "de": "Behalten Sie Kundengespräche, Angebotsphasen und nächste Aufgaben im Blick.", "fr": "Suivez échanges clients, étapes commerciales et prochaines actions au même endroit.", "ar": "تابعوا محادثات العملاء ومراحل البيع والخطوات التالية في لوحة واحدة." }
+  }
+}
