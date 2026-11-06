@@ -8,7 +8,6 @@ export const adminSections = [
   { key: "about", title: "Hakkımızda (CV)", description: "Profil, deneyim, yetenekler, eğitim, misyon, vizyon ve değerler." },
   { key: "aboutTeaser", title: "Ana Sayfa Hakkımızda Özeti", description: "Ana sayfadaki kısa tanıtım alanı." },
   { key: "references", title: "Referanslar Sayfası Metinleri", description: "Referanslar sayfası başlıkları (firmaların kendisi Referanslar menüsünden yönetilir)." },
-  { key: "projects", title: "Projeler Sayfası Metinleri", description: "Projeler sayfası başlıkları (projelerin kendisi Projeler menüsünden yönetilir)." },
   { key: "team", title: "Ekip Sayfası Metinleri", description: "Ekibimiz sayfası başlıkları (ekip üyelerinin kendisi Ekip menüsünden yönetilir)." },
   { key: "contact", title: "İletişim Sayfası", description: "İletişim sayfası başlıkları ve etiketleri." },
   { key: "contactForm", title: "Teklif ve Mesaj Formları", description: "Form başlıkları, alan adları, hata ve başarı mesajları." },

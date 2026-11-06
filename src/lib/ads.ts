@@ -34,7 +34,7 @@ export const AD_PAGES: { key: string; label: string; url: string; rows: Row[] }[
       { kind: "chrome", label: "Karşılama alanı" },
       { kind: "box", label: "Hizmetler" },
       { kind: "slot", slot: "middle" },
-      { kind: "box", label: "Neden biz ve projeler" },
+      { kind: "box", label: "Neden Biz, Önemli Bilgiler ve değerlendirmeler" },
       { kind: "slot", slot: "lower" },
       { kind: "box", label: "İletişim çağrısı" },
       { kind: "slot", slot: "bottom" },
@@ -71,14 +71,14 @@ export const AD_PAGES: { key: string; label: string; url: string; rows: Row[] }[
   },
   {
     key: "projects",
-    label: "Projeler",
-    url: "/projects",
+    label: "Eski Projeler → Referanslar",
+    url: "/projects → /references",
     rows: [
       { kind: "chrome", label: "Menü" },
       { kind: "slot", slot: "top" },
       { kind: "box", label: "Sayfa başlığı" },
       { kind: "slot", slot: "middle" },
-      { kind: "box", label: "Proje kartları" },
+      { kind: "box", label: "Referans kartları" },
       { kind: "slot", slot: "bottom" },
       { kind: "chrome", label: "Alt bilgi (footer)" },
     ],
@@ -93,6 +93,20 @@ export const AD_PAGES: { key: string; label: string; url: string; rows: Row[] }[
       { kind: "box", label: "Sayfa başlığı" },
       { kind: "slot", slot: "middle" },
       { kind: "box", label: "Referans kartları" },
+      { kind: "slot", slot: "bottom" },
+      { kind: "chrome", label: "Alt bilgi (footer)" },
+    ],
+  },
+  {
+    key: "insights",
+    label: "Önemli Bilgiler",
+    url: "/insights",
+    rows: [
+      { kind: "chrome", label: "Menü" },
+      { kind: "slot", slot: "top" },
+      { kind: "box", label: "Sayfa başlığı ve arama" },
+      { kind: "slot", slot: "middle" },
+      { kind: "box", label: "Makale listesi" },
       { kind: "slot", slot: "bottom" },
       { kind: "chrome", label: "Alt bilgi (footer)" },
     ],
@@ -120,6 +134,12 @@ export const AD_PAGES: { key: string; label: string; url: string; rows: Row[] }[
 export const adPageKeys = AD_PAGES.map((page) => page.key);
 
 export const placementKey = (page: string, slot: string) => `${page}:${slot}`;
+
+export function relatedAdPlacements(placement: string) {
+  const [page, slot] = placement.split(":");
+  if (slot && (page === "projects" || page === "references")) return [`references:${slot}`, `projects:${slot}`];
+  return [placement];
+}
 
 export function pageSlots(page: string): AdSlotKey[] {
   const found = AD_PAGES.find((item) => item.key === page);
@@ -155,5 +175,6 @@ export function pageKeyFromPath(pathname: string) {
   const section = parts[1];
   if (!section) return "home";
   if (section === "services") return parts[2] ? "service" : "services";
+  if (section === "projects") return "references";
   return adPageKeys.includes(section) ? section : "other";
 }

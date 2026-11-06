@@ -2,11 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { FiGlobe } from "react-icons/fi";
 import type { JSONContent } from "@tiptap/core";
 import { ArticleEditor } from "@/components/admin/article-editor";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { locales, type Locale } from "@/lib/locales";
-import { deleteArticle, saveArticle, type ArticleInput } from "@/app/admin/(panel)/article-actions";
+import { deleteArticle, saveArticle, translateArticleContent, type ArticleInput } from "@/app/admin/(panel)/article-actions";
 
 const inputClass = "w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/25";
 const labelClass = "mb-1.5 block text-xs font-semibold text-muted";
@@ -37,6 +38,24 @@ export function ArticleForm({ id, initial, storageReady }: Props) {
       if (!result.ok) return setStatus({ ok: false, text: result.error ?? "Makale kaydedilemedi." });
       router.push("/admin/articles");
       router.refresh();
+    });
+  }
+
+  function translate(overwrite: boolean) {
+    if (!form.title.tr.trim()) {
+      setStatus({ ok: false, text: "Önce Türkçe makale başlığını doldurun." });
+      return;
+    }
+    if (overwrite && !window.confirm("İngilizce, Almanca, Fransızca ve Arapça içeriklerin üzerine Türkçeden yapılan çeviriler yazılacak. Devam edilsin mi?")) return;
+    startTransition(async () => {
+      setStatus({ ok: true, text: "Türkçe içerik diğer dillere çevriliyor..." });
+      const result = await translateArticleContent(form, overwrite);
+      if (!result.ok || !result.data) {
+        setStatus({ ok: false, text: result.error ?? "Çeviri yapılamadı." });
+        return;
+      }
+      setForm(result.data);
+      setStatus({ ok: true, text: "Çeviri tamamlandı. İçeriği kontrol edip makaleyi kaydedin." });
     });
   }
 
@@ -73,7 +92,15 @@ export function ArticleForm({ id, initial, storageReady }: Props) {
 
       <section className="space-y-5 rounded-xl border border-border bg-surface p-4 sm:p-6">
         <div className="sticky top-14 z-10 -mx-4 -mt-4 border-b border-border bg-surface/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:-mt-6 sm:px-6">
-          <p className="mb-2 text-xs text-muted">Başlık, özet, kategori ve kapak açıklaması seçili dile göre düzenlenir. Yazı gövdesini de her dil sekmesinde ayrı hazırlayabilirsiniz.</p>
+          <p className="mb-3 text-xs text-muted">Türkçe içeriği hazırlayın, diğer dillere otomatik çevirin ve gerekirse her dili elle düzenleyin.</p>
+          <div className="mb-3 flex flex-wrap gap-2">
+            <button type="button" onClick={() => translate(false)} disabled={pending} className="inline-flex h-9 items-center gap-2 rounded-lg border border-accent/50 px-3 text-xs font-semibold text-accent transition-colors hover:bg-accent/10 disabled:opacity-50 sm:text-sm">
+              <FiGlobe className="h-4 w-4" /> Boş dilleri Türkçeden çevir
+            </button>
+            <button type="button" onClick={() => translate(true)} disabled={pending} className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-xs font-medium transition-colors hover:border-accent disabled:opacity-50 sm:text-sm">
+              {pending ? "Çevriliyor..." : "Tüm dilleri yeniden çevir"}
+            </button>
+          </div>
           <div role="tablist" aria-label="Makale dili" className="flex gap-1 overflow-x-auto rounded-lg bg-background p-1">
             {locales.map((locale) => (
               <button key={locale} type="button" role="tab" aria-selected={language === locale} onClick={() => setLanguage(locale)} className={`flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-xs font-semibold transition-colors sm:text-sm ${language === locale ? "bg-accent text-accent-foreground" : "text-muted hover:text-foreground"}`}>

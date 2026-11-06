@@ -85,7 +85,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
           </div>
 
           <div className="min-w-0">
-            <HeroShowcase />
+            <HeroShowcase lang={lang} />
           </div>
         </div>
         <Marquee items={services.items.map((item) => item.title)} />

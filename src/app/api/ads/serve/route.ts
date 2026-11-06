@@ -1,5 +1,5 @@
 import { connectDb } from "@/lib/db";
-import { AD_SLOTS, isAdSlot, slotCapacity } from "@/lib/ads";
+import { AD_SLOTS, isAdSlot, relatedAdPlacements, slotCapacity } from "@/lib/ads";
 import { Ad } from "@/models/ad";
 
 export const dynamic = "force-dynamic";
@@ -15,9 +15,10 @@ export async function GET(request: Request) {
   try {
     await connectDb();
     const now = new Date();
+    const placements = relatedAdPlacements(`${page}:${slot}`);
     const docs = await Ad.find({
       active: true,
-      placements: `${page}:${slot}`,
+      placements: { $in: placements },
       $and: [{ $or: [{ startsAt: null }, { startsAt: { $lte: now } }] }, { $or: [{ endsAt: null }, { endsAt: { $gte: now } }] }],
     })
       .sort({ priority: -1, createdAt: 1 })

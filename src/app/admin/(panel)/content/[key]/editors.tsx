@@ -4,11 +4,13 @@ import { useState, useTransition } from "react";
 import { FiRotateCcw, FiSave } from "react-icons/fi";
 import { Node, type Json } from "@/components/admin/json-editor";
 import { ImageUploader } from "@/components/admin/image-uploader";
+import { locales, type Locale } from "@/lib/locales";
 import { resetContent, saveAboutPhoto, saveContent, saveSettings } from "../../actions";
 
 type Common = { labels: Record<string, string>; templates: Record<string, Json> };
 type Status = { ok: boolean; text: string } | null;
 type ProfilePhoto = { url: string; publicId: string };
+const languageLabels: Record<Locale, string> = { tr: "Türkçe", en: "English", de: "Deutsch", fr: "Français", ar: "العربية" };
 
 function StatusMessage({ status }: { status: Status }) {
   if (!status) return null;
@@ -24,8 +26,8 @@ const primaryButton =
 const secondaryButton =
   "inline-flex h-10 items-center gap-2 rounded-lg border border-border px-4 text-sm font-medium transition-colors hover:border-accent hover:text-accent disabled:opacity-60";
 
-export function ContentEditor({ sectionKey, initial, labels, templates, profilePhoto, cloudinaryReady }: Common & { sectionKey: string; initial: { tr: Json; en: Json }; profilePhoto: ProfilePhoto; cloudinaryReady: boolean }) {
-  const [lang, setLang] = useState<"tr" | "en">("tr");
+export function ContentEditor({ sectionKey, initial, labels, templates, profilePhoto, cloudinaryReady }: Common & { sectionKey: string; initial: Record<Locale, Json>; profilePhoto: ProfilePhoto; cloudinaryReady: boolean }) {
+  const [lang, setLang] = useState<Locale>("tr");
   const [data, setData] = useState(initial);
   const [photo, setPhoto] = useState(profilePhoto);
   const [status, setStatus] = useState<Status>(null);
@@ -51,7 +53,7 @@ export function ContentEditor({ sectionKey, initial, labels, templates, profileP
     <div>
       <div className="sticky top-14 z-20 -mx-4 mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background/90 px-4 py-3 backdrop-blur sm:-mx-8 sm:px-8 lg:top-0">
         <div role="tablist" className="inline-flex rounded-lg border border-border bg-surface p-1">
-          {(["tr", "en"] as const).map((code) => (
+          {locales.map((code) => (
             <button
               key={code}
               type="button"
@@ -60,7 +62,7 @@ export function ContentEditor({ sectionKey, initial, labels, templates, profileP
               onClick={() => { setLang(code); setStatus(null); }}
               className={`rounded-md px-4 py-1.5 text-sm font-semibold transition-colors ${lang === code ? "bg-accent text-accent-foreground" : "text-muted hover:text-foreground"}`}
             >
-              {code === "tr" ? "Türkçe" : "English"}
+              {languageLabels[code]}
             </button>
           ))}
         </div>

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AdminHeader, DbError } from "@/components/admin/page-header";
-import { placementLabel } from "@/lib/ads";
+import { placementLabel, relatedAdPlacements } from "@/lib/ads";
 import { formatDate } from "@/lib/admin-ui";
 import { requireAdmin } from "@/lib/auth";
 import { connectDb } from "@/lib/db";
@@ -39,7 +39,12 @@ export default async function AdsAdminPage({ searchParams }: { searchParams: Pro
   const counts: Record<string, number> = { all: withStatus.length };
   for (const ad of withStatus) counts[ad.state] = (counts[ad.state] ?? 0) + 1;
   const occupancy: Record<string, number> = {};
-  for (const ad of withStatus) if (ad.state === "live" || ad.state === "scheduled") for (const placement of ad.placements) occupancy[placement] = (occupancy[placement] ?? 0) + 1;
+  for (const ad of withStatus) {
+    if (ad.state !== "live" && ad.state !== "scheduled") continue;
+    for (const placement of ad.placements) {
+      for (const related of relatedAdPlacements(placement)) occupancy[related] = (occupancy[related] ?? 0) + 1;
+    }
+  }
   const visible = filter === "all" ? withStatus : withStatus.filter((ad) => ad.state === filter);
 
   return (

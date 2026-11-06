@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import mongoose from "mongoose";
 import { AdminHeader } from "@/components/admin/page-header";
-import { isValidPlacement } from "@/lib/ads";
+import { isValidPlacement, relatedAdPlacements } from "@/lib/ads";
 import { requireAdmin } from "@/lib/auth";
 import { connectDb } from "@/lib/db";
 import { isStorageConfigured } from "@/lib/storage";
@@ -64,7 +64,11 @@ export default async function AdEditPage({ params, searchParams }: { params: Pro
   const occupancy: Record<string, number> = {};
   for (const ad of others) {
     const state = adStatus(ad);
-    if (state === "live" || state === "scheduled") for (const item of ad.placements) occupancy[item] = (occupancy[item] ?? 0) + 1;
+    if (state === "live" || state === "scheduled") {
+      for (const item of ad.placements) {
+        for (const related of relatedAdPlacements(item)) occupancy[related] = (occupancy[related] ?? 0) + 1;
+      }
+    }
   }
 
   return (

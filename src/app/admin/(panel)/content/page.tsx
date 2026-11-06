@@ -3,12 +3,13 @@ import { AdminHeader } from "@/components/admin/page-header";
 import { adminSections } from "@/lib/admin-config";
 import { requireAdmin } from "@/lib/auth";
 import { connectDb } from "@/lib/db";
+import { locales } from "@/lib/locales";
 import { Content } from "@/models/content";
 
 async function loadCustomized() {
   try {
     await connectDb();
-    const docs = await Content.find({ scope: { $in: ["tr", "en"] } }, { key: 1 }).lean();
+    const docs = await Content.find({ scope: { $in: locales } }, { key: 1 }).lean();
     return new Set(docs.map((doc) => doc.key));
   } catch {
     return new Set<string>();
@@ -21,7 +22,7 @@ export default async function ContentIndexPage() {
 
   return (
     <>
-      <AdminHeader title="Site İçeriği" text="Sitedeki tüm metinleri buradan düzenleyebilirsiniz. Bir bölüm seçin." />
+      <AdminHeader title="Site İçeriği" text="Site metinlerini beş dilde düzenleyin. Önemli Bilgiler yazılarını Makaleler bölümünden yönetin." />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {adminSections.map((section) => (
           <Link

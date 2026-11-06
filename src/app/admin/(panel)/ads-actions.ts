@@ -2,7 +2,7 @@
 
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
-import { isValidPlacement, placementLabel, slotCapacity, type AdSlotKey } from "@/lib/ads";
+import { isValidPlacement, placementLabel, relatedAdPlacements, slotCapacity, type AdSlotKey } from "@/lib/ads";
 import { requireAdmin } from "@/lib/auth";
 import { connectDb } from "@/lib/db";
 import { safeUrl } from "@/lib/site";
@@ -72,7 +72,7 @@ export async function saveAd(id: string | null, input: AdInput): Promise<AdResul
       for (const placement of placements) {
         const slot = placement.split(":")[1] as AdSlotKey;
         const taken = await Ad.countDocuments({
-          placements: placement,
+          placements: { $in: relatedAdPlacements(placement) },
           active: true,
           ...(id ? { _id: { $ne: id } } : {}),
           $or: [{ endsAt: null }, { endsAt: { $gte: now } }],
@@ -126,7 +126,7 @@ export async function setAdActive(id: string, active: boolean): Promise<AdResult
       const now = new Date();
       for (const placement of ad.placements) {
         const slot = placement.split(":")[1] as AdSlotKey;
-        const taken = await Ad.countDocuments({ placements: placement, active: true, _id: { $ne: id }, $or: [{ endsAt: null }, { endsAt: { $gte: now } }] });
+        const taken = await Ad.countDocuments({ placements: { $in: relatedAdPlacements(placement) }, active: true, _id: { $ne: id }, $or: [{ endsAt: null }, { endsAt: { $gte: now } }] });
         if (taken >= slotCapacity(slot)) return { ok: false, error: `"${placementLabel(placement)}" konumu dolu.` };
       }
     }

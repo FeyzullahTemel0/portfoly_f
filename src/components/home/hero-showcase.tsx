@@ -3,19 +3,62 @@
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { useRef, type CSSProperties } from "react";
 import { Globe } from "@/components/home/globe";
+import type { Locale } from "@/lib/locales";
 
-const serviceLabels = [
-  "Kişisel ve Blog Siteleri",
-  "Shopier Entegreli E-Ticaret Siteleri",
-  "Randevu Sistemleri",
-  "Masaüstü Yazılımları",
-  "Kitap & Dergi Paylaşım Siteleri",
-  "İlan Siteleri",
-  "Masaüstü Otomasyonlar",
-  "Stok Takip Programları (Masaüstü ve Web)",
-];
+const serviceLabels: Record<Locale, string[]> = {
+  tr: [
+    "Kişisel ve Blog Siteleri",
+    "Shopier Entegreli E-Ticaret Siteleri",
+    "Randevu Sistemleri",
+    "Masaüstü Yazılımları",
+    "Kitap & Dergi Paylaşım Siteleri",
+    "İlan Siteleri",
+    "Masaüstü Otomasyonlar",
+    "Stok Takip Programları (Masaüstü ve Web)",
+  ],
+  en: [
+    "Personal and Blog Websites",
+    "Shopier-Integrated E-Commerce Sites",
+    "Booking Systems",
+    "Desktop Software",
+    "Book & Magazine Sharing Sites",
+    "Classified Ads Sites",
+    "Desktop Automation",
+    "Inventory Tracking Software (Desktop and Web)",
+  ],
+  de: [
+    "Persönliche Websites und Blogs",
+    "E-Commerce-Seiten mit Shopier-Anbindung",
+    "Buchungssysteme",
+    "Desktop-Software",
+    "Plattformen für Bücher und Magazine",
+    "Kleinanzeigen-Portale",
+    "Desktop-Automatisierung",
+    "Lagerverwaltung (Desktop und Web)",
+  ],
+  fr: [
+    "Sites personnels et blogs",
+    "Sites e-commerce intégrés à Shopier",
+    "Systèmes de réservation",
+    "Logiciels de bureau",
+    "Sites de partage de livres et magazines",
+    "Sites de petites annonces",
+    "Automatisations de bureau",
+    "Logiciels de suivi de stock (bureau et web)",
+  ],
+  ar: [
+    "مواقع شخصية ومدونات",
+    "مواقع تجارة إلكترونية متكاملة مع Shopier",
+    "أنظمة الحجز والمواعيد",
+    "برامج سطح المكتب",
+    "مواقع مشاركة الكتب والمجلات",
+    "مواقع الإعلانات المبوبة",
+    "أتمتة سطح المكتب",
+    "برامج تتبع المخزون (سطح المكتب والويب)",
+  ],
+};
 
-export function HeroShowcase() {
+export function HeroShowcase({ lang }: { lang: Locale }) {
   const reduce = useReducedMotion();
   const pointer = useRef({ x: 0, y: 0 });
   const mx = useMotionValue(0);
@@ -81,7 +124,7 @@ export function HeroShowcase() {
         </g>
       </svg>
 
-      {serviceLabels.map((label, position) => {
+      {serviceLabels[lang].map((label, position) => {
         const side = position % 2 === 0 ? "left-0" : "right-0";
         const top = `${16 + Math.floor(position / 2) * 22}%`;
         return (

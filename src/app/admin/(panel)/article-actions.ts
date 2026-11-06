@@ -7,6 +7,7 @@ import { requireAdmin } from "@/lib/auth";
 import { connectDb } from "@/lib/db";
 import { locales, type LocalizedText } from "@/lib/locales";
 import { deleteImage, isOwnImageUrl, keyFromUrl } from "@/lib/storage";
+import { translateTexts } from "@/lib/translate";
 import { Article, type ArticleBody } from "@/models/article";
 
 export type ArticleInput = {
@@ -22,7 +23,7 @@ export type ArticleInput = {
   status: "draft" | "published";
 };
 
-type ActionResult = { ok: boolean; id?: string; error?: string };
+type ActionResult = { ok: boolean; id?: string; error?: string; data?: ArticleInput };
 type Plain = Record<string, unknown>;
 const maxBodyBytes = 850_000;
 const maxNodes = 5000;
@@ -40,6 +41,86 @@ function slugify(value: string) {
 function cleanLocalized(value: unknown, max: number): LocalizedText {
   const source = isPlain(value) ? value : {};
   return Object.fromEntries(locales.map((locale) => [locale, typeof source[locale] === "string" ? (source[locale] as string).trim().slice(0, max) : ""])) as LocalizedText;
+}
+
+function collectBodyText(body: JSONContent | undefined): string[] {
+  if (!body) return [];
+  const texts: string[] = [];
+  function visit(node: JSONContent) {
+    if (node.type === "text") texts.push(typeof node.text === "string" ? node.text : "");
+    if (node.type === "image") {
+      const attrs = (node.attrs ?? {}) as Record<string, unknown>;
+      texts.push(typeof attrs.alt === "string" ? attrs.alt : "", typeof attrs.title === "string" ? attrs.title : "");
+    }
+    node.content?.forEach(visit);
+  }
+  visit(body);
+  return texts;
+}
+
+function applyBodyTranslation(body: JSONContent, translations: string[]): JSONContent {
+  let index = 0;
+  function visit(node: JSONContent): JSONContent {
+    const translated: JSONContent = { ...node };
+    if (node.type === "text") translated.text = translations[index++] ?? node.text;
+    if (node.type === "image") {
+      const attrs = (node.attrs ?? {}) as Record<string, unknown>;
+      translated.attrs = {
+        ...attrs,
+        alt: translations[index++] ?? attrs.alt,
+        title: translations[index++] ?? attrs.title,
+      };
+    }
+    if (node.content) translated.content = node.content.map(visit);
+    return translated;
+  }
+  return visit(body);
+}
+
+export async function translateArticleContent(input: ArticleInput, overwrite: boolean): Promise<ActionResult> {
+  await requireAdmin();
+  if (!input || typeof input !== "object" || !input.title?.tr?.trim()) {
+    return { ok: false, error: "Önce Türkçe makale başlığını doldurun." };
+  }
+  const sourceBody = input.body?.tr;
+  if (!sourceBody) return { ok: false, error: "Önce Türkçe makale gövdesini hazırlayın." };
+
+  const translated: ArticleInput = {
+    ...input,
+    title: { ...input.title },
+    excerpt: { ...input.excerpt },
+    category: { ...input.category },
+    coverAlt: { ...input.coverAlt },
+    body: { ...input.body },
+  };
+  const fields = ["title", "excerpt", "category", "coverAlt"] as const;
+
+  try {
+    for (const locale of locales) {
+      if (locale === "tr") continue;
+      const sourceTexts: string[] = [];
+      const fieldTasks: { field: (typeof fields)[number]; index: number }[] = [];
+      for (const field of fields) {
+        if (overwrite || !translated[field][locale]) {
+          fieldTasks.push({ field, index: sourceTexts.length });
+          sourceTexts.push(input[field].tr ?? "");
+        }
+      }
+
+      const targetHasBodyText = collectBodyText(translated.body[locale]).some((text) => text.trim());
+      const translateBody = overwrite || !targetHasBodyText;
+      const bodyStart = sourceTexts.length;
+      if (translateBody) sourceTexts.push(...collectBodyText(sourceBody));
+
+      const results = await translateTexts(sourceTexts, "tr", locale);
+      for (const task of fieldTasks) translated[task.field][locale] = results[task.index] ?? "";
+      if (translateBody) translated.body[locale] = applyBodyTranslation(sourceBody, results.slice(bodyStart));
+    }
+    return { ok: true, data: translated };
+  } catch (error) {
+    console.error("Makale çevirisi başarısız:", error);
+    return { ok: false, error: error instanceof Error ? `Çeviri yapılamadı: ${error.message}` : "Çeviri yapılamadı. Lütfen tekrar deneyin." };
+  }
 }
 
 function cleanHref(value: unknown) {

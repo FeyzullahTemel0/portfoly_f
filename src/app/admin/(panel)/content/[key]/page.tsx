@@ -4,6 +4,7 @@ import { AdminHeader } from "@/components/admin/page-header";
 import { getDictionary } from "@/dictionaries";
 import { isStorageConfigured } from "@/lib/storage";
 import { getAboutPhoto } from "@/lib/about-photo";
+import { locales, type Locale } from "@/lib/locales";
 import { adminSections, fieldLabels, isSectionKey, itemTemplates } from "@/lib/admin-config";
 import { requireAdmin } from "@/lib/auth";
 import type { Json } from "@/components/admin/json-editor";
@@ -14,12 +15,12 @@ export default async function ContentEditPage({ params }: PageProps<"/admin/cont
   const { key } = await params;
   if (!isSectionKey(key)) notFound();
 
-  const [tr, en, profilePhoto] = await Promise.all([getDictionary("tr"), getDictionary("en"), getAboutPhoto()]);
+  const [dictionaries, profilePhoto] = await Promise.all([
+    Promise.all(locales.map((locale) => getDictionary(locale))),
+    getAboutPhoto(),
+  ]);
   const section = adminSections.find((item) => item.key === key)!;
-  const initial = {
-    tr: (tr as unknown as Record<string, Json>)[key],
-    en: (en as unknown as Record<string, Json>)[key],
-  };
+  const initial = Object.fromEntries(locales.map((locale, index) => [locale, (dictionaries[index] as unknown as Record<string, Json>)[key]])) as Record<Locale, Json>;
 
   return (
     <>
