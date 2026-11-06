@@ -9,6 +9,7 @@ export type PublicReference = {
   slug: string;
   name: string;
   website: string;
+  location: string;
   tagline: string;
   sector: string;
   description: string;
@@ -27,7 +28,7 @@ function pick(value: LocalizedText | undefined, lang: Locale) {
   return value?.[lang] || value?.en || value?.tr || "";
 }
 
-type Source = { _id: unknown; slug?: string; name: string; website: string; tagline?: LocalizedText; sector?: LocalizedText; description?: LocalizedText; logoUrl: string };
+type Source = { _id: unknown; slug?: string; name: string; website: string; location?: string; tagline?: LocalizedText; sector?: LocalizedText; description?: LocalizedText; logoUrl: string };
 
 function toPublic(doc: Source, lang: Locale): PublicReference {
   return {
@@ -35,6 +36,7 @@ function toPublic(doc: Source, lang: Locale): PublicReference {
     slug: doc.slug ?? "",
     name: doc.name,
     website: doc.website,
+    location: doc.location ?? "",
     tagline: pick(doc.tagline, lang),
     sector: pick(doc.sector, lang),
     description: pick(doc.description, lang),

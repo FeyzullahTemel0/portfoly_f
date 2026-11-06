@@ -83,6 +83,10 @@ export function ReferenceForm({ id, initial, cloudinaryReady }: Props) {
             <input id="website" value={form.website} onChange={(e) => set("website", e.target.value)} className={inputClass} />
           </div>
           <div>
+            <label htmlFor="location" className={labelClass}>Konum (şehir, ülke)</label>
+            <input id="location" value={form.location} onChange={(e) => set("location", e.target.value)} placeholder="İstanbul, Türkiye" className={inputClass} />
+          </div>
+          <div>
             <label htmlFor="slug" className={labelClass}>Detay sayfası adresi (ör. garanti-oto-ekspertiz)</label>
             <input id="slug" value={form.slug} onChange={(e) => set("slug", e.target.value)} placeholder="Boş bırakılırsa kart doğrudan siteye gider" className={inputClass} />
           </div>

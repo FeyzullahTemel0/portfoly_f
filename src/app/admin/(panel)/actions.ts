@@ -239,6 +239,7 @@ export type ReferenceInput = {
   slug: string;
   name: string;
   website: string;
+  location: string;
   tagline: LocalizedInput;
   sector: LocalizedInput;
   description: LocalizedInput;
@@ -273,6 +274,7 @@ export async function saveReference(id: string | null, input: ReferenceInput): P
   const name = text(input.name, 120);
   const slug = text(input.slug, 120) ? slugify(text(input.slug, 120)) : "";
   const website = text(input.website, 300);
+  const location = text(input.location, 120);
   const logoUrl = text(input.logoUrl, 500);
   const logoPublicId = text(input.logoPublicId, 300);
   const gallery = (Array.isArray(input.gallery) ? input.gallery : []).slice(0, 12).map((image) => ({
@@ -304,6 +306,7 @@ export async function saveReference(id: string | null, input: ReferenceInput): P
     slug,
     name,
     website,
+    location,
     tagline: loc(input.tagline, 240),
     sector: loc(input.sector, 200),
     description: loc(input.description, 2000),

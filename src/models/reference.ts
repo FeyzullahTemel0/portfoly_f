@@ -5,6 +5,7 @@ export type ReferenceDoc = {
   slug: string;
   name: string;
   website: string;
+  location: string;
   tagline: LocalizedText;
   sector: LocalizedText;
   description: LocalizedText;
@@ -37,6 +38,7 @@ const ReferenceSchema = new Schema<ReferenceDoc>(
     slug: { type: String, default: "", maxlength: 120 },
     name: { type: String, required: true, maxlength: 120 },
     website: { type: String, default: "", maxlength: 300 },
+    location: { type: String, default: "", maxlength: 120 },
     tagline: text(240),
     sector: text(200),
     description: text(2000),

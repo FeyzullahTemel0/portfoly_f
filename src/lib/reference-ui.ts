@@ -21,6 +21,9 @@ export type ReferenceUi = {
   ctaButton: string;
   others: string;
   badge: string;
+  location: string;
+  allLocations: string;
+  noLocationResults: string;
   lightbox: { close: string; zoomIn: string; zoomOut: string; reset: string; previous: string; next: string; hint: string };
 };
 
@@ -45,6 +48,9 @@ export const referenceUi: Record<Locale, ReferenceUi> = {
     ctaButton: "Ücretsiz teklif alın",
     others: "Diğer referanslarımız",
     badge: "Referans projesi",
+    location: "Konuma göre filtrele",
+    allLocations: "Tüm konumlar",
+    noLocationResults: "Bu konumda referans bulunamadı.",
     lightbox: { close: "Kapat", zoomIn: "Yakınlaştır", zoomOut: "Uzaklaştır", reset: "Sığdır", previous: "Önceki görsel", next: "Sonraki görsel", hint: "Kaydırarak gezin, tekerlek veya iki parmakla yakınlaştırın" },
   },
   en: {
@@ -67,6 +73,9 @@ export const referenceUi: Record<Locale, ReferenceUi> = {
     ctaButton: "Get a free quote",
     others: "More references",
     badge: "Reference project",
+    location: "Filter by location",
+    allLocations: "All locations",
+    noLocationResults: "No references found in this location.",
     lightbox: { close: "Close", zoomIn: "Zoom in", zoomOut: "Zoom out", reset: "Fit", previous: "Previous image", next: "Next image", hint: "Drag to pan, use the wheel or pinch to zoom" },
   },
   de: {
@@ -89,6 +98,9 @@ export const referenceUi: Record<Locale, ReferenceUi> = {
     ctaButton: "Kostenloses Angebot anfragen",
     others: "Weitere Referenzen",
     badge: "Referenzprojekt",
+    location: "Nach Standort filtern",
+    allLocations: "Alle Standorte",
+    noLocationResults: "Keine Referenzen an diesem Standort gefunden.",
     lightbox: { close: "Schließen", zoomIn: "Vergrößern", zoomOut: "Verkleinern", reset: "Einpassen", previous: "Vorheriges Bild", next: "Nächstes Bild", hint: "Zum Verschieben ziehen, per Mausrad oder Pinch zoomen" },
   },
   fr: {
@@ -111,6 +123,9 @@ export const referenceUi: Record<Locale, ReferenceUi> = {
     ctaButton: "Obtenir un devis gratuit",
     others: "Autres références",
     badge: "Projet de référence",
+    location: "Filtrer par lieu",
+    allLocations: "Tous les lieux",
+    noLocationResults: "Aucune référence trouvée dans ce lieu.",
     lightbox: { close: "Fermer", zoomIn: "Zoom avant", zoomOut: "Zoom arrière", reset: "Ajuster", previous: "Image précédente", next: "Image suivante", hint: "Faites glisser pour naviguer, zoomez à la molette ou avec deux doigts" },
   },
   ar: {
@@ -133,6 +148,9 @@ export const referenceUi: Record<Locale, ReferenceUi> = {
     ctaButton: "احصلوا على عرض مجاني",
     others: "أعمال أخرى",
     badge: "مشروع مرجعي",
+    location: "تصفية حسب الموقع",
+    allLocations: "كل المواقع",
+    noLocationResults: "لم يتم العثور على أعمال في هذا الموقع.",
     lightbox: { close: "إغلاق", zoomIn: "تكبير", zoomOut: "تصغير", reset: "ملاءمة", previous: "الصورة السابقة", next: "الصورة التالية", hint: "اسحبوا للتنقل واستخدموا العجلة أو إصبعين للتكبير" },
   },
 };
