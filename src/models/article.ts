@@ -1,9 +1,17 @@
 import { model, models, Schema, type Model } from "mongoose";
 import type { JSONContent } from "@tiptap/core";
-import type { Locale, LocalizedText } from "@/lib/locales";
+import { locales, type Locale, type LocalizedText } from "@/lib/locales";
 
 export type ArticleBody = Record<Locale, JSONContent>;
+export type ArticleTags = Record<Locale, string[]>;
 export type ArticleStatus = "draft" | "published";
+
+// Eski kayıtlar düz dizi (Türkçe) olarak saklanıyordu; hepsini dil bazlı yapıya çevirir.
+export function normalizeArticleTags(raw: unknown): ArticleTags {
+  const clean = (value: unknown) => (Array.isArray(value) ? value.filter((tag): tag is string => typeof tag === "string" && tag.trim() !== "") : []);
+  const source = typeof raw === "object" && raw !== null && !Array.isArray(raw) ? (raw as Record<string, unknown>) : { tr: raw };
+  return Object.fromEntries(locales.map((locale) => [locale, clean(source[locale])])) as ArticleTags;
+}
 
 export type ArticleDoc = {
   slug: string;
@@ -14,7 +22,7 @@ export type ArticleDoc = {
   coverUrl: string;
   coverPublicId: string;
   coverAlt: LocalizedText;
-  tags: string[];
+  tags: ArticleTags | string[];
   status: ArticleStatus;
   publishedAt: Date | null;
   createdAt: Date;
@@ -33,7 +41,7 @@ const ArticleSchema = new Schema<ArticleDoc>(
     coverUrl: { type: String, default: "", maxlength: 500 },
     coverPublicId: { type: String, default: "", maxlength: 300 },
     coverAlt: localized,
-    tags: { type: [String], default: [] },
+    tags: { type: Schema.Types.Mixed, default: () => ({ tr: [], en: [], de: [], fr: [], ar: [] }) },
     status: { type: String, enum: ["draft", "published"], default: "draft", index: true },
     publishedAt: { type: Date, default: null },
   },

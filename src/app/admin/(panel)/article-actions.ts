@@ -5,10 +5,10 @@ import type { JSONContent } from "@tiptap/core";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { connectDb } from "@/lib/db";
-import { locales, type LocalizedText } from "@/lib/locales";
+import { isLocale, locales, type Locale, type LocalizedText } from "@/lib/locales";
 import { deleteImage, isOwnImageUrl, keyFromUrl } from "@/lib/storage";
 import { translateTexts } from "@/lib/translate";
-import { Article, type ArticleBody } from "@/models/article";
+import { Article, type ArticleBody, type ArticleTags } from "@/models/article";
 
 export type ArticleInput = {
   slug: string;
@@ -19,7 +19,7 @@ export type ArticleInput = {
   coverUrl: string;
   coverPublicId: string;
   coverAlt: LocalizedText;
-  tags: string;
+  tags: Record<Locale, string>;
   status: "draft" | "published";
 };
 
@@ -43,42 +43,68 @@ function cleanLocalized(value: unknown, max: number): LocalizedText {
   return Object.fromEntries(locales.map((locale) => [locale, typeof source[locale] === "string" ? (source[locale] as string).trim().slice(0, max) : ""])) as LocalizedText;
 }
 
-function collectBodyText(body: JSONContent | undefined): string[] {
-  if (!body) return [];
-  const texts: string[] = [];
-  function visit(node: JSONContent) {
-    if (node.type === "text") texts.push(typeof node.text === "string" ? node.text : "");
-    if (node.type === "image") {
-      const attrs = (node.attrs ?? {}) as Record<string, unknown>;
-      texts.push(typeof attrs.alt === "string" ? attrs.alt : "", typeof attrs.title === "string" ? attrs.title : "");
-    }
-    node.content?.forEach(visit);
-  }
-  visit(body);
-  return texts;
+function parseTags(value: unknown) {
+  const seen = new Set<string>();
+  return (typeof value === "string" ? value : "")
+    .split(/[,،;]/)
+    .map((tag) => tag.trim().slice(0, 40))
+    .filter((tag) => {
+      const key = tag.toLocaleLowerCase();
+      if (!tag || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 20);
 }
 
-function applyBodyTranslation(body: JSONContent, translations: string[]): JSONContent {
-  let index = 0;
-  function visit(node: JSONContent): JSONContent {
-    const translated: JSONContent = { ...node };
-    if (node.type === "text") translated.text = translations[index++] ?? node.text;
+const sameMarks = (a: JSONContent, b: JSONContent) => JSON.stringify(a.marks ?? []) === JSON.stringify(b.marks ?? []);
+
+// Aynı biçimli ardışık metin düğümleri tek cümle olarak çevrilir; kod blokları ve satır içi kod atlanır. Toplama ve uygulama aynı sırada çağrılır.
+function mapBodyText(body: JSONContent, translate: (text: string) => string): JSONContent {
+  const edit = (text: string) => {
+    const core = text.trim();
+    if (!core) return text;
+    return `${/^\s*/.exec(text)?.[0] ?? ""}${translate(core)}${/\s*$/.exec(text)?.[0] ?? ""}`;
+  };
+  function visit(node: JSONContent, skip: boolean): JSONContent {
     if (node.type === "image") {
       const attrs = (node.attrs ?? {}) as Record<string, unknown>;
-      translated.attrs = {
-        ...attrs,
-        alt: translations[index++] ?? attrs.alt,
-        title: translations[index++] ?? attrs.title,
-      };
+      return { ...node, attrs: { ...attrs, alt: typeof attrs.alt === "string" ? edit(attrs.alt) : attrs.alt, title: typeof attrs.title === "string" ? edit(attrs.title) : attrs.title } };
     }
-    if (node.content) translated.content = node.content.map(visit);
-    return translated;
+    if (!node.content) return node;
+    const inCode = skip || node.type === "codeBlock";
+    const content: JSONContent[] = [];
+    let run: JSONContent[] = [];
+    const flush = () => {
+      if (run.length) content.push({ ...run[0], text: edit(run.map((item) => item.text ?? "").join("")) });
+      run = [];
+    };
+    for (const child of node.content) {
+      const translatable = child.type === "text" && !inCode && !child.marks?.some((mark) => mark.type === "code");
+      if (translatable && run.length && sameMarks(run[0], child)) {
+        run.push(child);
+        continue;
+      }
+      flush();
+      if (translatable) run = [child];
+      else content.push(visit(child, inCode));
+    }
+    flush();
+    return { ...node, content };
   }
-  return visit(body);
+  return visit(body, false);
 }
 
-export async function translateArticleContent(input: ArticleInput, overwrite: boolean): Promise<ActionResult> {
+const hasBodyText = (body: JSONContent | undefined) => {
+  let found = false;
+  if (body) mapBodyText(body, (text) => ((found = true), text));
+  return found;
+};
+
+// Türkçe kaynaktan tek bir dile çevirir; istemci dilleri sırayla çağırarak uzun makalelerde zaman aşımını ve tek hatanın tümünü bozmasını önler.
+export async function translateArticleLocale(input: ArticleInput, locale: Locale, overwrite: boolean): Promise<ActionResult> {
   await requireAdmin();
+  if (typeof locale !== "string" || !isLocale(locale) || locale === "tr") return { ok: false, error: "Geçersiz hedef dil." };
   if (!input || typeof input !== "object" || !input.title?.tr?.trim()) {
     return { ok: false, error: "Önce Türkçe makale başlığını doldurun." };
   }
@@ -92,34 +118,39 @@ export async function translateArticleContent(input: ArticleInput, overwrite: bo
     category: { ...input.category },
     coverAlt: { ...input.coverAlt },
     body: { ...input.body },
+    tags: { ...input.tags },
   };
   const fields = ["title", "excerpt", "category", "coverAlt"] as const;
 
   try {
-    for (const locale of locales) {
-      if (locale === "tr") continue;
-      const sourceTexts: string[] = [];
-      const fieldTasks: { field: (typeof fields)[number]; index: number }[] = [];
-      for (const field of fields) {
-        if (overwrite || !translated[field][locale]) {
-          fieldTasks.push({ field, index: sourceTexts.length });
-          sourceTexts.push(input[field].tr ?? "");
-        }
-      }
+    const sources: string[] = [];
+    const fieldTasks: { field: (typeof fields)[number]; index: number }[] = [];
+    for (const field of fields) {
+      if (!input[field].tr?.trim() || (!overwrite && translated[field][locale]?.trim())) continue;
+      fieldTasks.push({ field, index: sources.length });
+      sources.push(input[field].tr);
+    }
 
-      const targetHasBodyText = collectBodyText(translated.body[locale]).some((text) => text.trim());
-      const translateBody = overwrite || !targetHasBodyText;
-      const bodyStart = sourceTexts.length;
-      if (translateBody) sourceTexts.push(...collectBodyText(sourceBody));
+    const sourceTags = parseTags(input.tags?.tr);
+    const translateTags = sourceTags.length > 0 && (overwrite || !translated.tags[locale]?.trim());
+    const tagsStart = sources.length;
+    if (translateTags) sources.push(...sourceTags);
 
-      const results = await translateTexts(sourceTexts, "tr", locale);
-      for (const task of fieldTasks) translated[task.field][locale] = results[task.index] ?? "";
-      if (translateBody) translated.body[locale] = applyBodyTranslation(sourceBody, results.slice(bodyStart));
+    const translateBody = overwrite || !hasBodyText(translated.body[locale]);
+    const bodyStart = sources.length;
+    if (translateBody) mapBodyText(sourceBody, (text) => (sources.push(text), text));
+
+    const results = await translateTexts(sources, "tr", locale);
+    for (const task of fieldTasks) translated[task.field][locale] = results[task.index] || input[task.field].tr;
+    if (translateTags) translated.tags[locale] = parseTags(results.slice(tagsStart, tagsStart + sourceTags.length).join(",")).join(", ");
+    if (translateBody) {
+      let cursor = bodyStart;
+      translated.body[locale] = mapBodyText(sourceBody, (text) => results[cursor++] || text);
     }
     return { ok: true, data: translated };
   } catch (error) {
     console.error("Makale çevirisi başarısız:", error);
-    return { ok: false, error: error instanceof Error ? `Çeviri yapılamadı: ${error.message}` : "Çeviri yapılamadı. Lütfen tekrar deneyin." };
+    return { ok: false, error: error instanceof Error ? error.message : "Çeviri yapılamadı. Lütfen tekrar deneyin." };
   }
 }
 
@@ -206,7 +237,7 @@ export async function saveArticle(id: string | null, input: ArticleInput): Promi
   const slug = slugify(slugSource || title.tr);
   const coverUrl = typeof input?.coverUrl === "string" ? input.coverUrl.trim().slice(0, 500) : "";
   const coverPublicId = typeof input?.coverPublicId === "string" ? input.coverPublicId.trim().slice(0, 300) : "";
-  const tags = (typeof input?.tags === "string" ? input.tags : "").split(",").map((tag) => tag.trim().slice(0, 40)).filter(Boolean).slice(0, 20);
+  const tags = Object.fromEntries(locales.map((locale) => [locale, parseTags(input?.tags?.[locale])])) as ArticleTags;
   const status = input?.status === "published" ? "published" : "draft";
   if (!title.tr || !slug) return { ok: false, error: "Türkçe başlık zorunludur." };
   if (coverUrl && (!isOwnImageUrl(coverUrl) || !coverPublicId.startsWith("rovax/articles/"))) return { ok: false, error: "Kapak görseli doğrulanamadı." };

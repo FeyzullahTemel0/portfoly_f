@@ -7,7 +7,7 @@ import type { JSONContent } from "@tiptap/core";
 import { ArticleEditor } from "@/components/admin/article-editor";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { locales, type Locale } from "@/lib/locales";
-import { deleteArticle, saveArticle, translateArticleContent, type ArticleInput } from "@/app/admin/(panel)/article-actions";
+import { deleteArticle, saveArticle, translateArticleLocale, type ArticleInput } from "@/app/admin/(panel)/article-actions";
 
 const inputClass = "w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/25";
 const labelClass = "mb-1.5 block text-xs font-semibold text-muted";
@@ -21,6 +21,7 @@ export function ArticleForm({ id, initial, storageReady }: Props) {
   const [form, setForm] = useState(initial);
   const [language, setLanguage] = useState<Locale>("tr");
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
+  const [editorVersion, setEditorVersion] = useState(0);
   const [pending, startTransition] = useTransition();
   const direction = language === "ar" ? "rtl" : "ltr";
 
@@ -28,8 +29,9 @@ export function ArticleForm({ id, initial, storageReady }: Props) {
     setForm((current) => ({ ...current, [key]: value }));
     setStatus(null);
   }
-  function updateLocalized(key: "title" | "excerpt" | "category" | "coverAlt", value: string) {
-    update(key, { ...form[key], [language]: value });
+  function updateLocalized(key: "title" | "excerpt" | "category" | "coverAlt" | "tags", value: string) {
+    setForm((current) => ({ ...current, [key]: { ...current[key], [language]: value } }));
+    setStatus(null);
   }
 
   function save() {
@@ -48,13 +50,41 @@ export function ArticleForm({ id, initial, storageReady }: Props) {
     }
     if (overwrite && !window.confirm("İngilizce, Almanca, Fransızca ve Arapça içeriklerin üzerine Türkçeden yapılan çeviriler yazılacak. Devam edilsin mi?")) return;
     startTransition(async () => {
-      setStatus({ ok: true, text: "Türkçe içerik diğer dillere çevriliyor..." });
-      const result = await translateArticleContent(form, overwrite);
-      if (!result.ok || !result.data) {
-        setStatus({ ok: false, text: result.error ?? "Çeviri yapılamadı." });
-        return;
+      let current = form;
+      const failed: string[] = [];
+      let reason = "";
+      const targets = locales.filter((locale) => locale !== "tr");
+      for (const [position, locale] of targets.entries()) {
+        setStatus({ ok: true, text: `${languageLabels[locale]} çevriliyor (${position + 1}/${targets.length})...` });
+        const result = await translateArticleLocale(current, locale, overwrite).catch(() => null);
+        const data = result?.data;
+        if (!result?.ok || !data) {
+          failed.push(languageLabels[locale]);
+          reason ||= result?.error ?? "Sunucuya ulaşılamadı veya süre aşıldı.";
+          continue;
+        }
+        current = {
+          ...current,
+          title: { ...current.title, [locale]: data.title[locale] ?? "" },
+          excerpt: { ...current.excerpt, [locale]: data.excerpt[locale] ?? "" },
+          category: { ...current.category, [locale]: data.category[locale] ?? "" },
+          coverAlt: { ...current.coverAlt, [locale]: data.coverAlt[locale] ?? "" },
+          tags: { ...current.tags, [locale]: data.tags[locale] },
+          body: { ...current.body, [locale]: data.body[locale] },
+        };
+        setForm((latest) => ({
+          ...latest,
+          title: { ...latest.title, [locale]: data.title[locale] ?? "" },
+          excerpt: { ...latest.excerpt, [locale]: data.excerpt[locale] ?? "" },
+          category: { ...latest.category, [locale]: data.category[locale] ?? "" },
+          coverAlt: { ...latest.coverAlt, [locale]: data.coverAlt[locale] ?? "" },
+          tags: { ...latest.tags, [locale]: data.tags[locale] },
+          body: { ...latest.body, [locale]: data.body[locale] },
+        }));
+        setEditorVersion((version) => version + 1);
       }
-      setForm(result.data);
+      if (failed.length === targets.length) return setStatus({ ok: false, text: `Çeviri yapılamadı: ${reason}` });
+      if (failed.length) return setStatus({ ok: false, text: `Bazı diller çevrilemedi (${failed.join(", ")}): ${reason} Diğerleri hazır; kontrol edip kaydedin.` });
       setStatus({ ok: true, text: "Çeviri tamamlandı. İçeriği kontrol edip makaleyi kaydedin." });
     });
   }
@@ -129,12 +159,13 @@ export function ArticleForm({ id, initial, storageReady }: Props) {
             <textarea id="article-excerpt" rows={3} maxLength={500} value={form.excerpt[language]} onChange={(event) => updateLocalized("excerpt", event.target.value)} className={inputClass} />
           </div>
           <div>
-            <label htmlFor="article-tags" className={labelClass}>Etiketler (virgülle ayırın)</label>
-            <input id="article-tags" value={form.tags} onChange={(event) => update("tags", event.target.value)} className={inputClass} placeholder="Yazılım, Güvenlik, KOBİ" />
+            <label htmlFor="article-tags" className={labelClass}>Etiketler ({languageLabels[language]}, virgülle ayırın)</label>
+            <input id="article-tags" value={form.tags[language]} onChange={(event) => updateLocalized("tags", event.target.value)} className={inputClass} placeholder="Yazılım, Güvenlik, KOBİ" />
+            {language !== "tr" && <p className="mt-1 text-xs text-muted">Boş bırakılırsa sitede Türkçe etiketler gösterilir.</p>}
           </div>
           <div>
             <p className={labelClass}>Makale gövdesi ({languageLabels[language]})</p>
-            <ArticleEditor key={language} value={form.body[language] ?? blankDoc()} direction={direction} onChange={(body) => update("body", { ...form.body, [language]: body })} />
+            <ArticleEditor key={`${language}-${editorVersion}`} value={form.body[language] ?? blankDoc()} direction={direction} onChange={(body) => setForm((current) => ({ ...current, body: { ...current.body, [language]: body } }))} />
           </div>
         </div>
       </section>

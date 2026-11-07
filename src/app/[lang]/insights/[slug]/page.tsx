@@ -38,7 +38,7 @@ export default async function InsightDetailPage({ params }: { params: Promise<{ 
   const [article, all] = await Promise.all([getArticle(lang, slug), getArticles(lang)]);
   if (!article) notFound();
   const ui = articleUi[lang];
-  const related = all.filter((item) => item.slug !== article.slug && (item.category === article.category || article.tags.some((tag) => item.tags.includes(tag)))).slice(0, 3);
+  const related = all.filter((item) => item.slug !== article.slug && (item.category === article.category || article.tagKeys.some((tag) => item.tagKeys.includes(tag)))).slice(0, 3);
   const date = new Intl.DateTimeFormat(lang, { dateStyle: "long" }).format(new Date(article.publishedAt));
 
   return (

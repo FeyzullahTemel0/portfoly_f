@@ -3,9 +3,9 @@ import { cache } from "react";
 import type { JSONContent } from "@tiptap/core";
 import { connectDb } from "@/lib/db";
 import type { Locale, LocalizedText } from "@/lib/locales";
-import { Article } from "@/models/article";
+import { Article, normalizeArticleTags } from "@/models/article";
 
-export type PublicArticle = { id: string; slug: string; title: string; excerpt: string; category: string; coverUrl: string; coverAlt: string; tags: string[]; publishedAt: string; readMinutes: number };
+export type PublicArticle = { id: string; slug: string; title: string; excerpt: string; category: string; coverUrl: string; coverAlt: string; tags: string[]; tagKeys: string[]; publishedAt: string; readMinutes: number };
 export type ArticleDetail = PublicArticle & { body: JSONContent };
 
 const pick = (value: LocalizedText | undefined, lang: Locale) => value?.[lang] || value?.en || value?.tr || "";
@@ -25,11 +25,13 @@ function bodyFor(body: Record<string, JSONContent> | undefined, lang: Locale) {
 function readMinutes(body: JSONContent) {
   return Math.max(1, Math.ceil(textFromContent(body).trim().split(/\s+/).filter(Boolean).length / 220));
 }
-function toPublic(doc: { _id: unknown; slug: string; title: LocalizedText; excerpt?: LocalizedText; category?: LocalizedText; coverUrl?: string; coverAlt?: LocalizedText; tags?: string[]; publishedAt?: Date | null; body?: Record<string, JSONContent> }, lang: Locale): PublicArticle {
+function toPublic(doc: { _id: unknown; slug: string; title: LocalizedText; excerpt?: LocalizedText; category?: LocalizedText; coverUrl?: string; coverAlt?: LocalizedText; tags?: unknown; publishedAt?: Date | null; body?: Record<string, JSONContent> }, lang: Locale): PublicArticle {
   const body = bodyFor(doc.body, lang);
+  const tags = normalizeArticleTags(doc.tags);
   return {
     id: String(doc._id), slug: doc.slug, title: pick(doc.title, lang), excerpt: pick(doc.excerpt, lang), category: pick(doc.category, lang),
-    coverUrl: doc.coverUrl ?? "", coverAlt: pick(doc.coverAlt, lang), tags: doc.tags ?? [],
+    coverUrl: doc.coverUrl ?? "", coverAlt: pick(doc.coverAlt, lang), tags: tags[lang].length ? tags[lang] : tags.en.length ? tags.en : tags.tr,
+    tagKeys: tags.tr.map((tag) => tag.toLocaleLowerCase("tr")),
     publishedAt: (doc.publishedAt ?? new Date()).toISOString(), readMinutes: readMinutes(body),
   };
 }

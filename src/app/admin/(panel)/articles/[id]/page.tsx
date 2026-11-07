@@ -8,7 +8,7 @@ import { requireAdmin } from "@/lib/auth";
 import { connectDb } from "@/lib/db";
 import { isStorageConfigured } from "@/lib/storage";
 import { locales, type LocalizedText } from "@/lib/locales";
-import { Article, type ArticleBody } from "@/models/article";
+import { Article, normalizeArticleTags, type ArticleBody } from "@/models/article";
 import type { ArticleInput } from "../../article-actions";
 
 const emptyText = (): LocalizedText => ({ tr: "", en: "", de: "", fr: "", ar: "" });
@@ -22,7 +22,7 @@ const blank: ArticleInput = {
   coverUrl: "",
   coverPublicId: "",
   coverAlt: emptyText(),
-  tags: "",
+  tags: emptyText() as ArticleInput["tags"],
   status: "draft",
 };
 
@@ -48,7 +48,7 @@ export default async function ArticleEditPage({ params }: { params: Promise<{ id
       coverUrl: doc.coverUrl ?? "",
       coverPublicId: doc.coverPublicId ?? "",
       coverAlt: { tr: doc.coverAlt?.tr ?? "", en: doc.coverAlt?.en ?? "", de: doc.coverAlt?.de ?? "", fr: doc.coverAlt?.fr ?? "", ar: doc.coverAlt?.ar ?? "" },
-      tags: (doc.tags ?? []).join(", "),
+      tags: Object.fromEntries(locales.map((locale) => [locale, normalizeArticleTags(doc.tags)[locale].join(", ")])) as ArticleInput["tags"],
       status: doc.status,
     };
   }
