@@ -88,6 +88,23 @@ html[lang="ar"] body {
 @keyframes spin-cw { to { transform: rotate(360deg); } }
 @keyframes spin-ccw { to { transform: rotate(-360deg); } }
 .spin-cw { animation: spin-cw var(--d, 40s) linear infinite; }
+.hud-ring { will-change: transform; }
+
+/* Hizmet kartları: yumuşak neon gölge; üzerine gelince cam efekti ve süzülme durur. */
+.service-chip {
+  box-shadow: 0 0 18px -4px color-mix(in srgb, var(--accent) 45%, transparent);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+}
+.service-chip:hover {
+  animation-play-state: paused;
+  background-color: color-mix(in srgb, var(--surface) 35%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 75%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.7);
+  backdrop-filter: blur(18px) saturate(1.7);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), 0 0 32px -2px color-mix(in srgb, var(--accent) 65%, transparent);
+}
+.service-chip__dot { box-shadow: 0 0 10px var(--accent); transition: box-shadow 0.3s ease; }
+.service-chip:hover .service-chip__dot { box-shadow: 0 0 16px 3px var(--accent); }
 .spin-ccw { animation: spin-ccw var(--d, 40s) linear infinite; }
 .orbit { position: absolute; inset: 0; animation: spin-cw var(--d) linear infinite; animation-delay: var(--delay, 0s); }
 .orbit-item { position: absolute; left: 50%; top: calc(50% - var(--r)); transform: translate(-50%, -50%); }
