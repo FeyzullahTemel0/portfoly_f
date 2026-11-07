@@ -5,47 +5,53 @@ import type { Dictionary } from "@/dictionaries/tr";
 import type { Locale } from "@/lib/locales";
 import { BrandImage } from "@/components/brand-logo";
 import { PrivacyPreferencesButton } from "@/components/analytics-consent";
+import { groupServices } from "@/lib/service-groups";
 import { getContactItems, getSocialItems, type Settings } from "@/lib/site";
 
 type FooterProps = { lang: Locale; dict: Dictionary; settings: Settings };
 
 const contactIcons = { phone: FiPhone, email: FiMail, address: FiMapPin } as const;
+const FOOTER_SERVICES_PER_GROUP = 3;
 
 export function Footer({ lang, dict, settings }: FooterProps) {
   const contactItems = getContactItems(settings, lang);
   const socials = getSocialItems(settings);
-  const serviceColumns = [
-    dict.services.items.filter((_, index) => index % 2 === 0),
-    dict.services.items.filter((_, index) => index % 2 === 1),
-  ];
+  const serviceGroups = groupServices(dict.services);
   const linkClass = "text-sm text-muted transition-colors hover:text-foreground";
   const headingClass = "text-sm font-semibold";
 
   return (
     <footer className="border-t border-border bg-surface/50">
-      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-9 px-4 py-10 sm:grid-cols-2 sm:gap-10 sm:px-6 sm:py-14 lg:grid-cols-[1.35fr_2fr_1fr_1fr_1.3fr]">
-        <div className="col-span-2 sm:col-span-1">
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-9 px-4 py-10 sm:grid-cols-2 sm:gap-10 sm:px-6 sm:py-12 lg:grid-cols-[1.1fr_2.9fr_1fr_1fr_1.3fr]">
+        <div className="col-span-2 lg:col-span-1">
           <Link href={`/${lang}`} className="block max-w-[13rem]" aria-label={`${dict.brand.name} ${dict.brand.suffix}`}>
             <BrandImage className="w-full max-w-[13rem]" />
           </Link>
           <p className="mt-4 border-l-2 border-accent pl-3 text-xs leading-5 text-muted">{dict.footer.text}</p>
         </div>
 
-        <nav aria-label={dict.footer.services} className="hidden sm:block lg:border-l lg:border-border lg:pl-6">
+        <nav aria-label={dict.footer.services} className="hidden sm:col-span-2 sm:block lg:col-span-1 lg:border-l lg:border-border lg:pl-6">
           <p className={headingClass}>{dict.footer.services}</p>
-          <div className="mt-4 grid grid-cols-2 gap-x-4">
-            {serviceColumns.map((column, index) => (
-              <ul key={index} className={`space-y-2 ${index === 1 ? "border-l border-border pl-4" : ""}`}>
-                {column.map((item) => (
-                  <li key={item.slug}>
-                    <Link href={`/${lang}/services/${item.slug}`} className={linkClass}>
-                      {item.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+          <div className="mt-4 grid grid-cols-3 gap-x-5">
+            {serviceGroups.map((group) => (
+              <div key={group.key}>
+                <p className="text-xs font-semibold uppercase tracking-wider text-accent">{group.heading}</p>
+                <ul className="mt-3 space-y-2">
+                  {group.items.slice(0, FOOTER_SERVICES_PER_GROUP).map((item) => (
+                    <li key={item.slug}>
+                      <Link href={`/${lang}/services/${item.slug}`} className={linkClass}>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
           </div>
+          <Link href={`/${lang}/services`} className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-accent hover:underline">
+            {dict.services.all}
+            <span aria-hidden="true" className="rtl:rotate-180">→</span>
+          </Link>
         </nav>
 
         <nav aria-label={dict.footer.company} className="lg:col-span-1 lg:border-l lg:border-border lg:pl-6">
@@ -75,7 +81,7 @@ export function Footer({ lang, dict, settings }: FooterProps) {
           </ul>
         </nav>
 
-        <div className="col-span-2 sm:col-span-1 lg:col-span-1 lg:border-l lg:border-border lg:pl-6">
+        <div className="col-span-2 lg:col-span-1 lg:border-l lg:border-border lg:pl-6">
           <p className={headingClass}>{dict.footer.contact}</p>
           <ul className="mt-4 space-y-3">
             {contactItems.map((item) => {
