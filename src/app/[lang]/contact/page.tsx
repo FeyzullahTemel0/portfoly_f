@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FiMail, FiMapPin, FiNavigation, FiPhone } from "react-icons/fi";
+import { FiArrowRight, FiMail, FiMapPin, FiMessageSquare, FiNavigation, FiPhone } from "react-icons/fi";
 import { AdSlot } from "@/components/ad-slot";
-import { ContactForms } from "@/components/contact-forms";
+import { QuoteForm } from "@/components/contact-forms";
 import { MapEmbed } from "@/components/map-embed";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
@@ -12,12 +13,14 @@ import { isLocale, type Locale } from "@/lib/locales";
 import { localizedAlternates } from "@/lib/seo";
 import { getSocialItems, safeUrl } from "@/lib/site";
 
-const copy: Record<Locale, { quick: string; whatsapp: string; call: string; mail: string; location: string; openMap: string; channels: string; showMap: string; mapNote: string }> = {
-  tr: { quick: "Hemen ulaşın", whatsapp: "WhatsApp'tan yazın", call: "Hemen arayın", mail: "E-posta gönderin", location: "Konum", openMap: "Haritada aç", channels: "Sosyal medya ve mesajlaşma", showMap: "Haritayı göster", mapNote: "Harita Google Maps'ten yüklenir; göster dediğinizde Google ile veri paylaşımı başlar." },
-  en: { quick: "Reach us now", whatsapp: "Chat on WhatsApp", call: "Call now", mail: "Send an email", location: "Location", openMap: "Open in Maps", channels: "Social media & messaging", showMap: "Show map", mapNote: "The map loads from Google Maps; data is shared with Google once you show it." },
-  de: { quick: "Direkt erreichbar", whatsapp: "Per WhatsApp schreiben", call: "Jetzt anrufen", mail: "E-Mail senden", location: "Standort", openMap: "In Karten öffnen", channels: "Social Media & Messenger", showMap: "Karte anzeigen", mapNote: "Die Karte wird von Google Maps geladen; beim Anzeigen werden Daten an Google übermittelt." },
-  fr: { quick: "Contactez-nous", whatsapp: "Écrire sur WhatsApp", call: "Appeler maintenant", mail: "Envoyer un e-mail", location: "Adresse", openMap: "Ouvrir dans Maps", channels: "Réseaux sociaux et messageries", showMap: "Afficher la carte", mapNote: "La carte est chargée depuis Google Maps ; des données sont partagées avec Google une fois affichée." },
-  ar: { quick: "تواصلوا معنا الآن", whatsapp: "راسلونا على واتساب", call: "اتصلوا الآن", mail: "أرسلوا بريدًا", location: "الموقع", openMap: "افتح في الخرائط", channels: "وسائل التواصل والمراسلة", showMap: "إظهار الخريطة", mapNote: "تُحمّل الخريطة من Google Maps وتُشارك البيانات مع Google عند إظهارها." },
+type Copy = { whatsapp: string; call: string; mail: string; location: string; openMap: string; channels: string; contactStep: string; badges: string[] };
+
+const copy: Record<Locale, Copy> = {
+  tr: { whatsapp: "WhatsApp'tan yazın", call: "Hemen arayın", mail: "E-posta gönderin", location: "Konum", openMap: "Haritada aç", channels: "Sosyal medya ve mesajlaşma", contactStep: "İletişim bilgileriniz", badges: ["Ücretsiz", "Taahhüt yok"] },
+  en: { whatsapp: "Chat on WhatsApp", call: "Call now", mail: "Send an email", location: "Location", openMap: "Open in Maps", channels: "Social media & messaging", contactStep: "Your contact details", badges: ["Free", "No obligation"] },
+  de: { whatsapp: "Per WhatsApp schreiben", call: "Jetzt anrufen", mail: "E-Mail senden", location: "Standort", openMap: "In Karten öffnen", channels: "Social Media & Messenger", contactStep: "Ihre Kontaktdaten", badges: ["Kostenlos", "Unverbindlich"] },
+  fr: { whatsapp: "Écrire sur WhatsApp", call: "Appeler maintenant", mail: "Envoyer un e-mail", location: "Adresse", openMap: "Ouvrir dans Maps", channels: "Réseaux sociaux et messageries", contactStep: "Vos coordonnées", badges: ["Gratuit", "Sans engagement"] },
+  ar: { whatsapp: "راسلونا على واتساب", call: "اتصلوا الآن", mail: "أرسلوا بريدًا", location: "الموقع", openMap: "افتح في الخرائط", channels: "وسائل التواصل والمراسلة", contactStep: "بيانات التواصل", badges: ["مجاني", "دون التزام"] },
 };
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/contact">): Promise<Metadata> {
@@ -57,73 +60,70 @@ export default async function ContactPage({ params, searchParams }: PageProps<"/
 
   return (
     <>
-      <section aria-label={text.quick} className="relative border-b border-border bg-surface">
-        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-          <p className="mb-3 text-xs font-bold uppercase tracking-widest text-accent">{text.quick}</p>
-          <ul className="grid gap-3 sm:grid-cols-3">
-            {quick.map(({ key, href, label, sub, icon: Icon, color, external }) => (
-              <li key={key}>
-                <a
-                  href={href}
-                  {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  className="card-glow flex items-center gap-4 rounded-2xl border border-border bg-background p-4"
-                >
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white shadow-lg" style={{ background: color }}>
-                    <Icon className="h-6 w-6" aria-hidden="true" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block font-bold">{label}</span>
-                    <span className="block truncate text-sm text-muted" dir="ltr">{sub}</span>
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
+      <PageHero title={contact.title} text={contact.text} tight>
+        <ul className="mt-8 grid gap-3 sm:grid-cols-3">
+          {quick.map(({ key, href, label, sub, icon: Icon, color, external }) => (
+            <li key={key}>
+              <a
+                href={href}
+                {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className="card-glow flex items-center gap-4 rounded-2xl border border-border bg-surface p-4"
+              >
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white shadow-lg" style={{ background: color }}>
+                  <Icon className="h-6 w-6" aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-bold">{label}</span>
+                  <span className="block truncate text-sm text-muted" dir="ltr">{sub}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
 
-          {others.length > 0 && (
-            <div className="mt-5">
-              <p className="mb-2 text-xs font-semibold text-muted">{text.channels}</p>
-              <ul className="flex flex-wrap gap-2" aria-label={contact.social}>
-                {others.map((social) => {
-                  const Icon = socialIcons[social.key];
-                  if (!Icon) return null;
-                  return (
-                    <li key={social.key}>
-                      <a
-                        href={social.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group inline-flex h-11 items-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-medium transition-colors hover:border-accent"
-                      >
-                        <Icon className="h-4 w-4" style={{ color: socialColors[social.key] }} aria-hidden="true" />
-                        {social.label}
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
-        </div>
-      </section>
+        {others.length > 0 && (
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <p className="me-2 text-xs font-semibold text-muted">{text.channels}</p>
+            <ul className="flex flex-wrap gap-2" aria-label={contact.social}>
+              {others.map((social) => {
+                const Icon = socialIcons[social.key];
+                if (!Icon) return null;
+                return (
+                  <li key={social.key}>
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-surface px-4 text-sm font-medium transition-colors hover:border-accent"
+                    >
+                      <Icon className="h-4 w-4" style={{ color: socialColors[social.key] }} aria-hidden="true" />
+                      {social.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </PageHero>
 
-      <PageHero title={contact.title} text={contact.text} />
-
-      <section className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 sm:py-16 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <ContactForms
+      <section className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 sm:py-16 lg:grid-cols-5">
+        <div className="lg:col-span-3">
+          <QuoteForm
             lang={lang}
             form={dict.contactForm}
             services={dict.services.items.map(({ slug, title }) => ({ slug, title }))}
             sizes={dict.process.page.sizes}
+            ui={{ contactStep: text.contactStep, badges: text.badges }}
             initialService={initialService}
             initialPackage={initialPackage}
           />
         </div>
 
-        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <aside className="space-y-6 lg:col-span-2 lg:sticky lg:top-24 lg:self-start">
           <Reveal>
-            <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+            <div className="overflow-hidden rounded-3xl border border-border bg-surface shadow-xl shadow-accent/5">
+              <MapEmbed query={settings.address.tr || address} lang={lang} title={text.location} className="h-72" />
               <div className="flex items-start gap-3 p-5">
                 <FiMapPin className="mt-1 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
                 <div>
@@ -131,12 +131,28 @@ export default async function ContactPage({ params, searchParams }: PageProps<"/
                   <p className="font-semibold">{address}</p>
                 </div>
               </div>
-              <MapEmbed query={settings.address.tr || address} lang={lang} title={text.location} showLabel={text.showMap} note={text.mapNote} />
-              <a href={mapsLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 border-t border-border p-3 text-sm font-semibold text-accent hover:bg-background">
+              <a href={mapsLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 border-t border-border p-3 text-sm font-semibold text-accent transition-colors hover:bg-background">
                 <FiNavigation className="h-4 w-4" aria-hidden="true" /> {text.openMap}
               </a>
             </div>
           </Reveal>
+
+          <Reveal delay={0.1}>
+            <Link
+              href={`/${lang}/contact/message`}
+              className="card-glow group flex items-center gap-4 rounded-3xl border border-border bg-surface p-5"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-accent-foreground shadow-lg shadow-accent/30">
+                <FiMessageSquare className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-bold">{dict.contactForm.message.title}</span>
+                <span className="mt-0.5 block text-sm text-muted">{dict.contactForm.message.text}</span>
+              </span>
+              <FiArrowRight className="h-5 w-5 shrink-0 text-accent transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" aria-hidden="true" />
+            </Link>
+          </Reveal>
+
           <AdSlot position="sidebar" lang={lang} className="!px-0 !py-0" />
         </aside>
       </section>

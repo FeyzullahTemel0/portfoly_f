@@ -151,7 +151,7 @@ const tr: LegalDocs = {
     {
       heading: "3. Yerel Tercihler",
       paragraphs: [
-        "Tema ve para birimi tercihi tarayıcınızda saklanır. Analitik tercihi 180 gün hatırlanır ve yalnızca sunucunun okuyabildiği, siteler arası izleme yapmayan bir çerezle korunur. Yönetici oturumu için sadece yönetim alanında kullanılan, en fazla 8 saatlik bir oturum çerezi bulunur. Bu çerezler reklam amacı taşımaz; üçüncü taraf reklam/analitik çerezleri kullanılmaz. İletişim sayfasındaki harita, yalnızca siz \"Haritayı göster\" dediğinizde Google Maps'ten yüklenir; bu durumda Google, kendi politikası çerçevesinde IP adresiniz gibi verileri işleyebilir.",
+        "Tema ve para birimi tercihi tarayıcınızda saklanır. Analitik tercihi 180 gün hatırlanır ve yalnızca sunucunun okuyabildiği, siteler arası izleme yapmayan bir çerezle korunur. Yönetici oturumu için sadece yönetim alanında kullanılan, en fazla 8 saatlik bir oturum çerezi bulunur. Bu çerezler reklam amacı taşımaz; üçüncü taraf reklam/analitik çerezleri kullanılmaz. İletişim sayfasındaki harita Google Maps'ten yüklenir; bu sayfayı açtığınızda Google, kendi politikası çerçevesinde IP adresiniz gibi verileri işleyebilir.",
       ],
     },
     {
@@ -291,7 +291,7 @@ const en: LegalDocs = {
     },
     {
       heading: "3. Local Preferences",
-      paragraphs: ["Your theme and currency preferences are stored in your browser. Your analytics choice is remembered for 180 days using a first-party preference cookie that is not used for cross-site tracking. An essential session cookie is used only for administration for up to 8 hours. These cookies are not used for advertising; no third-party advertising or analytics cookies are used. The map on the contact page loads from Google Maps only after you choose to show it; Google may then process data such as your IP address under its own policy."],
+      paragraphs: ["Your theme and currency preferences are stored in your browser. Your analytics choice is remembered for 180 days using a first-party preference cookie that is not used for cross-site tracking. An essential session cookie is used only for administration for up to 8 hours. These cookies are not used for advertising; no third-party advertising or analytics cookies are used. The map on the contact page loads from Google Maps; when you open that page, Google may process data such as your IP address under its own policy."],
     },
     {
       heading: "4. Optional Visit Analytics",
